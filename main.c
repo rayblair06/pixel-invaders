@@ -3,6 +3,7 @@
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int PLAYER_SPEED = 5;
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,9 @@ int main(int argc, char *argv[])
 
     SDL_Rect player = {SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, 50, 20};
 
+    // keep track of key states
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+
     while (running)
     {
         while (SDL_PollEvent(&event))
@@ -30,7 +34,24 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Clear screen
+        // Move player based on key state
+        if (keystate[SDL_SCANCODE_LEFT])
+        {
+            player.x -= PLAYER_SPEED;
+        }
+
+        if (keystate[SDL_SCANCODE_RIGHT])
+        {
+            player.x += PLAYER_SPEED;
+        }
+
+        // Keep player within screen bounds
+        if (player.x < 0)
+            player.x = 0;
+        if (player.x > SCREEN_WIDTH - player.w)
+            player.x = SCREEN_WIDTH - player.w;
+
+        // Render screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
         SDL_RenderClear(renderer);
 
