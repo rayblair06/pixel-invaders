@@ -1,10 +1,10 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-const int SCREEN_WIDTH = 800 const
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
-    int
-    main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -12,10 +12,11 @@ const int SCREEN_WIDTH = 800 const
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERED_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     bool running = true;
-    SDL_EVENT event;
+
+    SDL_Event event;
 
     SDL_Rect player = {SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, 50, 20};
 
@@ -34,7 +35,7 @@ const int SCREEN_WIDTH = 800 const
         SDL_RenderClear(renderer);
 
         // Draw player
-        SDL_setRenderDrawColor(renderer, 0, 255, 0, 255); // green player
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
         SDL_RenderFillRect(renderer, &player);
 
         // Show the render
