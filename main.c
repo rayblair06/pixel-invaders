@@ -9,7 +9,6 @@ const int PLAYER_SPEED = 5;
 const int BULLET_SPEED = 10;
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
-int score = 0;
 
 typedef struct
 {
@@ -31,6 +30,12 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 
 int main(int argc, char *argv[])
 {
+    // Initialized game state
+    int score = 0;
+    int wave = 1;
+    Uint32 lastWaveTime = 0;
+    const Uint32 waveInterval = 3000; // 3 seconds between waves
+
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -199,6 +204,34 @@ int main(int argc, char *argv[])
             }
         }
 
+        // Waves!
+        Uint32 now = SDL_GetTicks();
+
+        if (now - lastWaveTime > waveInterval)
+        {
+            // Time for next wave!
+            lastWaveTime = now;
+            wave++;
+
+            // Spawn enemies for this wave
+            // Progressively more each wave
+            int enemiesToSpawn = wave + 2;
+            int spawned = 0;
+
+            for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
+            {
+                if (!enemies[i].active)
+                {
+                    enemies[i].active = true;
+                    enemies[i].rect.w = 40;
+                    enemies[i].rect.h = 30;
+                    enemies[i].rect.x = rand() % (SCREEN_WIDTH - enemies[i].rect.w);
+                    enemies[i].rect.y = 0;
+                    spawned++;
+                }
+            }
+        }
+
         // Render screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
         SDL_RenderClear(renderer);
@@ -242,7 +275,19 @@ int main(int argc, char *argv[])
         // Render the score text
         SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
+        // Display current wave
+        char waveText[32];
+        sprintf(waveText, "Wave: %d", wave);
+
+        SDL_Surface *waveSurface = TTF_RenderText_Solid(font, waveText, white);
+        SDL_Texture *waveTexture = SDL_CreateTextureFromSurface(renderer, waveSurface);
+        SDL_Rect waveRect = {10, 40, waveSurface->w, waveSurface->h};
+        SDL_RenderCopy(renderer, waveTexture, NULL, &waveRect);
+
         // Clean up
+        SDL_FreeSurface(waveSurface);
+        SDL_DestroyTexture(waveTexture);
+
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
 
