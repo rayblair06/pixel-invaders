@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 
 // Runtime constants
@@ -8,6 +9,7 @@ const int PLAYER_SPEED = 5;
 const int BULLET_SPEED = 10;
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
+int score = 0;
 
 typedef struct
 {
@@ -31,6 +33,20 @@ int main(int argc, char *argv[])
 {
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
+
+    if (TTF_Init() == -1)
+    {
+        printf("TTF_Init failed: %s\n", TTF_GetError());
+        return 1;
+    }
+
+    TTF_Font *font = TTF_OpenFont("fonts/Roboto-Regular.ttf", 24);
+
+    if (!font)
+    {
+        printf("Failed to load font: %s\n", TTF_GetError());
+        return 1;
+    }
 
     // Create a window
     SDL_Window *window = SDL_CreateWindow("Space Wars",
@@ -177,6 +193,7 @@ int main(int argc, char *argv[])
 
                     bullets[i].active = false;
                     enemies[j].active = false;
+                    score += 100;
                     break;
                 }
             }
@@ -210,16 +227,41 @@ int main(int argc, char *argv[])
             }
         }
 
+        // Convert score to string
+        char scoreText[32];
+        sprintf(scoreText, "Score: %d", score);
+
+        // Create surface and texture from text
+        SDL_Color white = {225, 255, 255, 255};
+        SDL_Surface *textSurface = TTF_RenderText_Solid(font, scoreText, white);
+        SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+        // Define destination rectrangle
+        SDL_Rect textRect = {10, 10, textSurface->w, textSurface->h};
+
+        // Render the score text
+        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+        // Clean up
+        SDL_FreeSurface(textSurface);
+        SDL_DestroyTexture(textTexture);
+
         // Show the render
         SDL_RenderPresent(renderer);
 
         SDL_Delay(16); // ~60 FPS
+
+        // Debugging!
+        printf("Score: %d\r", score);
+        fflush(stdout);
     }
 
     // Clean up
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
     SDL_Quit();
+    TTF_Quit();
 
     return 0;
 }

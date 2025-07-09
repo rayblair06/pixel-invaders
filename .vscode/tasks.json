@@ -11,7 +11,8 @@
         "build/spacewars",
         "-I/opt/homebrew/include",
         "-L/opt/homebrew/lib",
-        "-lSDL2"
+        "-lSDL2",
+        "-lSDL2_ttf"
       ],
       "group": {
         "kind": "build",
