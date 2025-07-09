@@ -1,9 +1,25 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+// Runtime constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int PLAYER_SPEED = 5;
+const int BULLET_SPEED = 10;
+const int MAX_BULLETS = 100;
+const int MAX_ENEMIES = 20;
+
+typedef struct
+{
+    SDL_Rect rect;
+    bool active;
+} Bullet;
+
+typedef struct
+{
+    SDL_Rect rect;
+    bool active;
+} Enemy;
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +44,30 @@ int main(int argc, char *argv[])
 
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+
+    // Bullet array
+    Bullet bullets[MAX_BULLETS];
+    for (int i = 0; i < MAX_BULLETS; i++)
+    {
+        bullets[i].active = false;
+    }
+
+    // Enemy array
+    Enemy enemies[MAX_ENEMIES];
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        enemies[i].active = false;
+    }
+
+    // Manually activate 5 enemies
+    for (int i = 0; i < 5; i++)
+    {
+        enemies[i].active = true;
+        enemies[i].rect.x = 100 + i * 120;
+        enemies[i].rect.y = 50;
+        enemies[i].rect.w = 40;
+        enemies[i].rect.h = 30;
+    }
 
     // Main loop
     while (running)
@@ -58,6 +98,62 @@ int main(int argc, char *argv[])
         if (player.x > SCREEN_WIDTH - player.w)
             player.x = SCREEN_WIDTH - player.w;
 
+        // Shoot bullet if SPACE is pressed
+        static bool spaceHeld = false;
+        if (keystate[SDL_SCANCODE_SPACE])
+        {
+            if (!spaceHeld)
+            { // prevent holding space from firing too fast
+                for (int i = 0; i < MAX_BULLETS; i++)
+                {
+                    if (!bullets[i].active)
+                    {
+                        bullets[i].active = true;
+                        bullets[i].rect.x = player.x + player.w / 2 - 2; // center bullet
+                        bullets[i].rect.y = player.y;
+                        bullets[i].rect.w = 4;
+                        bullets[i].rect.h = 10;
+                        break;
+                    }
+                }
+            }
+
+            spaceHeld = true;
+        }
+        else
+        {
+            spaceHeld = false;
+        }
+
+        // Move bullets
+        for (int i = 0; i < MAX_BULLETS; i++)
+        {
+            if (bullets[i].active)
+            {
+                bullets[i].rect.y -= BULLET_SPEED;
+
+                if (bullets[i].rect.y + bullets[i].rect.h < 0)
+                {
+                    // deactivate if off-screen
+                    bullets[i].active = false;
+                }
+            }
+        }
+
+        // Move enemies down slowly
+        for (int i = 0; i < MAX_ENEMIES; i++)
+        {
+            if (enemies[i].active)
+            {
+                enemies[i].rect.y += 1; // move down 1 pixel
+
+                if (enemies[i].rect.y > SCREEN_HEIGHT)
+                {
+                    enemies[i].active = false; // remove off-screen
+                }
+            }
+        }
+
         // Render screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
         SDL_RenderClear(renderer);
@@ -65,6 +161,26 @@ int main(int argc, char *argv[])
         // Draw player
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
         SDL_RenderFillRect(renderer, &player);
+
+        // Draw bullets
+        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // yellow
+        for (int i = 0; i < MAX_BULLETS; i++)
+        {
+            if (bullets[i].active)
+            {
+                SDL_RenderFillRect(renderer, &bullets[i].rect);
+            }
+        }
+
+        // Draw enemies
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // red
+        for (int i = 0; i < MAX_ENEMIES; i++)
+        {
+            if (enemies[i].active)
+            {
+                SDL_RenderFillRect(renderer, &enemies[i].rect);
+            }
+        }
 
         // Show the render
         SDL_RenderPresent(renderer);
