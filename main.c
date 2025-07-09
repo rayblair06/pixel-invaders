@@ -21,6 +21,12 @@ typedef struct
     bool active;
 } Enemy;
 
+//  AABB collision check (axis-aligned bounding box)
+bool checkCollision(SDL_Rect a, SDL_Rect b)
+{
+    return (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
+}
+
 int main(int argc, char *argv[])
 {
     // Initialize SDL
@@ -150,6 +156,28 @@ int main(int argc, char *argv[])
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
                     enemies[i].active = false; // remove off-screen
+                }
+            }
+        }
+
+        // Check for collisions between bullets and enemies
+        for (int i = 0; i < MAX_BULLETS; i++)
+        {
+            if (!bullets[i].active)
+                continue;
+
+            for (int j = 0; j < MAX_ENEMIES; j++)
+            {
+                if (!enemies[j].active)
+                    continue;
+
+                if (checkCollision(bullets[i].rect, enemies[j].rect))
+                {
+                    // Collision! Remove both
+
+                    bullets[i].active = false;
+                    enemies[j].active = false;
+                    break;
                 }
             }
         }
