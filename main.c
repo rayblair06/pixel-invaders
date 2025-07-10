@@ -113,6 +113,9 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     // Load Sprites
+    int bgTileW = 64;
+    int bgTileH = 64;
+
     SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/background.png");
     SDL_Texture *spriteTexture = IMG_LoadTexture(renderer, "assets/spritesheet.png");
 
@@ -163,9 +166,6 @@ int main(int argc, char *argv[])
     // Main loop
     while (running)
     {
-        // Draw Background
-        SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // full screen
-
         // Handle events
         while (SDL_PollEvent(&event))
         {
@@ -350,12 +350,20 @@ int main(int argc, char *argv[])
         if (flashRed)
         {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // flash red
+            SDL_RenderClear(renderer);
         }
         else
         {
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
+            // Draw Background
+            for (int y = 0; y < SCREEN_HEIGHT; y += bgTileH)
+            {
+                for (int x = 0; x < SCREEN_WIDTH; x += bgTileW)
+                {
+                    SDL_Rect dest = {x + shakeOffsetX, y + shakeOffsetY, bgTileW, bgTileH};
+                    SDL_RenderCopy(renderer, bgTexture, NULL, &dest);
+                }
+            }
         }
-        SDL_RenderClear(renderer);
 
         // Draw player
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
