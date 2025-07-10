@@ -83,16 +83,19 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Mix_Music *bgMusic = Mix_LoadMUS("assets/468407__onderwish__sci-fi-survival-dreamscape.mp3");
+    Mix_Music *gameMusic = Mix_LoadMUS("assets/game-music.mp3");
+    Mix_Music *gameOverMusic = Mix_LoadMUS("assets/game-over-music.mp3");
 
-    if (!bgMusic)
+    if (!gameMusic || !gameOverMusic)
     {
         printf("Failed to load music: %s\n", Mix_GetError());
         return 1;
     }
 
     // Play BG Music
-    Mix_PlayMusic(bgMusic, -1);
+    Mix_PlayMusic(gameMusic, -1);
+
+    // Mix_VolumeMusic(70);
 
     // Create a window
     SDL_Window *window = SDL_CreateWindow("Space Wars",
@@ -237,6 +240,10 @@ int main(int argc, char *argv[])
                     if (lives <= 0)
                     {
                         gameOver = true;
+
+                        // Play gameover music
+                        Mix_HaltMusic();
+                        Mix_PlayMusic(gameOverMusic, 1);
                     }
                 }
             }
@@ -429,9 +436,11 @@ int main(int argc, char *argv[])
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
-    Mix_CloseAudio();
     Mix_FreeChunk(sfx_hit);
     Mix_FreeChunk(sfx_shoot);
+    Mix_FreeMusic(gameMusic);
+    Mix_FreeMusic(gameOverMusic);
+    Mix_CloseAudio();
     SDL_Quit();
     TTF_Quit();
 
