@@ -37,9 +37,16 @@ int main(int argc, char *argv[])
     int wave = 1;
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
+
     bool flashRed = false;
     Uint32 flashStartTime = 0;
     const Uint32 flashDuration = 200; // 200 ms flash
+
+    bool shaking = false;
+    Uint32 shakeStartTime = 0;
+    const Uint32 shakeDuration = 200;
+    int shakeOffsetX = 0;
+    int shakeOffsetY = 0;
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -191,6 +198,10 @@ int main(int argc, char *argv[])
                     flashRed = true;
                     flashStartTime = SDL_GetTicks();
 
+                    // Trigger screenshake
+                    shaking = true;
+                    shakeStartTime = SDL_GetTicks();
+
                     if (lives <= 0)
                     {
                         gameOver = true;
@@ -256,6 +267,23 @@ int main(int argc, char *argv[])
             flashRed = false;
         }
 
+        // Shake
+        if (shaking)
+        {
+            if (SDL_GetTicks() - shakeStartTime > shakeDuration)
+            {
+                shaking = false;
+                shakeOffsetX = 0;
+                shakeOffsetY = 0;
+            }
+            else
+            {
+                // Shamml random offset between -5 and 5 pixels
+                shakeOffsetX = (rand() % 11) - 5;
+                shakeOffsetY = (rand() % 11) - 5;
+            }
+        }
+
         // Render screen
         if (flashRed)
         {
@@ -269,7 +297,11 @@ int main(int argc, char *argv[])
 
         // Draw player
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
-        SDL_RenderFillRect(renderer, &player);
+
+        SDL_Rect playerDraw = player;
+        playerDraw.x += shakeOffsetX;
+        playerDraw.y += shakeOffsetY;
+        SDL_RenderFillRect(renderer, &playerDraw);
 
         // Draw bullets
         SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // yellow
@@ -277,7 +309,10 @@ int main(int argc, char *argv[])
         {
             if (bullets[i].active)
             {
-                SDL_RenderFillRect(renderer, &bullets[i].rect);
+                SDL_Rect bulletDraw = bullets[i].rect;
+                bulletDraw.x += shakeOffsetX;
+                bulletDraw.y += shakeOffsetY;
+                SDL_RenderFillRect(renderer, &bulletDraw);
             }
         }
 
@@ -287,7 +322,10 @@ int main(int argc, char *argv[])
         {
             if (enemies[i].active)
             {
-                SDL_RenderFillRect(renderer, &enemies[i].rect);
+                SDL_Rect enemyDraw = enemies[i].rect;
+                enemyDraw.x += shakeOffsetX;
+                enemyDraw.y += shakeOffsetY;
+                SDL_RenderFillRect(renderer, &enemyDraw);
             }
         }
 
