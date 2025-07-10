@@ -124,8 +124,8 @@ int main(int argc, char *argv[])
         printf("Failed to load image: %s\n", IMG_GetError());
     }
 
-    SDL_Rect spritePlayer = {68, 4, 10, 9}; // x, y, w, h
-    SDL_Rect spriteEnemy = {3, 4, 11, 10};
+    SDL_Rect spritePlayer = {68, 4, 12, 12}; // x, y, w, h
+    SDL_Rect spriteEnemy = {3, 4, 12, 12};
     SDL_Rect spriteBullet = {38, 4, 3, 8};
 
     bool running = true;
@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
         enemies[i].active = true;
         enemies[i].rect.x = 100 + i * 120;
         enemies[i].rect.y = 50;
-        enemies[i].rect.w = 32;
-        enemies[i].rect.h = 32;
+        enemies[i].rect.w = 36;
+        enemies[i].rect.h = 36;
     }
 
     // Main loop
@@ -314,8 +314,8 @@ int main(int argc, char *argv[])
                 if (!enemies[i].active)
                 {
                     enemies[i].active = true;
-                    enemies[i].rect.w = 40;
-                    enemies[i].rect.h = 30;
+                    enemies[i].rect.w = 36;
+                    enemies[i].rect.h = 36;
                     enemies[i].rect.x = rand() % (SCREEN_WIDTH - enemies[i].rect.w);
                     enemies[i].rect.y = 0;
                     spawned++;
@@ -371,8 +371,8 @@ int main(int argc, char *argv[])
         SDL_Rect playerDraw = {
             player.x += shakeOffsetX,
             player.y += shakeOffsetY,
-            32,
-            32};
+            spritePlayer.w * 3,
+            spritePlayer.h * 3};
 
         SDL_RenderCopy(renderer, spriteTexture, &spritePlayer, &playerDraw);
 
