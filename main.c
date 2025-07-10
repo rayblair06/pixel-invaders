@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
         enemies[i].active = true;
         enemies[i].rect.x = 100 + i * 120;
         enemies[i].rect.y = 50;
-        enemies[i].rect.w = 40;
-        enemies[i].rect.h = 30;
+        enemies[i].rect.w = 32;
+        enemies[i].rect.h = 32;
     }
 
     // Main loop
@@ -368,9 +368,12 @@ int main(int argc, char *argv[])
         // Draw player
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
 
-        SDL_Rect playerDraw = player;
-        playerDraw.x += shakeOffsetX;
-        playerDraw.y += shakeOffsetY;
+        SDL_Rect playerDraw = {
+            player.x += shakeOffsetX,
+            player.y += shakeOffsetY,
+            32,
+            32};
+
         SDL_RenderCopy(renderer, spriteTexture, &spritePlayer, &playerDraw);
 
         // Draw bullets
@@ -395,6 +398,7 @@ int main(int argc, char *argv[])
                 SDL_Rect enemyDraw = enemies[i].rect;
                 enemyDraw.x += shakeOffsetX;
                 enemyDraw.y += shakeOffsetY;
+
                 SDL_RenderCopy(renderer, spriteTexture, &spriteEnemy, &enemyDraw);
             }
         }
