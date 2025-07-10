@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
 #include <stdbool.h>
 
 // Runtime constants
@@ -51,6 +52,12 @@ int main(int argc, char *argv[])
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
+
+    // Initialize Image package
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+        printf("Failed to initialize SDL_image: %s\n", IMG_GetError());
+    }
 
     // Initialize Fonts
     if (TTF_Init() == -1)
@@ -105,6 +112,19 @@ int main(int argc, char *argv[])
     // Create a renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
+    // Load Sprites
+    SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/background.png");
+    SDL_Texture *spriteTexture = IMG_LoadTexture(renderer, "assets/spritesheet.png");
+
+    if (!bgTexture || !spriteTexture)
+    {
+        printf("Failed to load image: %s\n", IMG_GetError());
+    }
+
+    SDL_Rect spritePlayer = {68, 4, 10, 9}; // x, y, w, h
+    SDL_Rect spriteEnemy = {3, 4, 11, 10};
+    SDL_Rect spriteBullet = {38, 4, 3, 8};
+
     bool running = true;
 
     // Main game loop
@@ -143,6 +163,9 @@ int main(int argc, char *argv[])
     // Main loop
     while (running)
     {
+        // Draw Background
+        SDL_RenderCopy(renderer, bgTexture, NULL, NULL); // full screen
+
         // Handle events
         while (SDL_PollEvent(&event))
         {
@@ -340,7 +363,7 @@ int main(int argc, char *argv[])
         SDL_Rect playerDraw = player;
         playerDraw.x += shakeOffsetX;
         playerDraw.y += shakeOffsetY;
-        SDL_RenderFillRect(renderer, &playerDraw);
+        SDL_RenderCopy(renderer, spriteTexture, &spritePlayer, &playerDraw);
 
         // Draw bullets
         SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // yellow
@@ -351,7 +374,7 @@ int main(int argc, char *argv[])
                 SDL_Rect bulletDraw = bullets[i].rect;
                 bulletDraw.x += shakeOffsetX;
                 bulletDraw.y += shakeOffsetY;
-                SDL_RenderFillRect(renderer, &bulletDraw);
+                SDL_RenderCopy(renderer, spriteTexture, &spriteBullet, &bulletDraw);
             }
         }
 
@@ -364,7 +387,7 @@ int main(int argc, char *argv[])
                 SDL_Rect enemyDraw = enemies[i].rect;
                 enemyDraw.x += shakeOffsetX;
                 enemyDraw.y += shakeOffsetY;
-                SDL_RenderFillRect(renderer, &enemyDraw);
+                SDL_RenderCopy(renderer, spriteTexture, &spriteEnemy, &enemyDraw);
             }
         }
 
@@ -433,6 +456,9 @@ int main(int argc, char *argv[])
     }
 
     // Clean up
+    SDL_DestroyTexture(bgTexture);
+    SDL_DestroyTexture(spriteTexture);
+    IMG_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);

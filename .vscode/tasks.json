@@ -13,7 +13,8 @@
         "-L/opt/homebrew/lib",
         "-lSDL2",
         "-lSDL2_ttf",
-        "-lSDL2_mixer"
+        "-lSDL2_mixer",
+        "-lSDL2_image"
       ],
       "group": {
         "kind": "build",
