@@ -37,6 +37,9 @@ int main(int argc, char *argv[])
     int wave = 1;
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
+    bool flashRed = false;
+    Uint32 flashStartTime = 0;
+    const Uint32 flashDuration = 200; // 200 ms flash
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -184,6 +187,10 @@ int main(int argc, char *argv[])
                     enemies[i].active = false; // remove off-screen
                     lives--;
 
+                    // Trigger red flash
+                    flashRed = true;
+                    flashStartTime = SDL_GetTicks();
+
                     if (lives <= 0)
                     {
                         gameOver = true;
@@ -243,8 +250,21 @@ int main(int argc, char *argv[])
             }
         }
 
+        // Flash Red when hurt
+        if (flashRed && SDL_GetTicks() - flashStartTime > flashDuration)
+        {
+            flashRed = false;
+        }
+
         // Render screen
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
+        if (flashRed)
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // flash red
+        }
+        else
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black background
+        }
         SDL_RenderClear(renderer);
 
         // Draw player
