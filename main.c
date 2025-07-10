@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdbool.h>
 
 // Runtime constants
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
+    // Initialize Fonts
     if (TTF_Init() == -1)
     {
         printf("TTF_Init failed: %s\n", TTF_GetError());
@@ -64,6 +66,33 @@ int main(int argc, char *argv[])
         printf("Failed to load font: %s\n", TTF_GetError());
         return 1;
     }
+
+    // Initialize Sounds
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer could not initialize! %s\n", Mix_GetError());
+        return 1;
+    }
+
+    Mix_Chunk *sfx_hit = Mix_LoadWAV("assets/hit.wav");
+    Mix_Chunk *sfx_shoot = Mix_LoadWAV("assets/shoot.wav");
+
+    if (!sfx_hit || !sfx_shoot)
+    {
+        printf("Failed to load sound effects: %s\n", Mix_GetError());
+        return 1;
+    }
+
+    Mix_Music *bgMusic = Mix_LoadMUS("assets/468407__onderwish__sci-fi-survival-dreamscape.mp3");
+
+    if (!bgMusic)
+    {
+        printf("Failed to load music: %s\n", Mix_GetError());
+        return 1;
+    }
+
+    // Play BG Music
+    Mix_PlayMusic(bgMusic, -1);
 
     // Create a window
     SDL_Window *window = SDL_CreateWindow("Space Wars",
@@ -146,6 +175,8 @@ int main(int argc, char *argv[])
         {
             if (!spaceHeld)
             { // prevent holding space from firing too fast
+                Mix_PlayChannel(-1, sfx_shoot, 0);
+
                 for (int i = 0; i < MAX_BULLETS; i++)
                 {
                     if (!bullets[i].active)
@@ -192,6 +223,7 @@ int main(int argc, char *argv[])
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
                     enemies[i].active = false; // remove off-screen
+                    Mix_PlayChannel(-1, sfx_hit, 0);
                     lives--;
 
                     // Trigger red flash
@@ -397,6 +429,9 @@ int main(int argc, char *argv[])
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
+    Mix_CloseAudio();
+    Mix_FreeChunk(sfx_hit);
+    Mix_FreeChunk(sfx_shoot);
     SDL_Quit();
     TTF_Quit();
 
