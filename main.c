@@ -31,6 +31,8 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 int main(int argc, char *argv[])
 {
     // Initialized game state
+    int lives = 3;
+    bool gameOver = false;
     int score = 0;
     int wave = 1;
     Uint32 lastWaveTime = 0;
@@ -108,15 +110,18 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Move player based on key state
-        if (keystate[SDL_SCANCODE_LEFT])
+        if (!gameOver)
         {
-            player.x -= PLAYER_SPEED;
-        }
+            // Move player based on key state
+            if (keystate[SDL_SCANCODE_LEFT])
+            {
+                player.x -= PLAYER_SPEED;
+            }
 
-        if (keystate[SDL_SCANCODE_RIGHT])
-        {
-            player.x += PLAYER_SPEED;
+            if (keystate[SDL_SCANCODE_RIGHT])
+            {
+                player.x += PLAYER_SPEED;
+            }
         }
 
         // Keep player within screen bounds
@@ -127,7 +132,7 @@ int main(int argc, char *argv[])
 
         // Shoot bullet if SPACE is pressed
         static bool spaceHeld = false;
-        if (keystate[SDL_SCANCODE_SPACE])
+        if (!gameOver && keystate[SDL_SCANCODE_SPACE])
         {
             if (!spaceHeld)
             { // prevent holding space from firing too fast
@@ -170,13 +175,19 @@ int main(int argc, char *argv[])
         // Move enemies down slowly
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
-            if (enemies[i].active)
+            if (!gameOver && enemies[i].active)
             {
                 enemies[i].rect.y += 1; // move down 1 pixel
 
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
                     enemies[i].active = false; // remove off-screen
+                    lives--;
+
+                    if (lives <= 0)
+                    {
+                        gameOver = true;
+                    }
                 }
             }
         }
@@ -207,7 +218,7 @@ int main(int argc, char *argv[])
         // Waves!
         Uint32 now = SDL_GetTicks();
 
-        if (now - lastWaveTime > waveInterval)
+        if (!gameOver && now - lastWaveTime > waveInterval)
         {
             // Time for next wave!
             lastWaveTime = now;
@@ -284,7 +295,30 @@ int main(int argc, char *argv[])
         SDL_Rect waveRect = {10, 40, waveSurface->w, waveSurface->h};
         SDL_RenderCopy(renderer, waveTexture, NULL, &waveRect);
 
+        // Draw lives on screen
+        char livesText[32];
+        sprintf(livesText, "Lives: %d", lives);
+
+        SDL_Surface *livesSurface = TTF_RenderText_Solid(font, livesText, white);
+        SDL_Texture *livesTexture = SDL_CreateTextureFromSurface(renderer, livesSurface);
+        SDL_Rect livesRect = {10, 70, livesSurface->w, livesSurface->h};
+        SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
+
+        // Render Game over screen
+        if (gameOver)
+        {
+            SDL_Surface *overSurface = TTF_RenderText_Solid(font, "GAME OVER", white);
+            SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
+            SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};
+            SDL_RenderCopy(renderer, overTexture, NULL, &overRect);
+            SDL_FreeSurface(overSurface);
+            SDL_DestroyTexture(overTexture);
+        }
+
         // Clean up
+        SDL_FreeSurface(livesSurface);
+        SDL_DestroyTexture(livesTexture);
+
         SDL_FreeSurface(waveSurface);
         SDL_DestroyTexture(waveTexture);
 
