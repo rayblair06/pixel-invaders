@@ -55,6 +55,11 @@ int main(int argc, char *argv[])
     Uint32 lastFrameSwitch = 0;
     const Uint32 frameInterval = 500; // ms
 
+    bool playerExplosion = false;
+    bool playerExplosionAnimation = false; // false - first slide, true - second slide
+    Uint32 explosionSwitch = 0;
+    const Uint32 explosionInterval = 500; // ms
+
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -266,6 +271,7 @@ int main(int argc, char *argv[])
                     if (lives <= 0)
                     {
                         gameOver = true;
+                        playerExplosion = true;
 
                         // Play gameover music
                         Mix_HaltMusic();
@@ -356,6 +362,19 @@ int main(int argc, char *argv[])
             lastFrameSwitch = SDL_GetTicks();
         }
 
+        // Toggle explosion animations
+        if (playerExplosion)
+        {
+            // Start timer as soon as we've explosed
+            explosionSwitch = SDL_GetTicks();
+
+            if (now - explosionSwitch > explosionInterval)
+            {
+                playerExplosionAnimation = true;
+                explosionSwitch = SDL_GetTicks();
+            }
+        }
+
         // Render screen
         if (flashRed)
         {
@@ -376,7 +395,8 @@ int main(int argc, char *argv[])
         }
 
         // Draw player
-        SDL_Rect playerSrc = get_sprite(SPR_PLAYER);
+        SDL_Rect explosionSrc = get_sprite(!playerExplosionAnimation ? SPR_EXPLOSION_A : SPR_EXPLOSION_B);
+        SDL_Rect playerSrc = !playerExplosion ? get_sprite(SPR_PLAYER) : explosionSrc;
         SDL_Rect playerDraw = {
             player.x + shakeOffsetX,
             player.y + shakeOffsetY,
