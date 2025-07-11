@@ -55,10 +55,13 @@ int main(int argc, char *argv[])
     Uint32 lastFrameSwitch = 0;
     const Uint32 frameInterval = 500; // ms
 
-    bool playerExplosion = false;
-    bool playerExplosionAnimation = false; // false - first slide, true - second slide
-    Uint32 explosionSwitch = 0;
-    const Uint32 explosionInterval = 500; // ms
+    bool playerVisible = true;
+
+    bool playerExploding = false;
+    int explosionFrame = 0;
+    Uint32 explosionStartTime = 0;
+    const int explosionFrameDurtion = 150; // ms per frame
+    const int explosionFrameCount = 2;
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -271,7 +274,9 @@ int main(int argc, char *argv[])
                     if (lives <= 0)
                     {
                         gameOver = true;
-                        playerExplosion = true;
+                        playerExploding = true;
+                        explosionStartTime = SDL_GetTicks();
+                        explosionFrame = 0;
 
                         // Play gameover music
                         Mix_HaltMusic();
@@ -363,15 +368,16 @@ int main(int argc, char *argv[])
         }
 
         // Toggle explosion animations
-        if (playerExplosion)
+        if (playerExploding)
         {
-            // Start timer as soon as we've explosed
-            explosionSwitch = SDL_GetTicks();
+            Uint32 elapsed = SDL_GetTicks() - explosionStartTime;
+            explosionFrame = elapsed / explosionFrameDurtion;
 
-            if (now - explosionSwitch > explosionInterval)
+            if (explosionFrame >= explosionFrameCount)
             {
-                playerExplosionAnimation = true;
-                explosionSwitch = SDL_GetTicks();
+                explosionFrame = explosionFrame - 1; // stop on last frame
+                playerExploding = false;
+                playerVisible = false;
             }
         }
 
@@ -395,15 +401,26 @@ int main(int argc, char *argv[])
         }
 
         // Draw player
-        SDL_Rect explosionSrc = get_sprite(!playerExplosionAnimation ? SPR_EXPLOSION_A : SPR_EXPLOSION_B);
-        SDL_Rect playerSrc = !playerExplosion ? get_sprite(SPR_PLAYER) : explosionSrc;
+        SDL_Rect playerSrc;
         SDL_Rect playerDraw = {
             player.x + shakeOffsetX,
             player.y + shakeOffsetY,
             SPRITE_DRAW_SIZE,
             SPRITE_DRAW_SIZE};
 
-        SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
+        if (gameOver && playerExploding)
+        {
+            SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
+            playerSrc = get_sprite(explosionSprites[explosionFrame]);
+
+            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
+        }
+        else if (playerVisible)
+        {
+            playerSrc = get_sprite(SPR_PLAYER);
+
+            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
+        }
 
         // Draw bullets
         for (int i = 0; i < MAX_BULLETS; i++)
