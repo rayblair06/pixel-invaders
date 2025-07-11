@@ -51,6 +51,10 @@ int main(int argc, char *argv[])
     int shakeOffsetX = 0;
     int shakeOffsetY = 0;
 
+    bool enemyFrameToggle = false;
+    Uint32 lastFrameSwitch = 0;
+    const Uint32 frameInterval = 500; // ms
+
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -345,6 +349,13 @@ int main(int argc, char *argv[])
             }
         }
 
+        // Toggle enemy animations
+        if (now - lastFrameSwitch > frameInterval)
+        {
+            enemyFrameToggle = !enemyFrameToggle;
+            lastFrameSwitch = SDL_GetTicks();
+        }
+
         // Render screen
         if (flashRed)
         {
@@ -392,7 +403,7 @@ int main(int argc, char *argv[])
         {
             if (enemies[i].active)
             {
-                SDL_Rect enemySrc = get_sprite(SPR_INVADER1);
+                SDL_Rect enemySrc = get_sprite(enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B);
                 SDL_Rect enemyDraw = enemies[i].rect;
                 enemyDraw.x += shakeOffsetX;
                 enemyDraw.y += shakeOffsetY;
