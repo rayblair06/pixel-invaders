@@ -211,10 +211,10 @@ int main(int argc, char *argv[])
                     if (!bullets[i].active)
                     {
                         bullets[i].active = true;
-                        bullets[i].rect.x = player.x + (player.w / 2) - (bullets[i].rect.w / 2); // center bullet from player
-                        bullets[i].rect.y = player.y;
                         bullets[i].rect.w = SPRITE_DRAW_SIZE;
                         bullets[i].rect.h = SPRITE_DRAW_SIZE;
+                        bullets[i].rect.x = player.x + (player.w / 2) - (bullets[i].rect.w / 2); // center bullet from player
+                        bullets[i].rect.y = player.y;
                         break;
                     }
                 }
