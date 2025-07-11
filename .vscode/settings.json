@@ -3,6 +3,7 @@
     "*": false
   },
   "files.associations": {
-    "stdbool.h": "c"
+    "stdbool.h": "c",
+    "sdl.h": "c"
   }
 }

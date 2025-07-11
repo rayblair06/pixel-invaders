@@ -1,0 +1,32 @@
+#ifndef SPRITE_H
+#define SPRITE_H
+
+#include <SDL2/SDL.h>
+
+#define SPRITE_SIZE 16
+#define SPRITE_DRAW_SIZE SPRITE_SIZE * 2
+
+typedef enum
+{
+    SPR_PLAYER,
+    SPR_BULLET1,
+    SPR_BULLET2,
+    SPR_INVADER1,
+    SPR_INVADER1_ALT,
+    SPR_INVADER2,
+    SPR_INVADER2_ALT,
+    SPR_INVADER3,
+    SPR_INVADER3_ALT,
+    SPR_UFO,
+    SPR_EXPLOSION1,
+    SPR_EXPLOSION2,
+    SPR_SHIELD_LEFT,
+    SPR_SHIELD_MID,
+    SPR_SHIELD_RIGHT,
+    SPR_COUNT
+} SpriteID;
+
+void init_sprites(void);
+SDL_Rect get_sprite(SpriteID id);
+
+#endif

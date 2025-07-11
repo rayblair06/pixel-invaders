@@ -3,6 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "sprites.h"
 
 // Runtime constants
 const int SCREEN_WIDTH = 800;
@@ -52,6 +53,8 @@ int main(int argc, char *argv[])
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
+
+    init_sprites();
 
     // Initialize Image package
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
@@ -105,7 +108,7 @@ int main(int argc, char *argv[])
     // Mix_VolumeMusic(70);
 
     // Create a window
-    SDL_Window *window = SDL_CreateWindow("Space Wars",
+    SDL_Window *window = SDL_CreateWindow("Pixel Invaders: Rogue Mode",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
@@ -124,17 +127,13 @@ int main(int argc, char *argv[])
         printf("Failed to load image: %s\n", IMG_GetError());
     }
 
-    SDL_Rect spritePlayer = {68, 4, 12, 12}; // x, y, w, h
-    SDL_Rect spriteEnemy = {3, 4, 12, 12};
-    SDL_Rect spriteBullet = {38, 4, 3, 8};
-
     bool running = true;
 
     // Main game loop
     SDL_Event event;
 
     // Initialize player position
-    SDL_Rect player = {SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, 50, 20};
+    SDL_Rect player = {SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE};
 
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
@@ -159,8 +158,8 @@ int main(int argc, char *argv[])
         enemies[i].active = true;
         enemies[i].rect.x = 100 + i * 120;
         enemies[i].rect.y = 50;
-        enemies[i].rect.w = 36;
-        enemies[i].rect.h = 36;
+        enemies[i].rect.w = SPRITE_DRAW_SIZE;
+        enemies[i].rect.h = SPRITE_DRAW_SIZE;
     }
 
     // Main loop
@@ -208,10 +207,10 @@ int main(int argc, char *argv[])
                     if (!bullets[i].active)
                     {
                         bullets[i].active = true;
-                        bullets[i].rect.x = player.x + player.w / 2 - 2; // center bullet
+                        bullets[i].rect.x = player.x + (player.w / 2) - (bullets[i].rect.w / 2); // center bullet from player
                         bullets[i].rect.y = player.y;
-                        bullets[i].rect.w = 4;
-                        bullets[i].rect.h = 10;
+                        bullets[i].rect.w = SPRITE_DRAW_SIZE;
+                        bullets[i].rect.h = SPRITE_DRAW_SIZE;
                         break;
                     }
                 }
@@ -314,8 +313,8 @@ int main(int argc, char *argv[])
                 if (!enemies[i].active)
                 {
                     enemies[i].active = true;
-                    enemies[i].rect.w = 36;
-                    enemies[i].rect.h = 36;
+                    enemies[i].rect.w = SPRITE_DRAW_SIZE;
+                    enemies[i].rect.h = SPRITE_DRAW_SIZE;
                     enemies[i].rect.x = rand() % (SCREEN_WIDTH - enemies[i].rect.w);
                     enemies[i].rect.y = 0;
                     spawned++;
@@ -366,40 +365,39 @@ int main(int argc, char *argv[])
         }
 
         // Draw player
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green player
-
+        SDL_Rect playerSrc = get_sprite(SPR_PLAYER);
         SDL_Rect playerDraw = {
-            player.x += shakeOffsetX,
-            player.y += shakeOffsetY,
-            spritePlayer.w * 3,
-            spritePlayer.h * 3};
+            player.x + shakeOffsetX,
+            player.y + shakeOffsetY,
+            SPRITE_DRAW_SIZE,
+            SPRITE_DRAW_SIZE};
 
-        SDL_RenderCopy(renderer, spriteTexture, &spritePlayer, &playerDraw);
+        SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
 
         // Draw bullets
-        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255); // yellow
         for (int i = 0; i < MAX_BULLETS; i++)
         {
             if (bullets[i].active)
             {
+                SDL_Rect bulletSrc = get_sprite(SPR_BULLET1);
                 SDL_Rect bulletDraw = bullets[i].rect;
                 bulletDraw.x += shakeOffsetX;
                 bulletDraw.y += shakeOffsetY;
-                SDL_RenderCopy(renderer, spriteTexture, &spriteBullet, &bulletDraw);
+                SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bulletDraw);
             }
         }
 
         // Draw enemies
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // red
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
             if (enemies[i].active)
             {
+                SDL_Rect enemySrc = get_sprite(SPR_INVADER1);
                 SDL_Rect enemyDraw = enemies[i].rect;
                 enemyDraw.x += shakeOffsetX;
                 enemyDraw.y += shakeOffsetY;
 
-                SDL_RenderCopy(renderer, spriteTexture, &spriteEnemy, &enemyDraw);
+                SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemyDraw);
             }
         }
 
