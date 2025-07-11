@@ -10,8 +10,10 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int PLAYER_SPEED = 5;
 const int BULLET_SPEED = 10;
+
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
+const int MAX_PICKUPS = 100;
 
 typedef struct
 {
@@ -25,6 +27,17 @@ typedef struct
     bool active;
 } Enemy;
 
+typedef struct
+{
+    SDL_Rect rect;
+    bool active;
+    bool falling;
+} Pickup;
+
+Bullet bullets[MAX_BULLETS];
+Enemy enemies[MAX_ENEMIES];
+Pickup pickups[MAX_PICKUPS];
+
 //  AABB collision check (axis-aligned bounding box)
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
@@ -36,7 +49,7 @@ int main(int argc, char *argv[])
     // Initialized game state
     int lives = 3;
     bool gameOver = false;
-    int score = 0;
+    int experience = 0;
     int wave = 1;
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
@@ -151,17 +164,21 @@ int main(int argc, char *argv[])
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
     // Bullet array
-    Bullet bullets[MAX_BULLETS];
     for (int i = 0; i < MAX_BULLETS; i++)
     {
         bullets[i].active = false;
     }
 
     // Enemy array
-    Enemy enemies[MAX_ENEMIES];
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         enemies[i].active = false;
+    }
+
+    // Pickup array
+    for (int i = 0; i < MAX_PICKUPS; i++)
+    {
+        pickups[i].active = false;
     }
 
     // Manually activate 5 enemies
@@ -299,13 +316,55 @@ int main(int argc, char *argv[])
 
                 if (checkCollision(bullets[i].rect, enemies[j].rect))
                 {
-                    // Collision! Remove both
+                    // Collision! Remove both bullets and enemies
 
                     bullets[i].active = false;
                     enemies[j].active = false;
-                    score += 100;
+
+                    // Generate pickup
+                    for (int k = 0; k < MAX_PICKUPS; k++)
+                    {
+                        if (!pickups[k].active)
+                        {
+                            pickups[k].active = true;
+                            pickups[k].falling = true;
+                            pickups[k].rect.x = enemies[j].rect.x + (enemies[j].rect.w / 2) - (pickups[k].rect.w / 2);
+                            pickups[k].rect.y = enemies[j].rect.y;
+                            pickups[k].rect.w = SPRITE_DRAW_SIZE;
+                            pickups[k].rect.h = SPRITE_DRAW_SIZE;
+
+                            break;
+                        }
+                    }
+
                     break;
                 }
+            }
+        }
+
+        // Pickups Handle
+        for (int i = 0; i < MAX_PICKUPS; i++)
+        {
+            if (!pickups[i].active)
+                continue;
+
+            if (pickups[i].falling)
+            {
+                pickups[i].rect.y += 2;
+
+                // Stop falling at player Y
+                if (pickups[i].rect.y >= player.y)
+                {
+                    pickups[i].rect.y = player.y;
+                    pickups[i].falling = false;
+                }
+            }
+
+            // Check for collision with player
+            if (SDL_HasIntersection(&pickups[i].rect, &player))
+            {
+                pickups[i].active = false;
+                experience += 100;
             }
         }
 
@@ -425,43 +484,57 @@ int main(int argc, char *argv[])
         // Draw bullets
         for (int i = 0; i < MAX_BULLETS; i++)
         {
-            if (bullets[i].active)
-            {
-                SDL_Rect bulletSrc = get_sprite(SPR_BULLET1);
-                SDL_Rect bulletDraw = bullets[i].rect;
-                bulletDraw.x += shakeOffsetX;
-                bulletDraw.y += shakeOffsetY;
-                SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bulletDraw);
-            }
+            if (!bullets[i].active)
+                continue;
+
+            SDL_Rect bulletSrc = get_sprite(SPR_BULLET1);
+            SDL_Rect bulletDraw = bullets[i].rect;
+            bulletDraw.x += shakeOffsetX;
+            bulletDraw.y += shakeOffsetY;
+            SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bulletDraw);
         }
 
         // Draw enemies
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
-            if (enemies[i].active)
-            {
-                SDL_Rect enemySrc = get_sprite(enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B);
-                SDL_Rect enemyDraw = enemies[i].rect;
-                enemyDraw.x += shakeOffsetX;
-                enemyDraw.y += shakeOffsetY;
+            if (!enemies[i].active)
+                continue;
 
-                SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemyDraw);
-            }
+            SDL_Rect enemySrc = get_sprite(enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B);
+            SDL_Rect enemyDraw = enemies[i].rect;
+            enemyDraw.x += shakeOffsetX;
+            enemyDraw.y += shakeOffsetY;
+
+            SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemyDraw);
         }
 
-        // Convert score to string
-        char scoreText[32];
-        sprintf(scoreText, "Score: %d", score);
+        // Draw pickups
+        for (int i = 0; i < MAX_PICKUPS; i++)
+        {
+            if (!pickups[i].active)
+                continue;
+
+            SDL_Rect pickupSrc = get_sprite(SPR_BULLET3); // Replace with pickup animation
+            SDL_Rect pickupDraw = pickups[i].rect;
+            pickupDraw.x += shakeOffsetX;
+            pickupDraw.y += shakeOffsetY;
+
+            SDL_RenderCopy(renderer, spriteTexture, &pickupSrc, &pickupDraw);
+        }
+
+        // Convert Experience to string
+        char experienceText[32];
+        sprintf(experienceText, "Experience: %d", experience);
 
         // Create surface and texture from text
         SDL_Color white = {225, 255, 255, 255};
-        SDL_Surface *textSurface = TTF_RenderText_Solid(font, scoreText, white);
+        SDL_Surface *textSurface = TTF_RenderText_Solid(font, experienceText, white);
         SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
         // Define destination rectrangle
         SDL_Rect textRect = {10, 10, textSurface->w, textSurface->h};
 
-        // Render the score text
+        // Render the experience text
         SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
         // Display current wave
@@ -509,7 +582,7 @@ int main(int argc, char *argv[])
         SDL_Delay(16); // ~60 FPS
 
         // Debugging!
-        printf("Score: %d\r", score);
+        // printf("experience: %d\r", experience);
         fflush(stdout);
     }
 

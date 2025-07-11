@@ -11,6 +11,7 @@ typedef enum
     SPR_PLAYER,
     SPR_BULLET1,
     SPR_BULLET2,
+    SPR_BULLET3,
     SPR_INVADER1_A,
     SPR_INVADER1_B,
     SPR_INVADER2_A,
