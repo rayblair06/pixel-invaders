@@ -8,8 +8,9 @@
       "args": [
         "bullets.c",
         "constants.c",
-        "main.c",
         "entity.c",
+        "enemies.c",
+        "main.c",
         "player.c",
         "sprites.c",
         "-o",

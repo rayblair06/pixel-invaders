@@ -5,11 +5,11 @@
 #include <stdbool.h>
 #include "constants.h"
 #include "bullets.h"
+#include "enemies.h"
 #include "entity.h"
 #include "sprites.h"
 #include "player.h"
 
-const int MAX_ENEMIES = 20;
 const int MAX_PICKUPS = 100;
 
 typedef Entity Bullet;
@@ -25,8 +25,6 @@ typedef struct
 Bullet bullets[MAX_BULLETS];
 Enemy enemies[MAX_ENEMIES];
 Pickup pickups[MAX_PICKUPS];
-
-float enemySpeed = 1.0f;
 
 typedef enum
 {
@@ -76,17 +74,6 @@ void generate_upgrade_choices()
         {
             options[optionCount++] = pick;
         }
-    }
-}
-
-void update_enemy(Entity *enemy, float speed)
-{
-    move(enemy, DOWN, speed);
-
-    // Disappear off screen
-    if (enemy->y > SCREEN_HEIGHT)
-    {
-        enemy->active = false;
     }
 }
 
@@ -225,14 +212,8 @@ int main(int argc, char *argv[])
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
-    // Set all starting Bullet entities as inactive
     init_bullets();
-
-    // Set all starting Enemy entities as inactive
-    for (int i = 0; i < MAX_ENEMIES; i++)
-    {
-        enemies[i].active = false;
-    }
+    init_enemies();
 
     // Set all starting Pickup entities as inactive
     for (int i = 0; i < MAX_PICKUPS; i++)
@@ -330,15 +311,18 @@ int main(int argc, char *argv[])
         update_bullets();
 
         // Move enemies down slowly
+        update_enemies();
+
+        // Handle enemies actions
+        // TODO: Should be moved to enemies or it's own modular but is fine here for now
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
             if (!gameOver && enemies[i].active)
             {
-                move(&enemies[i], DOWN, enemySpeed);
-
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
                     enemies[i].active = false; // remove off-screen
+
                     Mix_PlayChannel(-1, sfx_hit, 0);
                     lives--;
 
@@ -550,14 +534,7 @@ int main(int argc, char *argv[])
         render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Draw enemies
-        for (int i = 0; i < MAX_ENEMIES; i++)
-        {
-            if (!enemies[i].active)
-                continue;
-
-            SDL_Rect enemySrc = get_sprite(enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B);
-            SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemies[i].rect);
-        }
+        render_enemies(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Draw pickups
         for (int i = 0; i < MAX_PICKUPS; i++)
