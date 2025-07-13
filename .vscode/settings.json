@@ -11,6 +11,7 @@
     "sdl_ttf.h": "c",
     "sprites.h": "c",
     "sdl_image.h": "c",
-    "constants.h": "c"
+    "constants.h": "c",
+    "game.h": "c"
   }
 }

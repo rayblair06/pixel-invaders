@@ -1,9 +1,16 @@
+#include <SDL2/SDL_image.h>
 #include "sprites.h"
 
 static SDL_Rect spriteRects[SPR_COUNT];
 
 void init_sprites()
 {
+    // Initialize Image package
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+        printf("Failed to initialize SDL_image: %s\n", IMG_GetError());
+    }
+
     spriteRects[SPR_PLAYER] = (SDL_Rect){4 * SPRITE_SIZE, 0 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE};
     spriteRects[SPR_BULLET1] = (SDL_Rect){2 * SPRITE_SIZE, 0 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE};
     spriteRects[SPR_BULLET2] = (SDL_Rect){2 * SPRITE_SIZE, 1 * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE};

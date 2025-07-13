@@ -1,4 +1,5 @@
 #include <SDL2/SDL_mixer.h>
+#include "audio.h"
 #include "constants.h"
 #include "bullets.h"
 #include "entity.h"
@@ -33,7 +34,7 @@ void init_player(void)
 /**
  * Handle all of our 'tick' functionality of active player within the main game loop
  */
-void tick_player(const Uint8 *keystate, Mix_Chunk *shootSoundEffect)
+void tick_player(const Uint8 *keystate)
 {
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
@@ -62,7 +63,7 @@ void tick_player(const Uint8 *keystate, Mix_Chunk *shootSoundEffect)
         // prevent holding space from firing too fast
         if (!spaceHeld)
         {
-            trigger_player_shoot(shootSoundEffect);
+            trigger_player_shoot();
         }
 
         spaceHeld = true;
@@ -115,6 +116,26 @@ void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shake
     SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
 }
 
+void trigger_player_shoot()
+{
+    // No shooty on gameover
+    if (isGameOver)
+        return;
+
+    play_sound(SND_SHOOT);
+
+    spawn_bullet(
+        player.x + player.w / 2,
+        player.y);
+}
+
+void trigger_player_explosion()
+{
+    isPlayerExploding = true;
+    explosionStartTime = SDL_GetTicks();
+    explosionFrame = 0;
+}
+
 /**
  * Add experience to player
  */
@@ -131,24 +152,4 @@ void add_experience(int amount)
         // generate_upgrade_choices();
         isLevelUpPending = true;
     }
-}
-
-void trigger_player_shoot(Mix_Chunk *soundEffect)
-{
-    // No shooty on gameover
-    if (isGameOver)
-        return;
-
-    Mix_PlayChannel(-1, soundEffect, 0); // TODO: Move Audio to it's own module
-
-    spawn_bullet(
-        player.x + player.w / 2,
-        player.y);
-}
-
-void trigger_player_explosion()
-{
-    isPlayerExploding = true;
-    explosionStartTime = SDL_GetTicks();
-    explosionFrame = 0;
 }

@@ -1,6 +1,8 @@
 #include <stdbool.h>
+#include "audio.h"
 #include "constants.h"
 #include "game.h"
+#include "player.h"
 
 int score = 0;
 int lives = 3;
@@ -120,11 +122,19 @@ void add_score(int amount)
 void lose_lift(void)
 {
     lives--;
+
+    play_sound(SND_HIT);
+
     trigger_screen_shake();
     trigger_red_flash();
 
     if (lives <= 0)
     {
+        trigger_player_explosion();
+
         isGameOver = true;
+
+        // TODO: Need to trigger a gameover single event
+        play_music(MUS_GAMEOVER, false);
     }
 }

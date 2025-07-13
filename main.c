@@ -3,6 +3,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "audio.h"
 #include "constants.h"
 #include "bullets.h"
 #include "enemies.h"
@@ -101,12 +102,8 @@ int main(int argc, char *argv[])
     SDL_Init(SDL_INIT_VIDEO);
 
     init_sprites();
-
-    // Initialize Image package
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
-    {
-        printf("Failed to initialize SDL_image: %s\n", IMG_GetError());
-    }
+    init_audio();
+    play_music(MUS_GAME, true);
 
     // Initialize Fonts
     if (TTF_Init() == -1)
@@ -122,36 +119,6 @@ int main(int argc, char *argv[])
         printf("Failed to load font: %s\n", TTF_GetError());
         return 1;
     }
-
-    // Initialize Sounds
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-    {
-        printf("SDL_mixer could not initialize! %s\n", Mix_GetError());
-        return 1;
-    }
-
-    Mix_Chunk *sfx_hit = Mix_LoadWAV("assets/hit.wav");
-    Mix_Chunk *sfx_shoot = Mix_LoadWAV("assets/shoot.wav");
-
-    if (!sfx_hit || !sfx_shoot)
-    {
-        printf("Failed to load sound effects: %s\n", Mix_GetError());
-        return 1;
-    }
-
-    Mix_Music *gameMusic = Mix_LoadMUS("assets/game-music.mp3");
-    Mix_Music *gameOverMusic = Mix_LoadMUS("assets/game-over-music.mp3");
-
-    if (!gameMusic || !gameOverMusic)
-    {
-        printf("Failed to load music: %s\n", Mix_GetError());
-        return 1;
-    }
-
-    // Play BG Music
-    Mix_PlayMusic(gameMusic, -1);
-
-    // Mix_VolumeMusic(70);
 
     // Create a window
     SDL_Window *window = SDL_CreateWindow("Pixel Invaders: Rogue Mode",
@@ -249,7 +216,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        tick_player(keystate, sfx_shoot);
+        tick_player(keystate);
         tick_bullets();
         tick_enemies();
 
@@ -263,18 +230,7 @@ int main(int argc, char *argv[])
                 {
                     enemies[i].active = false; // remove off-screen
 
-                    Mix_PlayChannel(-1, sfx_hit, 0);
-
                     lose_lift();
-
-                    if (lives <= 0)
-                    {
-                        trigger_player_explosion();
-
-                        // Play gameover music
-                        Mix_HaltMusic();
-                        Mix_PlayMusic(gameOverMusic, 1);
-                    }
                 }
             }
         }
@@ -465,11 +421,7 @@ int main(int argc, char *argv[])
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
-    Mix_FreeChunk(sfx_hit);
-    Mix_FreeChunk(sfx_shoot);
-    Mix_FreeMusic(gameMusic);
-    Mix_FreeMusic(gameOverMusic);
-    Mix_CloseAudio();
+    cleanup_audio();
     SDL_Quit();
     TTF_Quit();
 
