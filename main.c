@@ -165,26 +165,6 @@ int main(int argc, char *argv[])
             isEntitiesFrozen = true;
         }
 
-        // Upgrade Menu
-        if (choosingUpgrade)
-        {
-            for (int i = 0; i < optionCount; i++)
-            {
-                SDL_Color white = {255, 255, 255};
-                char label[64];
-                snprintf(label, sizeof(label), "%s", upgrade_names[options[i]]);
-
-                SDL_Surface *optionsSurface = TTF_RenderText_Solid(font, label, white);
-                SDL_Texture *optionsTexture = SDL_CreateTextureFromSurface(renderer, optionsSurface);
-
-                SDL_Rect dst = {SCREEN_WIDTH / 2 - 100, 150 + i * 40, optionsSurface->w, optionsSurface->h};
-                SDL_RenderCopy(renderer, optionsTexture, NULL, &dst);
-
-                SDL_FreeSurface(optionsSurface);
-                SDL_DestroyTexture(optionsTexture);
-            }
-        }
-
         if (choosingUpgrade)
         {
             if (keystate[SDL_SCANCODE_UP])
@@ -261,6 +241,30 @@ int main(int argc, char *argv[])
             SDL_RenderCopy(renderer, overTexture, NULL, &overRect);
             SDL_FreeSurface(overSurface);
             SDL_DestroyTexture(overTexture);
+        }
+
+        // Upgrade Menu
+        if (choosingUpgrade)
+        {
+            for (int i = 0; i < optionCount; i++)
+            {
+                SDL_Color white = {255, 255, 255};
+                const char *text = upgrade_names[options[i]];
+
+                SDL_Surface *optionsSurface = TTF_RenderText_Solid(font, text, white);
+                SDL_Texture *optionsTexture = SDL_CreateTextureFromSurface(renderer, optionsSurface);
+
+                SDL_Rect dst = {
+                    SCREEN_WIDTH / 2 - optionsSurface->w / 2,
+                    150 + i * 40,
+                    optionsSurface->w,
+                    optionsSurface->h};
+
+                SDL_RenderCopy(renderer, optionsTexture, NULL, &dst);
+
+                SDL_FreeSurface(optionsSurface);
+                SDL_DestroyTexture(optionsTexture);
+            }
         }
 
         // Clean up
