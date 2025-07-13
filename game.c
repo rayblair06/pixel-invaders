@@ -1,12 +1,12 @@
 #include <stdbool.h>
 #include "audio.h"
 #include "constants.h"
+#include "enemies.h"
 #include "game.h"
 #include "player.h"
 
 int score = 0;
 int lives = 3;
-int wave = 0;
 
 bool isGameOver = false;
 bool isEntitiesFrozen = false;
@@ -23,6 +23,11 @@ int shakeStrength = 4;
 bool flashRed = false;
 Uint32 flashStartTime = 0;
 Uint32 flashDuration = 200; // ms
+
+// Waves
+int wave = 1;
+Uint32 lastWaveTime = 0;
+Uint32 waveInterval = 3000; // ms
 
 void init_game(void)
 {
@@ -114,12 +119,45 @@ void trigger_red_flash(void)
     flashStartTime = SDL_GetTicks();
 }
 
+/**
+ * Handle all of our 'tick' functionality of spawning new enemies within the main game loop
+ */
+void tick_waves(void)
+{
+    // Waves!
+    Uint32 now = SDL_GetTicks();
+
+    if (!isGameOver && now - lastWaveTime > waveInterval)
+    {
+        // Time for next wave!
+        lastWaveTime = now;
+        wave++;
+
+        // Spawn enemies for this wave
+        // Progressively more each wave
+        int enemiesToSpawn = wave + 2;
+        int spawned = 0;
+
+        for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
+        {
+            spawn_enemy(
+                rand() % (SCREEN_WIDTH - enemies[i].rect.w),
+                0);
+
+            spawned++;
+        }
+    }
+}
+
 void add_score(int amount)
 {
     score += amount;
 }
 
-void lose_lift(void)
+/**
+ * Handle when a life is losed
+ */
+void lose_life(void)
 {
     lives--;
 

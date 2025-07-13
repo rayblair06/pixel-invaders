@@ -79,12 +79,6 @@ void generate_upgrade_choices()
     }
 }
 
-//  AABB collision check (axis-aligned bounding box)
-bool checkCollision(SDL_Rect a, SDL_Rect b)
-{
-    return (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y);
-}
-
 int main(int argc, char *argv[])
 {
     // Initialized game state
@@ -93,10 +87,6 @@ int main(int argc, char *argv[])
     bool levelUpPending = false;
     bool choosingUpgrade = false;
     int selectedOption = 0;
-
-    int wave = 1;
-    Uint32 lastWaveTime = 0;
-    const Uint32 waveInterval = 3000; // 3 seconds between waves
 
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -219,21 +209,7 @@ int main(int argc, char *argv[])
         tick_player(keystate);
         tick_bullets();
         tick_enemies();
-
-        // Handle enemies actions
-        // TODO: Should be moved to enemies or it's own modular but is fine here for now
-        for (int i = 0; i < MAX_ENEMIES; i++)
-        {
-            if (!isGameOver && enemies[i].active)
-            {
-                if (enemies[i].rect.y > SCREEN_HEIGHT)
-                {
-                    enemies[i].active = false; // remove off-screen
-
-                    lose_lift();
-                }
-            }
-        }
+        tick_waves();
 
         // Check for collisions between bullets and enemies
         for (int i = 0; i < MAX_BULLETS; i++)
@@ -298,33 +274,6 @@ int main(int argc, char *argv[])
                 pickups[i].active = false;
 
                 add_experience(100);
-            }
-        }
-
-        // Waves!
-        Uint32 now = SDL_GetTicks();
-
-        if (!isGameOver && now - lastWaveTime > waveInterval)
-        {
-            // Time for next wave!
-            lastWaveTime = now;
-            wave++;
-
-            // Spawn enemies for this wave
-            // Progressively more each wave
-            int enemiesToSpawn = wave + 2;
-            int spawned = 0;
-
-            for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
-            {
-                if (!enemies[i].active)
-                {
-                    spawn_enemy(
-                        rand() % (SCREEN_WIDTH - enemies[i].rect.w),
-                        0);
-
-                    spawned++;
-                }
             }
         }
 

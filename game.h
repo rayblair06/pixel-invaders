@@ -20,13 +20,22 @@ extern bool flashRed;
 extern Uint32 flashStartTime;
 extern Uint32 flashDuration;
 
+extern int wave;
+extern Uint32 lastWaveTime;
+extern Uint32 waveInterval;
+
 void init_game(void);
 void render_background(SDL_Renderer *renderer, SDL_Texture *bgTexture);
+
 void update_screen_shake(void);
 void trigger_screen_shake(void);
+
 void update_red_flash(void);
 void trigger_red_flash(void);
+
+void tick_waves(void);
+
 void add_score(int amount);
-void lose_lift(void);
+void lose_life(void);
 
 #endif

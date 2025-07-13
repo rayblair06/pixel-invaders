@@ -1,5 +1,6 @@
 #include "constants.h"
 #include "enemies.h"
+#include "game.h"
 #include "sprites.h"
 
 Entity enemies[MAX_ENEMIES];
@@ -49,9 +50,10 @@ void tick_enemies(void)
 
         if (enemies[i].y > SCREEN_HEIGHT)
         {
-            // TODO: All of the handling from main.c should be moved to here such as:
-            //  Disappearance and game actions
-            // But due to the tight coupling of game events, it's not possible at this time
+            // remove off-screen
+            enemies[i].active = false;
+
+            lose_life();
         }
     }
 }
