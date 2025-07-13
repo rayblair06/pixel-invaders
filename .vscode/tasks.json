@@ -9,6 +9,7 @@
         "audio.c",
         "bullets.c",
         "constants.c",
+        "collisions.c",
         "entity.c",
         "enemies.c",
         "game.c",

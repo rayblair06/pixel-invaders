@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "audio.h"
 #include "constants.h"
+#include "collisions.h"
 #include "bullets.h"
 #include "enemies.h"
 #include "entity.h"
@@ -31,7 +32,7 @@ void apply_upgrade(UpgradeType upgrade)
     switch (upgrade)
     {
     case UPGRADE_PLAYER_SPEED:
-        // playerSpeed += 1.0f;
+        playerSpeed += 1.0f;
         break;
     case UPGRADE_BULLET_SPEED:
         bulletSpeed += 1.5f;
@@ -149,7 +150,6 @@ int main(int argc, char *argv[])
             generate_upgrade_choices();
 
             choosingUpgrade = true;
-            isLevelUpPending = false;
             isEntitiesFrozen = true;
         }
 
@@ -162,14 +162,14 @@ int main(int argc, char *argv[])
                 char label[64];
                 snprintf(label, sizeof(label), "%s", upgrade_names[options[i]]);
 
-                SDL_Surface *textSurface = TTF_RenderText_Solid(font, label, white);
-                SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+                SDL_Surface *optionsSurface = TTF_RenderText_Solid(font, label, white);
+                SDL_Texture *optionsTexture = SDL_CreateTextureFromSurface(renderer, optionsSurface);
 
-                SDL_Rect dst = {SCREEN_WIDTH / 2 - 100, 150 + i * 40, textSurface->w, textSurface->h};
-                SDL_RenderCopy(renderer, textTexture, NULL, &dst);
+                SDL_Rect dst = {SCREEN_WIDTH / 2 - 100, 150 + i * 40, optionsSurface->w, optionsSurface->h};
+                SDL_RenderCopy(renderer, optionsTexture, NULL, &dst);
 
-                SDL_FreeSurface(textSurface);
-                SDL_DestroyTexture(textTexture);
+                SDL_FreeSurface(optionsSurface);
+                SDL_DestroyTexture(optionsTexture);
             }
         }
 
@@ -183,8 +183,10 @@ int main(int argc, char *argv[])
             if (keystate[SDL_SCANCODE_KP_ENTER])
             {
                 apply_upgrade(options[selectedOption]);
+
                 choosingUpgrade = false;
                 isEntitiesFrozen = false;
+                isLevelUpPending = false;
             }
         }
 
@@ -194,41 +196,7 @@ int main(int argc, char *argv[])
         tick_pickups();
         tick_waves();
 
-        // Check for collisions between bullets and enemies
-        for (int i = 0; i < MAX_BULLETS; i++)
-        {
-            if (!bullets[i].active)
-                continue;
-
-            for (int j = 0; j < MAX_ENEMIES; j++)
-            {
-                if (!enemies[j].active)
-                    continue;
-
-                if (SDL_HasIntersection(&bullets[i].rect, &enemies[j].rect))
-                {
-                    // Collision! Remove both bullets and enemies
-
-                    bullets[i].active = false;
-                    enemies[j].active = false;
-
-                    // Generate pickup
-                    for (int k = 0; k < MAX_PICKUPS; k++)
-                    {
-                        if (!pickups[k].active)
-                        {
-                            spawn_pickup(
-                                enemies[j].rect.x + (enemies[j].rect.w / 2) - (pickups[k].rect.w / 2),
-                                enemies[j].rect.y);
-
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-            }
-        }
+        check_collisions();
 
         update_screen_shake();
         update_red_flash();
@@ -245,14 +213,14 @@ int main(int argc, char *argv[])
 
         // Create surface and texture from text
         SDL_Color white = {225, 255, 255, 255};
-        SDL_Surface *textSurface = TTF_RenderText_Solid(font, experienceText, white);
-        SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+        SDL_Surface *experienceSurface = TTF_RenderText_Solid(font, experienceText, white);
+        SDL_Texture *experienceTexture = SDL_CreateTextureFromSurface(renderer, experienceSurface);
 
         // Define destination rectrangle
-        SDL_Rect textRect = {10, 10, textSurface->w, textSurface->h};
+        SDL_Rect experienceRect = {10, 10, experienceSurface->w, experienceSurface->h};
 
         // Render the experience text
-        SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+        SDL_RenderCopy(renderer, experienceTexture, NULL, &experienceRect);
 
         // Display current wave
         char waveText[32];
@@ -290,8 +258,8 @@ int main(int argc, char *argv[])
         SDL_FreeSurface(waveSurface);
         SDL_DestroyTexture(waveTexture);
 
-        SDL_FreeSurface(textSurface);
-        SDL_DestroyTexture(textTexture);
+        SDL_FreeSurface(experienceSurface);
+        SDL_DestroyTexture(experienceTexture);
 
         // Show the render
         SDL_RenderPresent(renderer);

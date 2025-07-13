@@ -25,11 +25,11 @@ void spawn_bullet(float x, float y)
     {
         if (!bullets[i].active)
         {
-            // Define the bulletCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
-            const int bulletCenter = SPRITE_DRAW_SIZE / 2;
+            // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
+            const int entityCenter = SPRITE_DRAW_SIZE / 2;
 
             bullets[i] = create_entity(
-                x - bulletCenter,
+                x - entityCenter,
                 y,
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);

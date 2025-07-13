@@ -127,6 +127,12 @@ void tick_waves(void)
     // Waves!
     Uint32 now = SDL_GetTicks();
 
+    // If we're making a selection, don't generate new waves
+    if (isLevelUpPending)
+    {
+        // lastWaveTime = lastWaveTime + now;
+    }
+
     if (!isGameOver && now - lastWaveTime > waveInterval)
     {
         // Time for next wave!

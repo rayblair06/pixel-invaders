@@ -47,14 +47,6 @@ void tick_enemies(void)
             continue;
 
         move(&enemies[i], DOWN, enemySpeed);
-
-        if (enemies[i].y > SCREEN_HEIGHT)
-        {
-            // remove off-screen
-            enemies[i].active = false;
-
-            lose_life();
-        }
     }
 }
 

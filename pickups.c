@@ -25,8 +25,11 @@ void spawn_pickup(float x, float y)
     {
         if (!pickups[i].active)
         {
+            // Define the entityCenter so when we render, we render include the entity width to ensure entities are rendered center to the created object
+            const int entityCenter = SPRITE_DRAW_SIZE / 2;
+
             pickups[i] = create_entity(
-                x,
+                x - entityCenter,
                 y,
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
