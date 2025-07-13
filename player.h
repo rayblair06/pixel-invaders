@@ -1,12 +1,17 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "entity.h"
 #include <SDL2/SDL.h>
+#include <stdbool.h>
+#include "entity.h"
 
 extern Entity player;
 extern float playerSpeed;
-extern int experience, level;
+
+extern int experience, experienceToNextLevel;
+
+extern int level;
+extern bool isLevelUpPending;
 
 void init_player();
 void update_player(const Uint8 *keystate);

@@ -89,10 +89,6 @@ int main(int argc, char *argv[])
     // Initialized game state
     init_game();
 
-    int level = 0;
-    int experience = 0;
-    int experienceToNextLevel = 300;
-
     bool levelUpPending = false;
     bool choosingUpgrade = false;
     int selectedOption = 0;
@@ -382,17 +378,8 @@ int main(int argc, char *argv[])
             if (SDL_HasIntersection(&player.rect, &pickups[i].rect))
             {
                 pickups[i].active = false;
-                experience += 100;
 
-                if (experience >= experienceToNextLevel)
-                {
-                    experience -= experienceToNextLevel;
-                    level++;
-                    experienceToNextLevel += 300;
-
-                    generate_upgrade_choices();
-                    levelUpPending = true;
-                }
+                add_experience(100);
             }
         }
 

@@ -7,8 +7,10 @@ Entity player;
 float playerSpeed = 4.0f;
 
 int experience = 0;
-int level = 0;
 int experienceToNextLevel = 300;
+
+int level = 0;
+bool isLevelUpPending = false;
 
 /**
  * Initialises the player
@@ -68,5 +70,8 @@ void add_experience(int amount)
         experience -= experienceToNextLevel;
         level++;
         experienceToNextLevel += 300;
+
+        // generate_upgrade_choices();
+        isLevelUpPending = true;
     }
 }
