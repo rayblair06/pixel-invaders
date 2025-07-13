@@ -40,9 +40,9 @@ void spawn_bullet(float x, float y)
 }
 
 /**
- * Handle functionality of active bullets
+ * Handle all of our 'tick' functionality of active bullets within the main game loop
  */
-void update_bullets(void)
+void tick_bullets(void)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
     {

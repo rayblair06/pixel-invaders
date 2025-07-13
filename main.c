@@ -174,11 +174,11 @@ int main(int argc, char *argv[])
     // Main game loop
     SDL_Event event;
 
-    // Initialize player position
-    init_player();
-
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+
+    // Initialize player position
+    init_player();
 
     init_bullets();
     init_enemies();
@@ -249,16 +249,9 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Move player based on key state
-        update_player(keystate);
-
-        player_shoot(keystate, sfx_shoot);
-
-        // Move bullets
-        update_bullets();
-
-        // Move enemies down slowly
-        update_enemies();
+        tick_player(keystate, sfx_shoot);
+        tick_bullets();
+        tick_enemies();
 
         // Handle enemies actions
         // TODO: Should be moved to enemies or it's own modular but is fine here for now
@@ -383,13 +376,8 @@ int main(int argc, char *argv[])
         update_red_flash();
         render_background(renderer, bgTexture);
 
-        // Draw player
         render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-
-        // Draw bullets
         render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-
-        // Draw enemies
         render_enemies(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Draw pickups

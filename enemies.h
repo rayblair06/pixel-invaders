@@ -11,7 +11,7 @@ extern float enemySpeed;
 
 void init_enemies(void);
 void spawn_enemy(float x, float y);
-void update_enemies(void);
+void tick_enemies(void);
 void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY);
 
 #endif

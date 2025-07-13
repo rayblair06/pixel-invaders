@@ -31,9 +31,9 @@ void init_player(void)
 }
 
 /**
- * Handler for functionality of player
+ * Handle all of our 'tick' functionality of active player within the main game loop
  */
-void update_player(const Uint8 *keystate)
+void tick_player(const Uint8 *keystate, Mix_Chunk *shootSoundEffect)
 {
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
@@ -53,6 +53,24 @@ void update_player(const Uint8 *keystate)
         player.x = SCREEN_WIDTH - player.w;
 
     update_entity_rect(&player);
+
+    // Shoot bullet if SPACE is pressed
+    static bool spaceHeld = false;
+
+    if (keystate[SDL_SCANCODE_SPACE])
+    {
+        // prevent holding space from firing too fast
+        if (!spaceHeld)
+        {
+            trigger_player_shoot(shootSoundEffect);
+        }
+
+        spaceHeld = true;
+    }
+    else
+    {
+        spaceHeld = false;
+    }
 
     // Toggle explosion animations
     if (isPlayerExploding)
@@ -115,31 +133,17 @@ void add_experience(int amount)
     }
 }
 
-void player_shoot(const Uint8 *keystate, Mix_Chunk *soundEffect)
+void trigger_player_shoot(Mix_Chunk *soundEffect)
 {
+    // No shooty on gameover
     if (isGameOver)
         return;
 
-    // Shoot bullet if SPACE is pressed
-    static bool spaceHeld = false;
+    Mix_PlayChannel(-1, soundEffect, 0); // TODO: Move Audio to it's own module
 
-    if (keystate[SDL_SCANCODE_SPACE])
-    {
-        if (!spaceHeld)
-        {                                        // prevent holding space from firing too fast
-            Mix_PlayChannel(-1, soundEffect, 0); // TODO: Move Audio to it's own module
-
-            spawn_bullet(
-                player.x + player.w / 2,
-                player.y);
-        }
-
-        spaceHeld = true;
-    }
-    else
-    {
-        spaceHeld = false;
-    }
+    spawn_bullet(
+        player.x + player.w / 2,
+        player.y);
 }
 
 void trigger_player_explosion()

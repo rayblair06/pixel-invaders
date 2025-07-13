@@ -36,9 +36,9 @@ void spawn_enemy(float x, float y)
 }
 
 /**
- * Handle functionality of active enemies
+ * Handle all of our 'tick' functionality of active enemies within the main game loop
  */
-void update_enemies(void)
+void tick_enemies(void)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
     {

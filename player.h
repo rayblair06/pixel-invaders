@@ -21,11 +21,11 @@ extern int explosionFrameDurtion;
 extern int explosionFrameCount;
 
 void init_player();
-void update_player(const Uint8 *keystate);
+void tick_player(const Uint8 *keystate, Mix_Chunk *shootSoundEffect);
 void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY);
 void add_experience(int amount);
 
-void player_shoot(const Uint8 *keystate, Mix_Chunk *soundEffect);
+void trigger_player_shoot(Mix_Chunk *shootSoundEffect);
 void trigger_player_explosion();
 
 #endif
