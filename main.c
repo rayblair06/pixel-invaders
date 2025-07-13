@@ -8,8 +8,6 @@
 // Runtime constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-const int PLAYER_SPEED = 5;
-const int BULLET_SPEED = 10;
 
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
@@ -38,6 +36,91 @@ Bullet bullets[MAX_BULLETS];
 Enemy enemies[MAX_ENEMIES];
 Pickup pickups[MAX_PICKUPS];
 
+float playerSpeed = 4.0f;
+float bulletSpeed = 6.0f;
+float enemySpeed = 1.0f;
+
+typedef enum
+{
+    UPGRADE_PLAYER_SPEED,
+    UPGRADE_BULLET_SPEED,
+} UpgradeType;
+
+#define UPGRADE_COUNT 2
+
+const char *upgrade_names[] = {
+    "Player Speed",
+    "Bullet Speed",
+};
+
+void apply_upgrade(UpgradeType upgrade)
+{
+    switch (upgrade)
+    {
+    case UPGRADE_PLAYER_SPEED:
+        playerSpeed += 1.0f;
+        break;
+    case UPGRADE_BULLET_SPEED:
+        bulletSpeed += 1.5f;
+        break;
+    }
+}
+
+UpgradeType options[3];
+int optionCount = 0;
+
+void generate_upgrade_choices()
+{
+    // limit to 2 for now
+    while (optionCount < 2)
+    {
+        UpgradeType pick = rand() % UPGRADE_COUNT;
+
+        bool alreadyIncluded = false;
+
+        for (int i = 0; i < optionCount; i++)
+        {
+            if (options[i] == pick)
+                alreadyIncluded = true;
+        }
+
+        if (!alreadyIncluded)
+        {
+            options[optionCount++] = pick;
+        }
+    }
+}
+
+typedef enum
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+} Movement;
+
+/**
+ * Move an entity in the specified direction at that speed
+ */
+void move(SDL_Rect *entity, Movement move, float speed)
+{
+    switch (move)
+    {
+    case UP:
+        entity->y -= speed;
+        break;
+    case DOWN:
+        entity->y += speed;
+        break;
+    case LEFT:
+        entity->x -= speed;
+        break;
+    case RIGHT:
+        entity->x += speed;
+        break;
+    }
+}
+
 //  AABB collision check (axis-aligned bounding box)
 bool checkCollision(SDL_Rect a, SDL_Rect b)
 {
@@ -49,7 +132,17 @@ int main(int argc, char *argv[])
     // Initialized game state
     int lives = 3;
     bool gameOver = false;
+    // Freeze movement
+    bool freeze = false;
+
+    int level = 0;
     int experience = 0;
+    int experienceToNextLevel = 300;
+
+    bool levelUpPending = false;
+    bool choosingUpgrade = false;
+    int selectedOption = 0;
+
     int wave = 1;
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
@@ -203,17 +296,59 @@ int main(int argc, char *argv[])
             }
         }
 
+        // Trigger Upgrade Menu delay
+        if (levelUpPending && !choosingUpgrade)
+        {
+            generate_upgrade_choices();
+            choosingUpgrade = true;
+            levelUpPending = false;
+        }
+
+        // Upgrade Menu
+        if (choosingUpgrade)
+        {
+            for (int i = 0; i < optionCount; i++)
+            {
+                SDL_Color white = {255, 255, 255};
+                char label[64];
+                snprintf(label, sizeof(label), "%s", upgrade_names[options[i]]);
+
+                SDL_Surface *textSurface = TTF_RenderText_Solid(font, label, white);
+                SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+                SDL_Rect dst = {SCREEN_WIDTH / 2 - 100, 150 + i * 40, textSurface->w, textSurface->h};
+                SDL_RenderCopy(renderer, textTexture, NULL, &dst);
+
+                SDL_FreeSurface(textSurface);
+                SDL_DestroyTexture(textTexture);
+            }
+        }
+
+        if (choosingUpgrade)
+        {
+            if (keystate[SDL_SCANCODE_UP])
+                selectedOption = (selectedOption - 1 + optionCount) % optionCount;
+            if (keystate[SDL_SCANCODE_DOWN])
+                selectedOption = (selectedOption + 1) % optionCount;
+
+            if (keystate[SDL_SCANCODE_KP_ENTER])
+            {
+                apply_upgrade(options[selectedOption]);
+                choosingUpgrade = false;
+            }
+        }
+
         if (!gameOver)
         {
             // Move player based on key state
             if (keystate[SDL_SCANCODE_LEFT])
             {
-                player.x -= PLAYER_SPEED;
+                move(&player, LEFT, playerSpeed);
             }
 
             if (keystate[SDL_SCANCODE_RIGHT])
             {
-                player.x += PLAYER_SPEED;
+                move(&player, RIGHT, playerSpeed);
             }
         }
 
@@ -257,7 +392,7 @@ int main(int argc, char *argv[])
         {
             if (bullets[i].active)
             {
-                bullets[i].rect.y -= BULLET_SPEED;
+                move(&bullets[i].rect, UP, bulletSpeed);
 
                 if (bullets[i].rect.y + bullets[i].rect.h < 0)
                 {
@@ -272,7 +407,7 @@ int main(int argc, char *argv[])
         {
             if (!gameOver && enemies[i].active)
             {
-                enemies[i].rect.y += 1; // move down 1 pixel
+                move(&enemies[i].rect, DOWN, enemySpeed);
 
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
@@ -365,6 +500,16 @@ int main(int argc, char *argv[])
             {
                 pickups[i].active = false;
                 experience += 100;
+
+                if (experience >= experienceToNextLevel)
+                {
+                    experience -= experienceToNextLevel;
+                    level++;
+                    experienceToNextLevel += 300;
+
+                    generate_upgrade_choices();
+                    levelUpPending = true;
+                }
             }
         }
 
