@@ -6,8 +6,10 @@
       "type": "shell",
       "command": "clang",
       "args": [
+        "constants.c",
         "main.c",
         "entity.c",
+        "player.c",
         "sprites.c",
         "-o",
         "build/game",

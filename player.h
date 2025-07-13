@@ -1,0 +1,16 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include "entity.h"
+#include <SDL2/SDL.h>
+
+extern Entity player;
+extern float playerSpeed;
+extern int experience, level;
+
+void init_player();
+void update_player(const Uint8 *keystate);
+void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY);
+void add_experience(int amount);
+
+#endif

@@ -3,12 +3,10 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
-#include "sprites.h"
+#include "constants.h"
 #include "entity.h"
-
-// Runtime constants
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+#include "sprites.h"
+#include "player.h"
 
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
@@ -28,7 +26,6 @@ Bullet bullets[MAX_BULLETS];
 Enemy enemies[MAX_ENEMIES];
 Pickup pickups[MAX_PICKUPS];
 
-float playerSpeed = 4.0f;
 float bulletSpeed = 6.0f;
 float enemySpeed = 1.0f;
 
@@ -50,7 +47,7 @@ void apply_upgrade(UpgradeType upgrade)
     switch (upgrade)
     {
     case UPGRADE_PLAYER_SPEED:
-        playerSpeed += 1.0f;
+        // playerSpeed += 1.0f;
         break;
     case UPGRADE_BULLET_SPEED:
         bulletSpeed += 1.5f;
@@ -235,7 +232,7 @@ int main(int argc, char *argv[])
     SDL_Event event;
 
     // Initialize player position
-    Entity player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
+    init_player();
 
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
@@ -321,22 +318,8 @@ int main(int argc, char *argv[])
         if (!gameOver)
         {
             // Move player based on key state
-            if (keystate[SDL_SCANCODE_LEFT])
-            {
-                move(&player, LEFT, playerSpeed);
-            }
-
-            if (keystate[SDL_SCANCODE_RIGHT])
-            {
-                move(&player, RIGHT, playerSpeed);
-            }
+            update_player(keystate);
         }
-
-        // Keep player within screen bounds
-        if (player.x < 0)
-            player.x = 0;
-        if (player.x > SCREEN_WIDTH - player.w)
-            player.x = SCREEN_WIDTH - player.w;
 
         // Shoot bullet if SPACE is pressed
         static bool spaceHeld = false;
@@ -581,20 +564,17 @@ int main(int argc, char *argv[])
         }
 
         // Draw player
-        SDL_Rect playerSrc;
 
         if (gameOver && playerExploding)
         {
             SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
-            playerSrc = get_sprite(explosionSprites[explosionFrame]);
+            SDL_Rect playerSrc = get_sprite(explosionSprites[explosionFrame]);
 
             SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &player.rect);
         }
         else if (playerVisible)
         {
-            playerSrc = get_sprite(SPR_PLAYER);
-
-            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &player.rect);
+            render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
         }
 
         // Draw bullets
