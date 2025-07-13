@@ -97,14 +97,6 @@ int main(int argc, char *argv[])
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
 
-    bool playerVisible = true;
-
-    bool playerExploding = false;
-    int explosionFrame = 0;
-    Uint32 explosionStartTime = 0;
-    const int explosionFrameDurtion = 150; // ms per frame
-    const int explosionFrameCount = 2;
-
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -284,9 +276,7 @@ int main(int argc, char *argv[])
 
                     if (lives <= 0)
                     {
-                        playerExploding = true;
-                        explosionStartTime = SDL_GetTicks();
-                        explosionFrame = 0;
+                        trigger_player_explosion();
 
                         // Play gameover music
                         Mix_HaltMusic();
@@ -389,36 +379,12 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Toggle explosion animations
-        if (playerExploding)
-        {
-            Uint32 elapsed = SDL_GetTicks() - explosionStartTime;
-            explosionFrame = elapsed / explosionFrameDurtion;
-
-            if (explosionFrame >= explosionFrameCount)
-            {
-                explosionFrame = explosionFrame - 1; // stop on last frame
-                playerExploding = false;
-                playerVisible = false;
-            }
-        }
-
         update_screen_shake();
         update_red_flash();
         render_background(renderer, bgTexture);
 
         // Draw player
-        if (isGameOver && playerExploding)
-        {
-            SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
-            SDL_Rect playerSrc = get_sprite(explosionSprites[explosionFrame]);
-
-            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &player.rect);
-        }
-        else if (playerVisible)
-        {
-            render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-        }
+        render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Draw bullets
         render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
