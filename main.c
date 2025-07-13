@@ -575,11 +575,12 @@ int main(int argc, char *argv[])
             {
                 if (!enemies[i].active)
                 {
-                    enemies[i].active = true;
-                    enemies[i].rect.w = SPRITE_DRAW_SIZE;
-                    enemies[i].rect.h = SPRITE_DRAW_SIZE;
-                    enemies[i].rect.x = rand() % (SCREEN_WIDTH - enemies[i].rect.w);
-                    enemies[i].rect.y = 0;
+                    enemies[i] = create_entity(
+                        rand() % (SCREEN_WIDTH - enemies[i].rect.w),
+                        0,
+                        SPRITE_DRAW_SIZE,
+                        SPRITE_DRAW_SIZE);
+
                     spawned++;
                 }
             }
