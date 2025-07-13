@@ -7,6 +7,7 @@
       "command": "clang",
       "args": [
         "main.c",
+        "entity.c",
         "sprites.c",
         "-o",
         "build/game",

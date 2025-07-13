@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include "sprites.h"
+#include "entity.h"
 
 // Runtime constants
 const int SCREEN_WIDTH = 800;
@@ -12,15 +13,6 @@ const int SCREEN_HEIGHT = 600;
 const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
 const int MAX_PICKUPS = 100;
-
-typedef struct
-{
-    float x, y; // Position
-    int w, h;   // Size
-    bool active;
-
-    SDL_Rect rect;
-} Entity;
 
 typedef Entity Bullet;
 typedef Entity Enemy;
@@ -89,67 +81,6 @@ void generate_upgrade_choices()
             options[optionCount++] = pick;
         }
     }
-}
-
-typedef enum
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-} Movement;
-
-/**
- * Creates an entity
- */
-Entity create_entity(float x, float y, int w, int h)
-{
-    Entity entity;
-
-    entity.x = x;
-    entity.y = y;
-    entity.w = w;
-    entity.h = h;
-    entity.rect.x = (int)x;
-    entity.rect.y = (int)y;
-    entity.rect.w = w;
-    entity.rect.h = h;
-    entity.active = true;
-
-    return entity;
-}
-
-/**
- * Updates entity position
- */
-void update_entity_rect(Entity *entity)
-{
-    entity->rect.x = (int)entity->x;
-    entity->rect.y = (int)entity->y;
-}
-
-/**
- * Move an entity in the specified direction at that speed
- */
-void move(Entity *entity, Movement move, float speed)
-{
-    switch (move)
-    {
-    case UP:
-        entity->y -= speed;
-        break;
-    case DOWN:
-        entity->y += speed;
-        break;
-    case LEFT:
-        entity->x -= speed;
-        break;
-    case RIGHT:
-        entity->x += speed;
-        break;
-    }
-
-    update_entity_rect(entity);
 }
 
 void update_bullet(Entity *bullet, float speed)

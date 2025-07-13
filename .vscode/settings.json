@@ -4,6 +4,7 @@
   },
   "files.associations": {
     "stdbool.h": "c",
-    "sdl.h": "c"
+    "sdl.h": "c",
+    "sdl_mixer.h": "c"
   }
 }
