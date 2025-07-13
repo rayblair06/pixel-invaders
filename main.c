@@ -7,6 +7,7 @@
 #include "bullets.h"
 #include "enemies.h"
 #include "entity.h"
+#include "game.h"
 #include "sprites.h"
 #include "player.h"
 
@@ -86,10 +87,7 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 int main(int argc, char *argv[])
 {
     // Initialized game state
-    int lives = 3;
-    bool gameOver = false;
-    // Freeze movement
-    bool freeze = false;
+    init_game();
 
     int level = 0;
     int experience = 0;
@@ -102,16 +100,6 @@ int main(int argc, char *argv[])
     int wave = 1;
     Uint32 lastWaveTime = 0;
     const Uint32 waveInterval = 3000; // 3 seconds between waves
-
-    bool flashRed = false;
-    Uint32 flashStartTime = 0;
-    const Uint32 flashDuration = 200; // 200 ms flash
-
-    bool shaking = false;
-    Uint32 shakeStartTime = 0;
-    const Uint32 shakeDuration = 200;
-    int shakeOffsetX = 0;
-    int shakeOffsetY = 0;
 
     bool playerVisible = true;
 
@@ -184,10 +172,6 @@ int main(int argc, char *argv[])
 
     // Create a renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    // Load Sprites
-    int bgTileW = 64;
-    int bgTileH = 64;
 
     SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/background.png");
     SDL_Texture *spriteTexture = IMG_LoadTexture(renderer, "assets/spritesheet.png");
@@ -277,7 +261,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (!gameOver)
+        if (!isGameOver)
         {
             // Move player based on key state
             update_player(keystate);
@@ -285,7 +269,7 @@ int main(int argc, char *argv[])
 
         // Shoot bullet if SPACE is pressed
         static bool spaceHeld = false;
-        if (!gameOver && keystate[SDL_SCANCODE_SPACE])
+        if (!isGameOver && keystate[SDL_SCANCODE_SPACE])
         {
             if (!spaceHeld)
             { // prevent holding space from firing too fast
@@ -313,26 +297,18 @@ int main(int argc, char *argv[])
         // TODO: Should be moved to enemies or it's own modular but is fine here for now
         for (int i = 0; i < MAX_ENEMIES; i++)
         {
-            if (!gameOver && enemies[i].active)
+            if (!isGameOver && enemies[i].active)
             {
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
                     enemies[i].active = false; // remove off-screen
 
                     Mix_PlayChannel(-1, sfx_hit, 0);
-                    lives--;
 
-                    // Trigger red flash
-                    flashRed = true;
-                    flashStartTime = SDL_GetTicks();
-
-                    // Trigger screenshake
-                    shaking = true;
-                    shakeStartTime = SDL_GetTicks();
+                    lose_lift();
 
                     if (lives <= 0)
                     {
-                        gameOver = true;
                         playerExploding = true;
                         explosionStartTime = SDL_GetTicks();
                         explosionFrame = 0;
@@ -423,7 +399,7 @@ int main(int argc, char *argv[])
         // Waves!
         Uint32 now = SDL_GetTicks();
 
-        if (!gameOver && now - lastWaveTime > waveInterval)
+        if (!isGameOver && now - lastWaveTime > waveInterval)
         {
             // Time for next wave!
             lastWaveTime = now;
@@ -447,29 +423,6 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Flash Red when hurt
-        if (flashRed && SDL_GetTicks() - flashStartTime > flashDuration)
-        {
-            flashRed = false;
-        }
-
-        // Shake
-        if (shaking)
-        {
-            if (SDL_GetTicks() - shakeStartTime > shakeDuration)
-            {
-                shaking = false;
-                shakeOffsetX = 0;
-                shakeOffsetY = 0;
-            }
-            else
-            {
-                // Shamml random offset between -5 and 5 pixels
-                shakeOffsetX = (rand() % 11) - 5;
-                shakeOffsetY = (rand() % 11) - 5;
-            }
-        }
-
         // Toggle explosion animations
         if (playerExploding)
         {
@@ -484,28 +437,12 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Render screen
-        if (flashRed)
-        {
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // flash red
-            SDL_RenderClear(renderer);
-        }
-        else
-        {
-            // Draw Background
-            for (int y = 0; y < SCREEN_HEIGHT; y += bgTileH)
-            {
-                for (int x = 0; x < SCREEN_WIDTH; x += bgTileW)
-                {
-                    SDL_Rect dest = {x + shakeOffsetX, y + shakeOffsetY, bgTileW, bgTileH};
-                    SDL_RenderCopy(renderer, bgTexture, NULL, &dest);
-                }
-            }
-        }
+        update_screen_shake();
+        update_red_flash();
+        render_background(renderer, bgTexture);
 
         // Draw player
-
-        if (gameOver && playerExploding)
+        if (isGameOver && playerExploding)
         {
             SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
             SDL_Rect playerSrc = get_sprite(explosionSprites[explosionFrame]);
@@ -571,7 +508,7 @@ int main(int argc, char *argv[])
         SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
 
         // Render Game over screen
-        if (gameOver)
+        if (isGameOver)
         {
             SDL_Surface *overSurface = TTF_RenderText_Solid(font, "GAME OVER", white);
             SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);

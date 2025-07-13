@@ -10,6 +10,7 @@
         "constants.c",
         "entity.c",
         "enemies.c",
+        "game.c",
         "main.c",
         "player.c",
         "sprites.c",

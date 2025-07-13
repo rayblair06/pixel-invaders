@@ -9,6 +9,7 @@
     "player.h": "c",
     "entity.h": "c",
     "sdl_ttf.h": "c",
-    "sprites.h": "c"
+    "sprites.h": "c",
+    "sdl_image.h": "c"
   }
 }
