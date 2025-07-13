@@ -4,11 +4,11 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include "constants.h"
+#include "bullets.h"
 #include "entity.h"
 #include "sprites.h"
 #include "player.h"
 
-const int MAX_BULLETS = 100;
 const int MAX_ENEMIES = 20;
 const int MAX_PICKUPS = 100;
 
@@ -26,7 +26,6 @@ Bullet bullets[MAX_BULLETS];
 Enemy enemies[MAX_ENEMIES];
 Pickup pickups[MAX_PICKUPS];
 
-float bulletSpeed = 6.0f;
 float enemySpeed = 1.0f;
 
 typedef enum
@@ -77,17 +76,6 @@ void generate_upgrade_choices()
         {
             options[optionCount++] = pick;
         }
-    }
-}
-
-void update_bullet(Entity *bullet, float speed)
-{
-    move(bullet, UP, speed);
-
-    if (bullet->y + bullet->h < 0)
-    {
-        // disappear off screen
-        bullet->active = false;
     }
 }
 
@@ -238,10 +226,7 @@ int main(int argc, char *argv[])
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
     // Set all starting Bullet entities as inactive
-    for (int i = 0; i < MAX_BULLETS; i++)
-    {
-        bullets[i].active = false;
-    }
+    init_bullets();
 
     // Set all starting Enemy entities as inactive
     for (int i = 0; i < MAX_ENEMIES; i++)
@@ -329,19 +314,9 @@ int main(int argc, char *argv[])
             { // prevent holding space from firing too fast
                 Mix_PlayChannel(-1, sfx_shoot, 0);
 
-                for (int i = 0; i < MAX_BULLETS; i++)
-                {
-                    if (!bullets[i].active)
-                    {
-                        bullets[i] = create_entity(
-                            player.x + (player.w / 2) - (bullets[i].rect.w / 2), // center bullet from player
-                            player.y,
-                            SPRITE_DRAW_SIZE,
-                            SPRITE_DRAW_SIZE);
-
-                        break;
-                    }
-                }
+                spawn_bullet(
+                    player.x + player.w / 2,
+                    player.y);
             }
 
             spaceHeld = true;
@@ -352,13 +327,7 @@ int main(int argc, char *argv[])
         }
 
         // Move bullets
-        for (int i = 0; i < MAX_BULLETS; i++)
-        {
-            if (bullets[i].active)
-            {
-                update_bullet(&bullets[i], bulletSpeed);
-            }
-        }
+        update_bullets();
 
         // Move enemies down slowly
         for (int i = 0; i < MAX_ENEMIES; i++)
@@ -578,14 +547,7 @@ int main(int argc, char *argv[])
         }
 
         // Draw bullets
-        for (int i = 0; i < MAX_BULLETS; i++)
-        {
-            if (!bullets[i].active)
-                continue;
-
-            SDL_Rect bulletSrc = get_sprite(SPR_BULLET1);
-            SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bullets[i].rect);
-        }
+        render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Draw enemies
         for (int i = 0; i < MAX_ENEMIES; i++)

@@ -8,6 +8,7 @@
     "sdl_mixer.h": "c",
     "player.h": "c",
     "entity.h": "c",
-    "sdl_ttf.h": "c"
+    "sdl_ttf.h": "c",
+    "sprites.h": "c"
   }
 }

@@ -6,6 +6,7 @@
       "type": "shell",
       "command": "clang",
       "args": [
+        "bullets.c",
         "constants.c",
         "main.c",
         "entity.c",
