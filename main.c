@@ -27,6 +27,18 @@ const char *upgrade_names[] = {
     "Bullet Speed",
 };
 
+void debug_log(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    printf("[DEBUG] ");
+    vprintf(format, args);
+    printf("\n");
+
+    va_end(args);
+}
+
 void apply_upgrade(UpgradeType upgrade)
 {
     switch (upgrade)
@@ -267,7 +279,11 @@ int main(int argc, char *argv[])
         SDL_Delay(16); // ~60 FPS
 
         // Debugging!
-        // printf("experience: %d\r", experience);
+        debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
+        debug_log("Enemy count: %d", sizeof(enemies));
+        debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
+
+        debug_log("Options count: %d", optionCount);
         fflush(stdout);
     }
 
