@@ -1,10 +1,12 @@
 #ifndef ENEMIES_H
 #define ENEMIES_H
 
-#include "entity.h"
 #include <SDL2/SDL.h>
+#include "entity.h"
 
 #define MAX_ENEMIES 50
+
+typedef Entity Enemy;
 
 extern Entity enemies[MAX_ENEMIES];
 extern float enemySpeed;

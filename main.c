@@ -10,23 +10,8 @@
 #include "entity.h"
 #include "game.h"
 #include "sprites.h"
+#include "pickups.h"
 #include "player.h"
-
-const int MAX_PICKUPS = 100;
-
-typedef Entity Bullet;
-typedef Entity Enemy;
-
-typedef struct
-{
-    SDL_Rect rect;
-    bool active;
-    bool falling;
-} Pickup;
-
-Bullet bullets[MAX_BULLETS];
-Enemy enemies[MAX_ENEMIES];
-Pickup pickups[MAX_PICKUPS];
 
 typedef enum
 {
@@ -138,12 +123,7 @@ int main(int argc, char *argv[])
 
     init_bullets();
     init_enemies();
-
-    // Set all starting Pickup entities as inactive
-    for (int i = 0; i < MAX_PICKUPS; i++)
-    {
-        pickups[i].active = false;
-    }
+    init_pickups();
 
     // Manually activate 5 enemies
     for (int i = 0; i < 5; i++)
@@ -211,6 +191,7 @@ int main(int argc, char *argv[])
         tick_player(keystate);
         tick_bullets();
         tick_enemies();
+        tick_pickups();
         tick_waves();
 
         // Check for collisions between bullets and enemies
@@ -236,12 +217,9 @@ int main(int argc, char *argv[])
                     {
                         if (!pickups[k].active)
                         {
-                            pickups[k].active = true;
-                            pickups[k].falling = true;
-                            pickups[k].rect.x = enemies[j].rect.x + (enemies[j].rect.w / 2) - (pickups[k].rect.w / 2);
-                            pickups[k].rect.y = enemies[j].rect.y;
-                            pickups[k].rect.w = SPRITE_DRAW_SIZE;
-                            pickups[k].rect.h = SPRITE_DRAW_SIZE;
+                            spawn_pickup(
+                                enemies[j].rect.x + (enemies[j].rect.w / 2) - (pickups[k].rect.w / 2),
+                                enemies[j].rect.y);
 
                             break;
                         }
@@ -252,33 +230,6 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Pickups Handle
-        for (int i = 0; i < MAX_PICKUPS; i++)
-        {
-            if (!pickups[i].active)
-                continue;
-
-            if (pickups[i].falling)
-            {
-                pickups[i].rect.y += 2;
-
-                // Stop falling at player Y
-                if (pickups[i].rect.y >= player.y)
-                {
-                    pickups[i].rect.y = player.y;
-                    pickups[i].falling = false;
-                }
-            }
-
-            // Check for collision with player
-            if (SDL_HasIntersection(&player.rect, &pickups[i].rect))
-            {
-                pickups[i].active = false;
-
-                add_experience(100);
-            }
-        }
-
         update_screen_shake();
         update_red_flash();
         render_background(renderer, bgTexture);
@@ -286,20 +237,7 @@ int main(int argc, char *argv[])
         render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
         render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
         render_enemies(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-
-        // Draw pickups
-        for (int i = 0; i < MAX_PICKUPS; i++)
-        {
-            if (!pickups[i].active)
-                continue;
-
-            SDL_Rect pickupSrc = get_sprite(SPR_BULLET3); // Replace with pickup animation
-            SDL_Rect pickupDraw = pickups[i].rect;
-            pickupDraw.x += shakeOffsetX;
-            pickupDraw.y += shakeOffsetY;
-
-            SDL_RenderCopy(renderer, spriteTexture, &pickupSrc, &pickupDraw);
-        }
+        render_pickups(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
 
         // Convert Experience to string
         char experienceText[32];

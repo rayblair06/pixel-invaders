@@ -1,10 +1,12 @@
 #ifndef BULLETS_H
 #define BULLETS_H
 
-#include "entity.h"
 #include <SDL2/SDL.h>
+#include "entity.h"
 
 #define MAX_BULLETS 100
+
+typedef Entity Bullet;
 
 extern Entity bullets[MAX_BULLETS];
 extern float bulletSpeed;

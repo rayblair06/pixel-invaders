@@ -13,6 +13,7 @@
         "enemies.c",
         "game.c",
         "main.c",
+        "pickups.c",
         "player.c",
         "sprites.c",
         "-o",
