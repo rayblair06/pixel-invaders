@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "game.h"
 
 /**
  * Creates an entity
@@ -25,6 +26,10 @@ Entity create_entity(float x, float y, int w, int h)
  */
 void move(Entity *entity, Movement move, float speed)
 {
+    // Nothing can move if the game has ended
+    if (isGameOver)
+        return;
+
     switch (move)
     {
     case UP:

@@ -1,5 +1,8 @@
+#include <SDL2/SDL_mixer.h>
 #include "constants.h"
+#include "bullets.h"
 #include "entity.h"
+#include "game.h"
 #include "player.h"
 #include "sprites.h"
 
@@ -20,6 +23,32 @@ void init_player(void)
     player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
 }
 
+void player_shoot(const Uint8 *keystate, Mix_Chunk *soundEffect)
+{
+    if (isGameOver)
+        return;
+
+    // Shoot bullet if SPACE is pressed
+    static bool spaceHeld = false;
+
+    if (keystate[SDL_SCANCODE_SPACE])
+    {
+        if (!spaceHeld)
+        {                                        // prevent holding space from firing too fast
+            Mix_PlayChannel(-1, soundEffect, 0); // TODO: Move Audio to it's own module
+
+            spawn_bullet(
+                player.x + player.w / 2,
+                player.y);
+        }
+
+        spaceHeld = true;
+    }
+    else
+    {
+        spaceHeld = false;
+    }
+}
 /**
  * Handler for functionality of player
  */

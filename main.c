@@ -257,31 +257,10 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (!isGameOver)
-        {
-            // Move player based on key state
-            update_player(keystate);
-        }
+        // Move player based on key state
+        update_player(keystate);
 
-        // Shoot bullet if SPACE is pressed
-        static bool spaceHeld = false;
-        if (!isGameOver && keystate[SDL_SCANCODE_SPACE])
-        {
-            if (!spaceHeld)
-            { // prevent holding space from firing too fast
-                Mix_PlayChannel(-1, sfx_shoot, 0);
-
-                spawn_bullet(
-                    player.x + player.w / 2,
-                    player.y);
-            }
-
-            spaceHeld = true;
-        }
-        else
-        {
-            spaceHeld = false;
-        }
+        player_shoot(keystate, sfx_shoot);
 
         // Move bullets
         update_bullets();
