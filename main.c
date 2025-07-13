@@ -113,10 +113,6 @@ int main(int argc, char *argv[])
     int shakeOffsetX = 0;
     int shakeOffsetY = 0;
 
-    bool enemyFrameToggle = false;
-    Uint32 lastFrameSwitch = 0;
-    const Uint32 frameInterval = 500; // ms
-
     bool playerVisible = true;
 
     bool playerExploding = false;
@@ -474,13 +470,6 @@ int main(int argc, char *argv[])
                 shakeOffsetX = (rand() % 11) - 5;
                 shakeOffsetY = (rand() % 11) - 5;
             }
-        }
-
-        // Toggle enemy animations
-        if (now - lastFrameSwitch > frameInterval)
-        {
-            enemyFrameToggle = !enemyFrameToggle;
-            lastFrameSwitch = SDL_GetTicks();
         }
 
         // Toggle explosion animations

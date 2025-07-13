@@ -5,9 +5,9 @@
 Entity enemies[MAX_ENEMIES];
 float enemySpeed = 1.0f;
 
-int enemyFrameCounter = 0;
-int enemyFrameDuration = 15;
-
+bool enemyFrameToggle = false;
+Uint32 lastFrameSwitch = 0;
+const Uint32 frameInterval = 500; // ms
 /**
  * Initialise enemies as deactivated
  */
@@ -51,8 +51,17 @@ void update_enemies(void)
 
 void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
 {
+    Uint32 now = SDL_GetTicks();
+
+    // Toggle enemy animations
+    if (now - lastFrameSwitch > frameInterval)
+    {
+        enemyFrameToggle = !enemyFrameToggle;
+        lastFrameSwitch = SDL_GetTicks();
+    }
+
     // Alternative animation frame
-    SpriteID frame = (enemyFrameCounter / enemyFrameDuration) % 2 == 0 ? SPR_INVADER1_A : SPR_INVADER1_B;
+    SpriteID frame = enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B;
 
     SDL_Rect src = get_sprite(frame);
 
