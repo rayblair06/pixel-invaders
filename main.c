@@ -15,15 +15,15 @@ const int MAX_PICKUPS = 100;
 
 typedef struct
 {
-    SDL_Rect rect;
+    float x, y; // Position
+    int w, h;   // Size
     bool active;
-} Bullet;
 
-typedef struct
-{
     SDL_Rect rect;
-    bool active;
-} Enemy;
+} Entity;
+
+typedef Entity Bullet;
+typedef Entity Enemy;
 
 typedef struct
 {
@@ -100,9 +100,38 @@ typedef enum
 } Movement;
 
 /**
+ * Creates an entity
+ */
+Entity create_entity(float x, float y, int w, int h)
+{
+    Entity entity;
+
+    entity.x = x;
+    entity.y = y;
+    entity.w = w;
+    entity.h = h;
+    entity.rect.x = (int)x;
+    entity.rect.y = (int)y;
+    entity.rect.w = w;
+    entity.rect.h = h;
+    entity.active = true;
+
+    return entity;
+}
+
+/**
+ * Updates entity position
+ */
+void update_entity_rect(Entity *entity)
+{
+    entity->rect.x = (int)entity->x;
+    entity->rect.y = (int)entity->y;
+}
+
+/**
  * Move an entity in the specified direction at that speed
  */
-void move(SDL_Rect *entity, Movement move, float speed)
+void move(Entity *entity, Movement move, float speed)
 {
     switch (move)
     {
@@ -118,6 +147,30 @@ void move(SDL_Rect *entity, Movement move, float speed)
     case RIGHT:
         entity->x += speed;
         break;
+    }
+
+    update_entity_rect(entity);
+}
+
+void update_bullet(Entity *bullet, float speed)
+{
+    move(bullet, UP, speed);
+
+    if (bullet->y + bullet->h < 0)
+    {
+        // disappear off screen
+        bullet->active = false;
+    }
+}
+
+void update_enemy(Entity *enemy, float speed)
+{
+    move(enemy, DOWN, speed);
+
+    // Disappear off screen
+    if (enemy->y > SCREEN_HEIGHT)
+    {
+        enemy->active = false;
     }
 }
 
@@ -251,24 +304,24 @@ int main(int argc, char *argv[])
     SDL_Event event;
 
     // Initialize player position
-    SDL_Rect player = {SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE};
+    Entity player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
 
     // keep track of key states
     const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
-    // Bullet array
+    // Set all starting Bullet entities as inactive
     for (int i = 0; i < MAX_BULLETS; i++)
     {
         bullets[i].active = false;
     }
 
-    // Enemy array
+    // Set all starting Enemy entities as inactive
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         enemies[i].active = false;
     }
 
-    // Pickup array
+    // Set all starting Pickup entities as inactive
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
         pickups[i].active = false;
@@ -277,11 +330,7 @@ int main(int argc, char *argv[])
     // Manually activate 5 enemies
     for (int i = 0; i < 5; i++)
     {
-        enemies[i].active = true;
-        enemies[i].rect.x = 100 + i * 120;
-        enemies[i].rect.y = 50;
-        enemies[i].rect.w = SPRITE_DRAW_SIZE;
-        enemies[i].rect.h = SPRITE_DRAW_SIZE;
+        enemies[i] = create_entity(100 + i * 120, 50, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
     }
 
     // Main loop
@@ -370,11 +419,12 @@ int main(int argc, char *argv[])
                 {
                     if (!bullets[i].active)
                     {
-                        bullets[i].active = true;
-                        bullets[i].rect.w = SPRITE_DRAW_SIZE;
-                        bullets[i].rect.h = SPRITE_DRAW_SIZE;
-                        bullets[i].rect.x = player.x + (player.w / 2) - (bullets[i].rect.w / 2); // center bullet from player
-                        bullets[i].rect.y = player.y;
+                        bullets[i] = create_entity(
+                            player.x + (player.w / 2) - (bullets[i].rect.w / 2), // center bullet from player
+                            player.y,
+                            SPRITE_DRAW_SIZE,
+                            SPRITE_DRAW_SIZE);
+
                         break;
                     }
                 }
@@ -392,13 +442,7 @@ int main(int argc, char *argv[])
         {
             if (bullets[i].active)
             {
-                move(&bullets[i].rect, UP, bulletSpeed);
-
-                if (bullets[i].rect.y + bullets[i].rect.h < 0)
-                {
-                    // deactivate if off-screen
-                    bullets[i].active = false;
-                }
+                update_bullet(&bullets[i], bulletSpeed);
             }
         }
 
@@ -407,7 +451,7 @@ int main(int argc, char *argv[])
         {
             if (!gameOver && enemies[i].active)
             {
-                move(&enemies[i].rect, DOWN, enemySpeed);
+                move(&enemies[i], DOWN, enemySpeed);
 
                 if (enemies[i].rect.y > SCREEN_HEIGHT)
                 {
@@ -449,7 +493,7 @@ int main(int argc, char *argv[])
                 if (!enemies[j].active)
                     continue;
 
-                if (checkCollision(bullets[i].rect, enemies[j].rect))
+                if (SDL_HasIntersection(&bullets[i].rect, &enemies[j].rect))
                 {
                     // Collision! Remove both bullets and enemies
 
@@ -496,7 +540,7 @@ int main(int argc, char *argv[])
             }
 
             // Check for collision with player
-            if (SDL_HasIntersection(&pickups[i].rect, &player))
+            if (SDL_HasIntersection(&player.rect, &pickups[i].rect))
             {
                 pickups[i].active = false;
                 experience += 100;
@@ -606,24 +650,19 @@ int main(int argc, char *argv[])
 
         // Draw player
         SDL_Rect playerSrc;
-        SDL_Rect playerDraw = {
-            player.x + shakeOffsetX,
-            player.y + shakeOffsetY,
-            SPRITE_DRAW_SIZE,
-            SPRITE_DRAW_SIZE};
 
         if (gameOver && playerExploding)
         {
             SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
             playerSrc = get_sprite(explosionSprites[explosionFrame]);
 
-            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
+            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &player.rect);
         }
         else if (playerVisible)
         {
             playerSrc = get_sprite(SPR_PLAYER);
 
-            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &playerDraw);
+            SDL_RenderCopy(renderer, spriteTexture, &playerSrc, &player.rect);
         }
 
         // Draw bullets
@@ -633,10 +672,7 @@ int main(int argc, char *argv[])
                 continue;
 
             SDL_Rect bulletSrc = get_sprite(SPR_BULLET1);
-            SDL_Rect bulletDraw = bullets[i].rect;
-            bulletDraw.x += shakeOffsetX;
-            bulletDraw.y += shakeOffsetY;
-            SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bulletDraw);
+            SDL_RenderCopy(renderer, spriteTexture, &bulletSrc, &bullets[i].rect);
         }
 
         // Draw enemies
@@ -646,11 +682,7 @@ int main(int argc, char *argv[])
                 continue;
 
             SDL_Rect enemySrc = get_sprite(enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B);
-            SDL_Rect enemyDraw = enemies[i].rect;
-            enemyDraw.x += shakeOffsetX;
-            enemyDraw.y += shakeOffsetY;
-
-            SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemyDraw);
+            SDL_RenderCopy(renderer, spriteTexture, &enemySrc, &enemies[i].rect);
         }
 
         // Draw pickups
