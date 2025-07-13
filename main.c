@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
     // Initialized game state
     init_game();
 
-    bool levelUpPending = false;
     bool choosingUpgrade = false;
     int selectedOption = 0;
 
@@ -165,11 +164,13 @@ int main(int argc, char *argv[])
         }
 
         // Trigger Upgrade Menu delay
-        if (levelUpPending && !choosingUpgrade)
+        if (isLevelUpPending && !choosingUpgrade)
         {
             generate_upgrade_choices();
+
             choosingUpgrade = true;
-            levelUpPending = false;
+            isLevelUpPending = false;
+            isEntitiesFrozen = true;
         }
 
         // Upgrade Menu
@@ -203,6 +204,7 @@ int main(int argc, char *argv[])
             {
                 apply_upgrade(options[selectedOption]);
                 choosingUpgrade = false;
+                isEntitiesFrozen = false;
             }
         }
 
