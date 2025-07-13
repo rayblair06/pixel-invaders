@@ -10,11 +10,17 @@ int experience = 0;
 int level = 0;
 int experienceToNextLevel = 300;
 
+/**
+ * Initialises the player
+ */
 void init_player(void)
 {
     player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
 }
 
+/**
+ * Handler for functionality of player
+ */
 void update_player(const Uint8 *keystate)
 {
     // Move player based on key state
@@ -37,6 +43,9 @@ void update_player(const Uint8 *keystate)
     update_entity_rect(&player);
 }
 
+/**
+ * Draw the player on the screen
+ */
 void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
 {
     SDL_Rect src = get_sprite(SPR_PLAYER);
@@ -47,6 +56,9 @@ void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shake
     SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
 }
 
+/**
+ * Add experience to player
+ */
 void add_experience(int amount)
 {
     experience += amount;

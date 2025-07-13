@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
     // Manually activate 5 enemies
     for (int i = 0; i < 5; i++)
     {
-        enemies[i] = create_entity(100 + i * 120, 50, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
+        spawn_enemy(100 + i * 120, 50);
     }
 
     // Main loop
@@ -438,11 +438,9 @@ int main(int argc, char *argv[])
             {
                 if (!enemies[i].active)
                 {
-                    enemies[i] = create_entity(
+                    spawn_enemy(
                         rand() % (SCREEN_WIDTH - enemies[i].rect.w),
-                        0,
-                        SPRITE_DRAW_SIZE,
-                        SPRITE_DRAW_SIZE);
+                        0);
 
                     spawned++;
                 }

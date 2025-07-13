@@ -45,7 +45,7 @@ void move(Entity *entity, Movement move, float speed)
 }
 
 /**
- * Updates entity position
+ * Updates the SDL rect box with the new entity position
  */
 void update_entity_rect(Entity *entity)
 {

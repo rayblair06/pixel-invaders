@@ -8,6 +8,7 @@ float enemySpeed = 1.0f;
 bool enemyFrameToggle = false;
 Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
+
 /**
  * Initialise enemies as deactivated
  */
@@ -19,6 +20,9 @@ void init_enemies(void)
     }
 }
 
+/**
+ * Spawn a single enemy entity
+ */
 void spawn_enemy(float x, float y)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
@@ -31,6 +35,9 @@ void spawn_enemy(float x, float y)
     }
 }
 
+/**
+ * Handle functionality of active enemies
+ */
 void update_enemies(void)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
@@ -49,6 +56,9 @@ void update_enemies(void)
     }
 }
 
+/**
+ * Render Active Enemies on Screen
+ */
 void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
 {
     Uint32 now = SDL_GetTicks();

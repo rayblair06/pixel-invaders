@@ -5,6 +5,9 @@
 Entity bullets[MAX_BULLETS];
 float bulletSpeed = 6.0f;
 
+/**
+ * Initialise bullets as deactivated
+ */
 void init_bullets(void)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
@@ -13,6 +16,9 @@ void init_bullets(void)
     }
 }
 
+/**
+ * Spawn a single Bullet entity
+ */
 void spawn_bullet(float x, float y)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
@@ -33,6 +39,9 @@ void spawn_bullet(float x, float y)
     }
 }
 
+/**
+ * Handle functionality of active bullets
+ */
 void update_bullets(void)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
@@ -50,6 +59,9 @@ void update_bullets(void)
     }
 }
 
+/**
+ * Render Active Bullets on Screen
+ */
 void render_bullets(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
 {
     SDL_Rect src = get_sprite(SPR_BULLET1);
