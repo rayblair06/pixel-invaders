@@ -11,6 +11,7 @@
 
 typedef enum
 {
+    // spritesheet.png
     // Row 0
     SPR_INVADER1_A,
     SPR_INVADER1_B,
@@ -47,13 +48,22 @@ typedef enum
     SPR_ARROW_LEFT,
     SPR_ARROW_RIGHT,
 
-    // ROw 4
+    // Row 4
     SPR_INVADER5_A,
     SPR_INVADER5_B,
     SPR_EXPLOSION_B,
     SPR_SHIELD4_LEFT,
     SPR_SHIELD4_RIGHT,
     SPR_EMPTY_6,
+    SPR_EMPTY_7,
+
+    // pickups.png
+    // Row 0
+    SPR_PICKUP_A,
+    SPR_PICKUP_B,
+    SPR_PICKUP_C,
+    SPR_PICKUP_D,
+    SPR_PICKUP_E,
 
     SPR_COUNT
 } SpriteID;

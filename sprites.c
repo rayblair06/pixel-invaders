@@ -37,9 +37,26 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].rows = sheet0->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
     sheets[sheetCount].offset = 0;
-    sheets[sheetCount].count = 40;
+    sheets[sheetCount].count = 35;
 
     SDL_FreeSurface(sheet0);
+    sheetCount++;
+
+    SDL_Surface *sheet1 = IMG_Load("assets/sprites/SpaceInvaders_Pickups.png");
+
+    if (!sheet1)
+    {
+        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+    }
+
+    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, sheet1);
+    sheets[sheetCount].cols = sheet1->w / SPRITE_SIZE;
+    sheets[sheetCount].rows = sheet1->h / SPRITE_SIZE;
+    sheets[sheetCount].tileSize = SPRITE_SIZE;
+    sheets[sheetCount].offset = sheets[sheetCount - 1].count;
+    sheets[sheetCount].count = 6;
+
+    SDL_FreeSurface(sheet1);
     sheetCount++;
 }
 
