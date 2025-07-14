@@ -34,6 +34,11 @@ void spawn_pickup(float x, float y)
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
 
+            pickups[i].animFrame = 0;
+            pickups[i].animFrameCount = 5;
+            pickups[i].animStartTime = SDL_GetTicks();
+            pickups[i].animFrameDuration = 100;
+
             break;
         }
     }
@@ -51,6 +56,10 @@ void tick_pickups(void)
             continue;
 
         move(&pickups[i], DOWN, 2);
+
+        // Animation
+        Uint32 elapsed = SDL_GetTicks() - pickups[i].animStartTime;
+        pickups[i].animFrame = (elapsed / pickups[i].animFrameDuration) % pickups[i].animFrameCount;
 
         // Stop falling at player Y
         if (pickups[i].y >= player.y)
@@ -73,13 +82,20 @@ void tick_pickups(void)
  */
 void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    SDL_Rect src = get_sprite(SPR_PICKUP_A);
-    SDL_Texture *texture = get_sprite_texture(SPR_PICKUP_A);
+    const char frameId[] = {
+        SPR_PICKUP_A,
+        SPR_PICKUP_B,
+        SPR_PICKUP_C,
+        SPR_PICKUP_D,
+        SPR_PICKUP_E};
 
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
         if (!pickups[i].active)
             continue;
+
+        SDL_Rect src = get_sprite(frameId[pickups[i].animFrame]);
+        SDL_Texture *texture = get_sprite_texture(frameId[pickups[i].animFrame]);
 
         SDL_Rect dst = pickups[i].rect;
         dst.x += shakeX;

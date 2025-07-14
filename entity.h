@@ -6,11 +6,17 @@
 
 typedef struct
 {
+    bool active;
     float x, y; // Position
     int w, h;   // Size
-    bool active;
 
     SDL_Rect rect;
+
+    // animation state
+    int animFrame;
+    int animFrameCount;
+    Uint32 animStartTime;
+    int animFrameDuration;
 } Entity;
 
 typedef enum
