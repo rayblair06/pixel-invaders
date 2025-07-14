@@ -13,12 +13,15 @@ void init_audio(void)
     }
 
     // Load sounds
-    sounds[SND_SHOOT] = Mix_LoadWAV("assets/shoot.wav");
-    sounds[SND_HIT] = Mix_LoadWAV("assets/hit.wav");
+    sounds[SND_SHOOT] = Mix_LoadWAV("assets/sounds/shoot.wav");
+    sounds[SND_EXPLOSION] = Mix_LoadWAV("assets/sounds/shoot.wav");
+    sounds[SND_PICKUP] = Mix_LoadWAV("assets/sounds/hit.wav");
+    sounds[SND_HIT] = Mix_LoadWAV("assets/sounds/hit.wav");
 
     // Load Music
-    music[MUS_GAME] = Mix_LoadMUS("assets/game-music.mp3");
-    music[MUS_GAMEOVER] = Mix_LoadMUS("assets/game-over-music.mp3");
+    // music[MUS_GAME] = Mix_LoadMUS("assets/game-music.mp3");
+    music[MUS_GAME] = Mix_LoadMUS("assets/music/Music for a Space Inavders-like minigame v1.wav");
+    music[MUS_GAMEOVER] = Mix_LoadMUS("assets/music/game-over-music.mp3");
 }
 
 void play_sound(SoundID id)

@@ -13,6 +13,7 @@
 #include "sprites.h"
 #include "pickups.h"
 #include "player.h"
+#include "ui.h"
 
 typedef enum
 {
@@ -24,8 +25,7 @@ typedef enum
 
 const char *upgrade_names[] = {
     "Player Speed",
-    "Bullet Speed",
-};
+    "Bullet Speed"};
 
 void debug_log(const char *format, ...)
 {
@@ -156,32 +156,6 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Trigger Upgrade Menu delay
-        if (isLevelUpPending && !choosingUpgrade)
-        {
-            generate_upgrade_choices();
-
-            choosingUpgrade = true;
-            isEntitiesFrozen = true;
-        }
-
-        if (choosingUpgrade)
-        {
-            if (keystate[SDL_SCANCODE_UP])
-                selectedOption = (selectedOption - 1 + optionCount) % optionCount;
-            if (keystate[SDL_SCANCODE_DOWN])
-                selectedOption = (selectedOption + 1) % optionCount;
-
-            if (keystate[SDL_SCANCODE_KP_ENTER])
-            {
-                apply_upgrade(options[selectedOption]);
-
-                choosingUpgrade = false;
-                isEntitiesFrozen = false;
-                isLevelUpPending = false;
-            }
-        }
-
         tick_player(keystate);
         tick_bullets();
         tick_enemies();
@@ -246,24 +220,32 @@ int main(int argc, char *argv[])
         // Upgrade Menu
         if (choosingUpgrade)
         {
-            for (int i = 0; i < optionCount; i++)
+            render_menu(renderer, font, upgrade_names, 2, selectedOption, 150);
+        }
+
+        // Trigger Upgrade Menu delay
+        if (isLevelUpPending && !choosingUpgrade)
+        {
+            generate_upgrade_choices();
+
+            choosingUpgrade = true;
+            isEntitiesFrozen = true;
+        }
+
+        if (choosingUpgrade)
+        {
+            if (keystate[SDL_SCANCODE_UP])
+                selectedOption = (selectedOption - 1 + optionCount) % optionCount;
+            if (keystate[SDL_SCANCODE_DOWN])
+                selectedOption = (selectedOption + 1) % optionCount;
+
+            if (keystate[SDL_SCANCODE_KP_ENTER])
             {
-                SDL_Color white = {255, 255, 255};
-                const char *text = upgrade_names[options[i]];
+                apply_upgrade(options[selectedOption]);
 
-                SDL_Surface *optionsSurface = TTF_RenderText_Solid(font, text, white);
-                SDL_Texture *optionsTexture = SDL_CreateTextureFromSurface(renderer, optionsSurface);
-
-                SDL_Rect dst = {
-                    SCREEN_WIDTH / 2 - optionsSurface->w / 2,
-                    150 + i * 40,
-                    optionsSurface->w,
-                    optionsSurface->h};
-
-                SDL_RenderCopy(renderer, optionsTexture, NULL, &dst);
-
-                SDL_FreeSurface(optionsSurface);
-                SDL_DestroyTexture(optionsTexture);
+                choosingUpgrade = false;
+                isEntitiesFrozen = false;
+                isLevelUpPending = false;
             }
         }
 
@@ -288,6 +270,8 @@ int main(int argc, char *argv[])
         debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
 
         debug_log("Options count: %d", optionCount);
+        debug_log("Selected option: %s", selectedOption);
+
         fflush(stdout);
     }
 

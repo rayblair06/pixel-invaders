@@ -17,6 +17,7 @@
         "pickups.c",
         "player.c",
         "sprites.c",
+        "ui.c",
         "-o",
         "build/game",
         "-I/opt/homebrew/include",
