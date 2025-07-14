@@ -54,7 +54,6 @@ typedef enum
     SPR_SHIELD4_LEFT,
     SPR_SHIELD4_RIGHT,
     SPR_EMPTY_6,
-    SPR_EMPTY_7,
 
     SPR_COUNT
 } SpriteID;

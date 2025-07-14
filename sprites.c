@@ -37,7 +37,7 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].rows = sheet0->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
     sheets[sheetCount].offset = 0;
-    sheets[sheetCount].count = 8;
+    sheets[sheetCount].count = 40;
 
     SDL_FreeSurface(sheet0);
     sheetCount++;
