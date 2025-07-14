@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 
+#define PANEL_SIZE 16
 #define SPRITE_SIZE 16
 #define TILE_SIZE 64
 #define SPRITE_DRAW_SIZE SPRITE_SIZE * 2
@@ -20,6 +21,17 @@ typedef enum
 
     // SpaceInvaders_BackgroundFloor.png
     BG_TILE_FLOOR,
+
+    // SpaceInvaders_Borders.png
+    MENU_TL,
+    MENU_T,
+    MENU_TR,
+    MENU_L,
+    MENU_C,
+    MENU_R,
+    MENU_BL,
+    MENU_B,
+    MENU_BR,
 
     // spritesheet.png
     // Row 0

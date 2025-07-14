@@ -76,6 +76,23 @@ void init_sprites(SDL_Renderer *renderer)
     SDL_FreeSurface(backgroundFloorTile);
     sheetCount++;
 
+    SDL_Surface *menuPanel = IMG_Load("assets/sprites/SpaceInvaders_Borders.png");
+
+    if (!menuPanel)
+    {
+        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+    }
+
+    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, menuPanel);
+    sheets[sheetCount].cols = menuPanel->w / PANEL_SIZE;
+    sheets[sheetCount].rows = menuPanel->h / PANEL_SIZE;
+    sheets[sheetCount].tileSize = PANEL_SIZE;
+    sheets[sheetCount].offset = 3;
+    sheets[sheetCount].count = 9;
+
+    SDL_FreeSurface(menuPanel);
+    sheetCount++;
+
     SDL_Surface *sheet0 = IMG_Load("assets/sprites/spritesheet.png");
 
     if (!sheet0)
@@ -87,7 +104,7 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].cols = sheet0->w / SPRITE_SIZE;
     sheets[sheetCount].rows = sheet0->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = 3;
+    sheets[sheetCount].offset = 12;
     sheets[sheetCount].count = 7 * 5;
 
     SDL_FreeSurface(sheet0);
@@ -104,7 +121,7 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].cols = sheet1->w / SPRITE_SIZE;
     sheets[sheetCount].rows = sheet1->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = 3 + 7 * 5;
+    sheets[sheetCount].offset = 12 + 7 * 5;
     sheets[sheetCount].count = 6 * 4;
 
     SDL_FreeSurface(sheet1);

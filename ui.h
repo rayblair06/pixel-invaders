@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *options[], int optionCount, int selectedIndex, int yStart);
+void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h);
+void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY);
 
 #endif
