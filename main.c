@@ -52,6 +52,11 @@ void apply_upgrade(UpgradeType upgrade)
     }
 }
 
+bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
+{
+    return current[key] && !previous[key];
+}
+
 UpgradeType options[3];
 int optionCount = 0;
 
@@ -127,8 +132,9 @@ int main(int argc, char *argv[])
     // Main game loop
     SDL_Event event;
 
-    // keep track of key states
-    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+    // ✅ Force keyboard state to update
+    SDL_PumpEvents();
+    Uint8 prevKeystateBuffer[SDL_NUM_SCANCODES] = {0};
 
     // Initialize player position
     init_player();
@@ -154,6 +160,9 @@ int main(int argc, char *argv[])
                 running = false;
             }
         }
+
+        const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+        const Uint8 *prevKeystate = prevKeystateBuffer;
 
         tick_player(keystate);
         tick_bullets();
@@ -233,12 +242,22 @@ int main(int argc, char *argv[])
 
         if (choosingUpgrade)
         {
-            if (keystate[SDL_SCANCODE_UP])
+            debug_log("Upgrade menu is active.");
+            debug_log("selectedOption: %d", selectedOption);
+
+            if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
+                debug_log("UP is held");
+            if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
+                debug_log("DOWN is held");
+            if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
+                debug_log("RETURN is held");
+
+            if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
                 selectedOption = (selectedOption - 1 + optionCount) % optionCount;
-            if (keystate[SDL_SCANCODE_DOWN])
+            if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
                 selectedOption = (selectedOption + 1) % optionCount;
 
-            if (keystate[SDL_SCANCODE_KP_ENTER])
+            if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
             {
                 apply_upgrade(options[selectedOption]);
 
@@ -247,6 +266,8 @@ int main(int argc, char *argv[])
                 isLevelUpPending = false;
             }
         }
+
+        memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
 
         // Clean up
         SDL_FreeSurface(livesSurface);
@@ -269,7 +290,7 @@ int main(int argc, char *argv[])
         debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
 
         debug_log("Options count: %d", optionCount);
-        debug_log("Selected option: %s", selectedOption);
+        debug_log("Selected option: %d", selectedOption);
 
         fflush(stdout);
     }
