@@ -62,9 +62,10 @@ void tick_bullets(void)
 /**
  * Render Active Bullets on Screen
  */
-void render_bullets(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
+void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     SDL_Rect src = get_sprite(SPR_BULLET1);
+    SDL_Texture *texture = get_sprite_texture(SPR_BULLET1);
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -75,6 +76,6 @@ void render_bullets(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shak
         dst.x += shakeX;
         dst.y += shakeY;
 
-        SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
+        SDL_RenderCopy(renderer, texture, &src, &dst);
     }
 }

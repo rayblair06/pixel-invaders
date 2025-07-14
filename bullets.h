@@ -14,6 +14,6 @@ extern float bulletSpeed;
 void init_bullets(void);
 void spawn_bullet(float x, float y);
 void tick_bullets(void);
-void render_bullets(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY);
+void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
 
 #endif

@@ -71,9 +71,10 @@ void tick_pickups(void)
 /**
  * Render Active Pickups on Screen
  */
-void render_pickups(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
+void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    SDL_Rect src = get_sprite(SPR_BULLET3);
+    SDL_Rect src = get_sprite(SPR_BULLET4);
+    SDL_Texture *texture = get_sprite_texture(SPR_BULLET4);
 
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
@@ -84,6 +85,6 @@ void render_pickups(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shak
         dst.x += shakeX;
         dst.y += shakeY;
 
-        SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
+        SDL_RenderCopy(renderer, texture, &src, &dst);
     }
 }

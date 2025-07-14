@@ -88,10 +88,6 @@ int main(int argc, char *argv[])
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
-    init_sprites();
-    init_audio();
-    play_music(MUS_GAME, true);
-
     // Initialize Fonts
     if (TTF_Init() == -1)
     {
@@ -115,10 +111,13 @@ int main(int argc, char *argv[])
     // Create a renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/background.png");
-    SDL_Texture *spriteTexture = IMG_LoadTexture(renderer, "assets/spritesheet.png");
+    init_sprites(renderer);
+    init_audio();
+    play_music(MUS_GAME, true);
 
-    if (!bgTexture || !spriteTexture)
+    SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/sprites/background.png");
+
+    if (!bgTexture)
     {
         printf("Failed to load image: %s\n", IMG_GetError());
     }
@@ -168,10 +167,10 @@ int main(int argc, char *argv[])
         update_red_flash();
         render_background(renderer, bgTexture);
 
-        render_player(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-        render_bullets(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-        render_enemies(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
-        render_pickups(renderer, spriteTexture, shakeOffsetX, shakeOffsetY);
+        render_player(renderer, shakeOffsetX, shakeOffsetY);
+        render_bullets(renderer, shakeOffsetX, shakeOffsetY);
+        render_enemies(renderer, shakeOffsetX, shakeOffsetY);
+        render_pickups(renderer, shakeOffsetX, shakeOffsetY);
 
         // Convert Experience to string
         char experienceText[32];
@@ -277,7 +276,6 @@ int main(int argc, char *argv[])
 
     // Clean up
     SDL_DestroyTexture(bgTexture);
-    SDL_DestroyTexture(spriteTexture);
     IMG_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

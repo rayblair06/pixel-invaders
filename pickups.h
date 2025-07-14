@@ -14,6 +14,6 @@ extern Entity pickups[MAX_PICKUPS];
 void init_pickups(void);
 void spawn_pickup(float x, float y);
 void tick_pickups(void);
-void render_pickups(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY);
+void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY);
 
 #endif

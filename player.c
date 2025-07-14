@@ -91,9 +91,10 @@ void tick_player(const Uint8 *keystate)
 /**
  * Draw the player on the screen
  */
-void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
+void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     SDL_Rect src;
+    SDL_Texture *texture = get_sprite_texture(SPR_PLAYER);
 
     if (!isPlayerVisible)
         return;
@@ -113,7 +114,7 @@ void render_player(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shake
     dst.x += shakeX;
     dst.y += shakeY;
 
-    SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
+    SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 
 void trigger_player_shoot()

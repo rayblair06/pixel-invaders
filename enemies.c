@@ -53,7 +53,7 @@ void tick_enemies(void)
 /**
  * Render Active Enemies on Screen
  */
-void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shakeX, int shakeY)
+void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     Uint32 now = SDL_GetTicks();
 
@@ -68,6 +68,7 @@ void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shak
     SpriteID frame = enemyFrameToggle ? SPR_INVADER1_A : SPR_INVADER1_B;
 
     SDL_Rect src = get_sprite(frame);
+    SDL_Texture *texture = get_sprite_texture(frame);
 
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
@@ -78,6 +79,6 @@ void render_enemies(SDL_Renderer *renderer, SDL_Texture *spriteTexture, int shak
         dst.x += shakeX;
         dst.y += shakeY;
 
-        SDL_RenderCopy(renderer, spriteTexture, &src, &dst);
+        SDL_RenderCopy(renderer, texture, &src, &dst);
     }
 }
