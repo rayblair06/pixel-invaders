@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #define SPRITE_SIZE 16
+#define TILE_SIZE 64
 #define SPRITE_DRAW_SIZE SPRITE_SIZE * 2
 
 #define MAX_SPRITESHEETS 8
@@ -11,6 +12,15 @@
 
 typedef enum
 {
+    // background.png
+    BG_TILE,
+
+    // SpaceInvaders_BackgroundBuildings.png
+    BG_TILE_BUILDING,
+
+    // SpaceInvaders_BackgroundFloor.png
+    BG_TILE_FLOOR,
+
     // spritesheet.png
     // Row 0
     SPR_INVADER1_A,
@@ -64,6 +74,30 @@ typedef enum
     SPR_PICKUP_C,
     SPR_PICKUP_D,
     SPR_PICKUP_E,
+
+    // Row 1
+    SPR_S_PICKUP_A,
+    SPR_S_PICKUP_B,
+    SPR_EMPTY_8,
+    SPR_EMPTY_9,
+    SPR_EMPTY_10,
+    SPR_EMPTY_11,
+
+    // Row 2
+    SPR_L_PICKUP_A,
+    SPR_L_PICKUP_B,
+    SPR_EMPTY_12,
+    SPR_EMPTY_13,
+    SPR_EMPTY_14,
+    SPR_EMPTY_15,
+
+    // Row 3
+    SPR_H_PICKUP_A,
+    SPR_H_PICKUP_B,
+    SPR_EMPTY_16,
+    SPR_EMPTY_17,
+    SPR_EMPTY_18,
+    SPR_EMPTY_19,
 
     SPR_COUNT
 } SpriteID;

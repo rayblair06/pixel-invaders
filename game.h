@@ -25,7 +25,7 @@ extern Uint32 lastWaveTime;
 extern Uint32 waveInterval;
 
 void init_game(void);
-void render_background(SDL_Renderer *renderer, SDL_Texture *bgTexture);
+void render_background(SDL_Renderer *renderer);
 
 void update_screen_shake(void);
 void trigger_screen_shake(void);

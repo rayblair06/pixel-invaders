@@ -4,6 +4,7 @@
 #include "enemies.h"
 #include "game.h"
 #include "player.h"
+#include "sprites.h"
 
 int score = 0;
 int lives = 3;
@@ -41,12 +42,13 @@ void init_game(void)
 /**
  * Renders our game background
  */
-void render_background(SDL_Renderer *renderer, SDL_Texture *bgTexture)
+void render_background(SDL_Renderer *renderer)
 {
     // Load Sprites
-    // TODO: Move to somewhere better
     int bgTileW = 64;
     int bgTileH = 64;
+
+    SDL_Texture *texture = get_sprite_texture(BG_TILE);
 
     // Render screen
     if (flashRed)
@@ -62,7 +64,7 @@ void render_background(SDL_Renderer *renderer, SDL_Texture *bgTexture)
             for (int x = 0; x < SCREEN_WIDTH; x += bgTileW)
             {
                 SDL_Rect dest = {x + shakeOffsetX, y + shakeOffsetY, bgTileW, bgTileH};
-                SDL_RenderCopy(renderer, bgTexture, NULL, &dest);
+                SDL_RenderCopy(renderer, texture, NULL, &dest);
             }
         }
     }

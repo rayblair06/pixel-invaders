@@ -120,13 +120,6 @@ int main(int argc, char *argv[])
     init_audio();
     play_music(MUS_GAME, true);
 
-    SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "assets/sprites/background.png");
-
-    if (!bgTexture)
-    {
-        printf("Failed to load image: %s\n", IMG_GetError());
-    }
-
     bool running = true;
 
     // Main game loop
@@ -174,7 +167,7 @@ int main(int argc, char *argv[])
 
         update_screen_shake();
         update_red_flash();
-        render_background(renderer, bgTexture);
+        render_background(renderer);
 
         render_player(renderer, shakeOffsetX, shakeOffsetY);
         render_bullets(renderer, shakeOffsetX, shakeOffsetY);
@@ -296,8 +289,7 @@ int main(int argc, char *argv[])
     }
 
     // Clean up
-    SDL_DestroyTexture(bgTexture);
-    IMG_Quit();
+    cleanup_sprites();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);

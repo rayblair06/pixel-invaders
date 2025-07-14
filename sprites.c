@@ -25,6 +25,57 @@ void init_sprites(SDL_Renderer *renderer)
 
     sheetCount = 0;
 
+    SDL_Surface *backgroundTile = IMG_Load("assets/sprites/background.png");
+
+    if (!backgroundTile)
+    {
+        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+    }
+
+    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundTile);
+    sheets[sheetCount].cols = backgroundTile->w / TILE_SIZE;
+    sheets[sheetCount].rows = backgroundTile->h / TILE_SIZE;
+    sheets[sheetCount].tileSize = TILE_SIZE;
+    sheets[sheetCount].offset = 0;
+    sheets[sheetCount].count = 1;
+
+    SDL_FreeSurface(backgroundTile);
+    sheetCount++;
+
+    SDL_Surface *backgroundBuildingTile = IMG_Load("assets/sprites/SpaceInvaders_BackgroundBuildings.png");
+
+    if (!backgroundBuildingTile)
+    {
+        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+    }
+
+    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundBuildingTile);
+    sheets[sheetCount].cols = backgroundBuildingTile->w / TILE_SIZE;
+    sheets[sheetCount].rows = backgroundBuildingTile->h / TILE_SIZE;
+    sheets[sheetCount].tileSize = TILE_SIZE;
+    sheets[sheetCount].offset = 1;
+    sheets[sheetCount].count = 1;
+
+    SDL_FreeSurface(backgroundBuildingTile);
+    sheetCount++;
+
+    SDL_Surface *backgroundFloorTile = IMG_Load("assets/sprites/SpaceInvaders_BackgroundFloor.png");
+
+    if (!backgroundFloorTile)
+    {
+        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+    }
+
+    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundFloorTile);
+    sheets[sheetCount].cols = backgroundFloorTile->w / TILE_SIZE;
+    sheets[sheetCount].rows = backgroundFloorTile->h / TILE_SIZE;
+    sheets[sheetCount].tileSize = TILE_SIZE;
+    sheets[sheetCount].offset = 2;
+    sheets[sheetCount].count = 1;
+
+    SDL_FreeSurface(backgroundFloorTile);
+    sheetCount++;
+
     SDL_Surface *sheet0 = IMG_Load("assets/sprites/spritesheet.png");
 
     if (!sheet0)
@@ -36,8 +87,8 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].cols = sheet0->w / SPRITE_SIZE;
     sheets[sheetCount].rows = sheet0->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = 0;
-    sheets[sheetCount].count = 35;
+    sheets[sheetCount].offset = 3;
+    sheets[sheetCount].count = 7 * 5;
 
     SDL_FreeSurface(sheet0);
     sheetCount++;
@@ -53,8 +104,8 @@ void init_sprites(SDL_Renderer *renderer)
     sheets[sheetCount].cols = sheet1->w / SPRITE_SIZE;
     sheets[sheetCount].rows = sheet1->h / SPRITE_SIZE;
     sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = sheets[sheetCount - 1].count;
-    sheets[sheetCount].count = 6;
+    sheets[sheetCount].offset = 3 + 7 * 5;
+    sheets[sheetCount].count = 6 * 4;
 
     SDL_FreeSurface(sheet1);
     sheetCount++;
@@ -71,6 +122,8 @@ void cleanup_sprites(void)
     }
 
     sheetCount = 0;
+
+    IMG_Quit();
 }
 
 SDL_Rect get_sprite(SpriteID id)
