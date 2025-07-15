@@ -1,8 +1,6 @@
 #ifndef UPGRADES_H
 #define UPGRADES_H
 
-#define UPGRADE_COUNT 6
-
 typedef enum
 {
     UPGRADE_PLAYER_SPEED,
@@ -11,6 +9,8 @@ typedef enum
     UPGRADE_HEALTH_REGEN,
     UPGRADE_SHIELD,
     UPGRADE_PICKUP_MAGNET,
+
+    UPGRADE_COUNT
 } UpgradeType;
 
 extern UpgradeType options[UPGRADE_COUNT];

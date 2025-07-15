@@ -2,8 +2,17 @@
 #include "player.h"
 #include "upgrades.h"
 
-UpgradeType options[UPGRADE_COUNT];
+UpgradeType options[UPGRADE_COUNT] = {
+    UPGRADE_PLAYER_SPEED,
+    UPGRADE_BULLET_SPEED,
+    UPGRADE_MULTI_SHOT,
+    UPGRADE_HEALTH_REGEN,
+    UPGRADE_SHIELD,
+    UPGRADE_PICKUP_MAGNET};
+
 int optionCount = 0;
+
+bool upgradesApplied[UPGRADE_COUNT] = {false};
 
 void apply_upgrade(UpgradeType upgrade)
 {
@@ -27,27 +36,46 @@ void apply_upgrade(UpgradeType upgrade)
     case UPGRADE_PICKUP_MAGNET:
         hasPickupMagnet = true;
         break;
+    case UPGRADE_COUNT:
+        // do nothing
+        break;
     }
+
+    upgradesApplied[upgrade] = true;
 }
 
 void generate_upgrade_choices()
 {
-    // limit to 2 for now
-    while (optionCount < 2)
+    optionCount = 0;
+
+    // Build a list of available upgrades
+    UpgradeType available[UPGRADE_COUNT];
+    int availableCount = 0;
+
+    for (int i = 0; i < UPGRADE_COUNT; i++)
     {
-        UpgradeType pick = rand() % UPGRADE_COUNT;
-
-        bool alreadyIncluded = false;
-
-        for (int i = 0; i < optionCount; i++)
+        if (!upgradesApplied[i])
         {
-            if (options[i] == pick)
-                alreadyIncluded = true;
-        }
-
-        if (!alreadyIncluded)
-        {
-            options[optionCount++] = pick;
+            available[availableCount++] = (UpgradeType)i;
         }
     }
+
+    // Shuffle the available upgradecs
+    for (int i = availableCount - 1; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+        UpgradeType temp = available[i];
+        available[i] = available[j];
+        available[j] = temp;
+    }
+
+    // Pick up to 3 from the shuffled list
+    int maxOptions = (availableCount < 3) ? availableCount : 3;
+
+    for (int i = 0; i < maxOptions; i++)
+    {
+        options[i] = available[i];
+    }
+
+    optionCount = maxOptions;
 }

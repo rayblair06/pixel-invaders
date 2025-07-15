@@ -213,12 +213,6 @@ int main(int argc, char *argv[])
             SDL_Rect livesRect = {10, 70, livesSurface->w, livesSurface->h};
             SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
 
-            // Upgrade Menu
-            if (choosingUpgrade)
-            {
-                render_menu(renderer, font, "Choose an Upgrade", upgrade_names, 2, selectedOption, 32, 32);
-            }
-
             // Trigger Upgrade Menu delay
             if (isLevelUpPending && !choosingUpgrade)
             {
@@ -226,6 +220,20 @@ int main(int argc, char *argv[])
 
                 choosingUpgrade = true;
                 isEntitiesFrozen = true;
+            }
+
+            // Upgrade Menu
+            if (choosingUpgrade)
+            {
+                // Reorganise labels so they match the selections
+                const char *upgrade_labels[UPGRADE_COUNT];
+
+                for (int i = 0; i < optionCount; i++)
+                {
+                    upgrade_labels[i] = upgrade_names[options[i]];
+                }
+
+                render_menu(renderer, font, "Choose an Upgrade", upgrade_labels, optionCount, selectedOption, 32, 32);
             }
 
             if (choosingUpgrade)
@@ -247,6 +255,8 @@ int main(int argc, char *argv[])
 
                 if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
                 {
+                    // debug_log("Player has selected upgrade: %s", options[selectedOption]);
+
                     apply_upgrade(options[selectedOption]);
 
                     choosingUpgrade = false;
@@ -297,7 +307,13 @@ int main(int argc, char *argv[])
         debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
 
         debug_log("Options count: %d", optionCount);
-        debug_log("Selected option: %d", selectedOption);
+
+        debug_log("Player move speed: %.f2", playerSpeed);
+        debug_log("Player bullet speed: %f.f2", bulletSpeed);
+        debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
+        debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
+        debug_log("Player hasShield: %s", hasShield ? "true" : "false");
+        debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
 
         fflush(stdout);
     }
