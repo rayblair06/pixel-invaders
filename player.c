@@ -132,11 +132,19 @@ void trigger_player_shoot()
     if (isGameOver)
         return;
 
-    play_sound(SND_SHOOT);
+    int bulletsFired = hasMultiShot ? 3 : 1;
+    float offSets[] = {0, -10, 10}; // Center, left, right
 
-    spawn_bullet(
-        player.x + player.w / 2,
-        player.y);
+    SoundID fireSound = hasMultiShot ? SND_SHOOT : SND_SHOOT;
+
+    play_sound(fireSound);
+
+    for (int i = 0; i < bulletsFired; i++)
+    {
+        spawn_bullet(
+            player.x + player.w / 2 + offSets[i],
+            player.y);
+    }
 }
 
 void trigger_player_explosion()
