@@ -14,6 +14,7 @@
 #include "pickups.h"
 #include "player.h"
 #include "ui.h"
+#include "upgrades.h"
 
 GameState gameState = STATE_MAIN_MENU;
 
@@ -22,17 +23,14 @@ const char *mainMenuOptions[] = {"Start Game", "Quit"};
 int selectedMenuOption = 0;
 const int mainMenuOptionCount = 2;
 
-typedef enum
-{
-    UPGRADE_PLAYER_SPEED,
-    UPGRADE_BULLET_SPEED,
-} UpgradeType;
-
-#define UPGRADE_COUNT 2
-
 const char *upgrade_names[] = {
     "Player Speed",
-    "Bullet Speed"};
+    "Bullet Speed",
+    "Multi-Shot",
+    "Health Regen",
+    "Shield",
+    "Pickup Magnet",
+};
 
 void debug_log(const char *format, ...)
 {
@@ -46,47 +44,9 @@ void debug_log(const char *format, ...)
     va_end(args);
 }
 
-void apply_upgrade(UpgradeType upgrade)
-{
-    switch (upgrade)
-    {
-    case UPGRADE_PLAYER_SPEED:
-        playerSpeed += 1.0f;
-        break;
-    case UPGRADE_BULLET_SPEED:
-        bulletSpeed += 1.5f;
-        break;
-    }
-}
-
 bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
 {
     return current[key] && !previous[key];
-}
-
-UpgradeType options[3];
-int optionCount = 0;
-
-void generate_upgrade_choices()
-{
-    // limit to 2 for now
-    while (optionCount < 2)
-    {
-        UpgradeType pick = rand() % UPGRADE_COUNT;
-
-        bool alreadyIncluded = false;
-
-        for (int i = 0; i < optionCount; i++)
-        {
-            if (options[i] == pick)
-                alreadyIncluded = true;
-        }
-
-        if (!alreadyIncluded)
-        {
-            options[optionCount++] = pick;
-        }
-    }
 }
 
 int main(int argc, char *argv[])

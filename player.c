@@ -23,6 +23,15 @@ Uint32 explosionStartTime = 0;
 int explosionFrameDurtion = 150; // ms per frame
 int explosionFrameCount = 2;
 
+// Upgrades
+bool hasMultiShot = false;
+bool hasHealthRegen = false;
+bool hasShield = false;
+bool hasPickupMagnet = false;
+
+Uint32 lastRegenTime = 0;
+const Uint32 regenCooldown = 2000; // ms
+
 /**
  * Initialises the player
  */

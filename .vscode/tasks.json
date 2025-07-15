@@ -18,6 +18,7 @@
         "player.c",
         "sprites.c",
         "ui.c",
+        "upgrades.c",
         "-o",
         "build/game",
         "-I/opt/homebrew/include",
