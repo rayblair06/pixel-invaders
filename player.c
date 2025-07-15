@@ -32,6 +32,9 @@ bool hasPickupMagnet = false;
 Uint32 lastRegenTime = 0;
 const Uint32 regenCooldown = 2000; // ms
 
+Uint32 lastRegenHealthTime = 0;
+Uint32 regenHealthCooldown = 10000; // ms
+
 /**
  * Initialises the player
  */
@@ -93,6 +96,18 @@ void tick_player(const Uint8 *keystate)
             explosionFrame = explosionFrame - 1; // stop on last frame
             isPlayerExploding = false;
             isPlayerVisible = false;
+        }
+    }
+
+    // Regenerate lives
+    if (hasHealthRegen && lives < MAX_LIVES)
+    {
+        Uint32 now = SDL_GetTicks();
+
+        if (now - lastRegenHealthTime > regenHealthCooldown)
+        {
+            lives++;
+            lastRegenHealthTime = now;
         }
     }
 }
