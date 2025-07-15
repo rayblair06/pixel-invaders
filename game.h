@@ -3,10 +3,18 @@
 
 #include <SDL2/SDL.h>
 
+typedef enum
+{
+    STATE_MAIN_MENU,
+    STATE_PLAYING,
+    STATE_GAME_OVER
+} GameState;
+
 extern int score;
 extern int lives;
 extern int wave;
 
+extern bool initialiseGameProps;
 extern bool isGameOver;
 extern bool isEntitiesFrozen;
 

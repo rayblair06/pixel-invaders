@@ -12,6 +12,8 @@
     "sprites.h": "c",
     "sdl_image.h": "c",
     "constants.h": "c",
-    "game.h": "c"
+    "game.h": "c",
+    "enemies.h": "c",
+    "audio.h": "c"
   }
 }

@@ -15,6 +15,13 @@
 #include "player.h"
 #include "ui.h"
 
+GameState gameState = STATE_MAIN_MENU;
+
+const char *mainMenuOptions[] = {"Start Game", "Quit"};
+
+int selectedMenuOption = 0;
+const int mainMenuOptionCount = 2;
+
 typedef enum
 {
     UPGRADE_PLAYER_SPEED,
@@ -129,23 +136,12 @@ int main(int argc, char *argv[])
     SDL_PumpEvents();
     Uint8 prevKeystateBuffer[SDL_NUM_SCANCODES] = {0};
 
-    // Initialize player position
-    init_player();
-
-    init_bullets();
-    init_enemies();
-    init_pickups();
-
-    // Manually activate 5 enemies
-    for (int i = 0; i < 5; i++)
-    {
-        spawn_enemy(100 + i * 120, 50);
-    }
+    SDL_Color white = {225, 255, 255, 255};
 
     // Main loop
     while (running)
     {
-        // Handle events
+        // Handle events and keystates
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -157,120 +153,178 @@ int main(int argc, char *argv[])
         const Uint8 *keystate = SDL_GetKeyboardState(NULL);
         const Uint8 *prevKeystate = prevKeystateBuffer;
 
-        tick_player(keystate);
-        tick_bullets();
-        tick_enemies();
-        tick_pickups();
-        tick_waves();
-
-        check_collisions();
-
-        update_screen_shake();
-        update_red_flash();
-        render_background(renderer);
-
-        render_player(renderer, shakeOffsetX, shakeOffsetY);
-        render_bullets(renderer, shakeOffsetX, shakeOffsetY);
-        render_enemies(renderer, shakeOffsetX, shakeOffsetY);
-        render_pickups(renderer, shakeOffsetX, shakeOffsetY);
-
-        // Convert Experience to string
-        char experienceText[32];
-        sprintf(experienceText, "Experience: %d", experience);
-
-        // Create surface and texture from text
-        SDL_Color white = {225, 255, 255, 255};
-        SDL_Surface *experienceSurface = TTF_RenderText_Solid(font, experienceText, white);
-        SDL_Texture *experienceTexture = SDL_CreateTextureFromSurface(renderer, experienceSurface);
-
-        // Define destination rectrangle
-        SDL_Rect experienceRect = {10, 10, experienceSurface->w, experienceSurface->h};
-
-        // Render the experience text
-        SDL_RenderCopy(renderer, experienceTexture, NULL, &experienceRect);
-
-        // Display current wave
-        char waveText[32];
-        sprintf(waveText, "Wave: %d", wave);
-
-        SDL_Surface *waveSurface = TTF_RenderText_Solid(font, waveText, white);
-        SDL_Texture *waveTexture = SDL_CreateTextureFromSurface(renderer, waveSurface);
-        SDL_Rect waveRect = {10, 40, waveSurface->w, waveSurface->h};
-        SDL_RenderCopy(renderer, waveTexture, NULL, &waveRect);
-
-        // Draw lives on screen
-        char livesText[32];
-        sprintf(livesText, "Lives: %d", lives);
-
-        SDL_Surface *livesSurface = TTF_RenderText_Solid(font, livesText, white);
-        SDL_Texture *livesTexture = SDL_CreateTextureFromSurface(renderer, livesSurface);
-        SDL_Rect livesRect = {10, 70, livesSurface->w, livesSurface->h};
-        SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
-
-        // Render Game over screen
-        if (isGameOver)
+        // Main Menu
+        if (gameState == STATE_MAIN_MENU)
         {
-            SDL_Surface *overSurface = TTF_RenderText_Solid(font, "GAME OVER", white);
-            SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
-            SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};
-            SDL_RenderCopy(renderer, overTexture, NULL, &overRect);
-            SDL_FreeSurface(overSurface);
-            SDL_DestroyTexture(overTexture);
-        }
-
-        // Upgrade Menu
-        if (choosingUpgrade)
-        {
-            render_menu(renderer, font, "Choose an Upgrade", upgrade_names, 2, selectedOption, 32, 32);
-        }
-
-        // Trigger Upgrade Menu delay
-        if (isLevelUpPending && !choosingUpgrade)
-        {
-            generate_upgrade_choices();
-
-            choosingUpgrade = true;
-            isEntitiesFrozen = true;
-        }
-
-        if (choosingUpgrade)
-        {
-            debug_log("Upgrade menu is active.");
-            debug_log("selectedOption: %d", selectedOption);
+            render_background(renderer);
+            render_menu(renderer, font, "Pixel Invaders", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
 
             if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
-                debug_log("UP is held");
+                selectedMenuOption = (selectedMenuOption - 1 + mainMenuOptionCount) % mainMenuOptionCount;
+
             if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
-                debug_log("DOWN is held");
+                selectedMenuOption = (selectedMenuOption + 1) % mainMenuOptionCount;
+
             if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
-                debug_log("RETURN is held");
-
-            if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
-                selectedOption = (selectedOption - 1 + optionCount) % optionCount;
-            if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
-                selectedOption = (selectedOption + 1) % optionCount;
-
-            if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
             {
-                apply_upgrade(options[selectedOption]);
+                switch (selectedMenuOption)
+                {
+                case 0:
+                    init_game();
+                    gameState = STATE_PLAYING;
+                    initialiseGameProps = true;
+                    break;
+                case 1:
+                    running = false;
+                    break;
+                }
+            }
+        }
 
-                choosingUpgrade = false;
-                isEntitiesFrozen = false;
-                isLevelUpPending = false;
+        // Main Game Loop
+        if (gameState == STATE_PLAYING)
+        {
+            // Initialise these on first launch of game
+            if (initialiseGameProps)
+            {
+                // Initialize player position
+                init_player();
+
+                init_bullets();
+                init_enemies();
+                init_pickups();
+
+                // Manually activate 5 enemies
+                for (int i = 0; i < 5; i++)
+                {
+                    spawn_enemy(100 + i * 120, 50);
+                }
+
+                initialiseGameProps = false;
+            }
+
+            render_background(renderer);
+
+            render_player(renderer, shakeOffsetX, shakeOffsetY);
+            render_bullets(renderer, shakeOffsetX, shakeOffsetY);
+            render_enemies(renderer, shakeOffsetX, shakeOffsetY);
+            render_pickups(renderer, shakeOffsetX, shakeOffsetY);
+
+            tick_player(keystate);
+            tick_bullets();
+            tick_enemies();
+            tick_pickups();
+            tick_waves();
+
+            check_collisions();
+
+            update_screen_shake();
+            update_red_flash();
+
+            // Convert Experience to string
+            char experienceText[32];
+            sprintf(experienceText, "Experience: %d", experience);
+
+            // Create surface and texture from text
+            SDL_Surface *experienceSurface = TTF_RenderText_Solid(font, experienceText, white);
+            SDL_Texture *experienceTexture = SDL_CreateTextureFromSurface(renderer, experienceSurface);
+
+            // Define destination rectrangle
+            SDL_Rect experienceRect = {10, 10, experienceSurface->w, experienceSurface->h};
+
+            // Render the experience text
+            SDL_RenderCopy(renderer, experienceTexture, NULL, &experienceRect);
+
+            // Display current wave
+            char waveText[32];
+            sprintf(waveText, "Wave: %d", wave);
+
+            SDL_Surface *waveSurface = TTF_RenderText_Solid(font, waveText, white);
+            SDL_Texture *waveTexture = SDL_CreateTextureFromSurface(renderer, waveSurface);
+            SDL_Rect waveRect = {10, 40, waveSurface->w, waveSurface->h};
+            SDL_RenderCopy(renderer, waveTexture, NULL, &waveRect);
+
+            // Draw lives on screen
+            char livesText[32];
+            sprintf(livesText, "Lives: %d", lives);
+
+            SDL_Surface *livesSurface = TTF_RenderText_Solid(font, livesText, white);
+            SDL_Texture *livesTexture = SDL_CreateTextureFromSurface(renderer, livesSurface);
+            SDL_Rect livesRect = {10, 70, livesSurface->w, livesSurface->h};
+            SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
+
+            // Upgrade Menu
+            if (choosingUpgrade)
+            {
+                render_menu(renderer, font, "Choose an Upgrade", upgrade_names, 2, selectedOption, 32, 32);
+            }
+
+            // Trigger Upgrade Menu delay
+            if (isLevelUpPending && !choosingUpgrade)
+            {
+                generate_upgrade_choices();
+
+                choosingUpgrade = true;
+                isEntitiesFrozen = true;
+            }
+
+            if (choosingUpgrade)
+            {
+                debug_log("Upgrade menu is active.");
+                debug_log("selectedOption: %d", selectedOption);
+
+                if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
+                    debug_log("UP is held");
+                if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
+                    debug_log("DOWN is held");
+                if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
+                    debug_log("RETURN is held");
+
+                if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
+                    selectedOption = (selectedOption - 1 + optionCount) % optionCount;
+                if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
+                    selectedOption = (selectedOption + 1) % optionCount;
+
+                if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
+                {
+                    apply_upgrade(options[selectedOption]);
+
+                    choosingUpgrade = false;
+                    isEntitiesFrozen = false;
+                    isLevelUpPending = false;
+                }
+            }
+
+            // Clean up
+            SDL_FreeSurface(livesSurface);
+            SDL_DestroyTexture(livesTexture);
+
+            SDL_FreeSurface(waveSurface);
+            SDL_DestroyTexture(waveTexture);
+
+            SDL_FreeSurface(experienceSurface);
+            SDL_DestroyTexture(experienceTexture);
+
+            // Game Over Screen
+            if (isGameOver)
+            {
+                SDL_Surface *overSurface = TTF_RenderText_Solid(font, "GAME OVER", white);
+                SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
+                SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};
+                SDL_RenderCopy(renderer, overTexture, NULL, &overRect);
+
+                SDL_FreeSurface(overSurface);
+                SDL_DestroyTexture(overTexture);
+
+                // Enter to restart
+                if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
+                {
+                    gameState = STATE_MAIN_MENU;
+                }
             }
         }
 
         memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
-
-        // Clean up
-        SDL_FreeSurface(livesSurface);
-        SDL_DestroyTexture(livesTexture);
-
-        SDL_FreeSurface(waveSurface);
-        SDL_DestroyTexture(waveTexture);
-
-        SDL_FreeSurface(experienceSurface);
-        SDL_DestroyTexture(experienceTexture);
 
         // Show the render
         SDL_RenderPresent(renderer);
