@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
         // Upgrade Menu
         if (choosingUpgrade)
         {
-            render_menu(renderer, font, upgrade_names, 2, selectedOption, 32, 32);
+            render_menu(renderer, font, "Choose an Upgrade", upgrade_names, 2, selectedOption, 32, 32);
         }
 
         // Trigger Upgrade Menu delay

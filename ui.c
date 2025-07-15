@@ -38,18 +38,41 @@ void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
     }
 }
 
-void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
+void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
 {
     SDL_Color white = {255, 255, 255};
     SDL_Color yellow = {255, 255, 0};
 
+    int titleHeight = (title != NULL) ? 40 : 0;
+
     int panelWidth = 300 + paddingX * 2;
-    int panelHeight = optionCount * 40 + paddingY * 2;
+    int panelHeight = titleHeight + optionCount * 40 + paddingY * 2;
 
     int panelX = SCREEN_WIDTH / 2 - panelWidth / 2;
     int panelY = SCREEN_HEIGHT / 2 - panelHeight / 2;
 
     render_panel(renderer, panelX, panelY, panelWidth, panelHeight);
+
+    // Optional: Generate Menu Title
+    if (title != NULL)
+    {
+        SDL_Color titleColor = white;
+        SDL_Surface *titleSurface = TTF_RenderText_Solid(font, title, titleColor);
+        SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+
+        SDL_Rect titleRect = {
+            panelX + panelWidth / 2 - titleSurface->w / 2,
+            panelY + paddingY,
+            titleSurface->w,
+            titleSurface->h};
+
+        SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+        SDL_FreeSurface(titleSurface);
+        SDL_DestroyTexture(titleTexture);
+    }
+
+    int optionStartY = panelY + paddingY + titleHeight;
 
     for (int i = 0; i < optionCount; i++)
     {
@@ -60,7 +83,7 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *options[], 
 
         SDL_Rect dst = {
             panelX + paddingX + (panelWidth - 2 * paddingX) / 2 - surface->w / 2,
-            panelY + paddingY + i * 40,
+            optionStartY + i * 40,
             surface->w,
             surface->h};
 
