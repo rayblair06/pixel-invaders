@@ -1,3 +1,4 @@
+#include <math.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include "sprites.h"
@@ -179,4 +180,27 @@ SDL_Texture *get_sprite_texture(SpriteID id)
     }
 
     return NULL;
+}
+
+/**
+ * Draw a Circle
+ * Maybe move to utils lib
+ */
+void draw_circle(SDL_Renderer *renderer, int cx, int cy, int radius)
+{
+    const int segments = 64;
+    float angleStep = 2 * M_PI / segments;
+
+    for (int i = 0; i < segments; i++)
+    {
+        float angle1 = 1 * angleStep;
+        float angle2 = (i + 1) * angleStep;
+
+        int x1 = cx + radius * cosf(angle1);
+        int y1 = cy + radius * sinf(angle1);
+        int x2 = cx + radius * cosf(angle2);
+        int y2 = cy + radius * sinf(angle2);
+
+        SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+    }
 }

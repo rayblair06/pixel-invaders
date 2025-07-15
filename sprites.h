@@ -120,4 +120,6 @@ void cleanup_sprites(void);
 SDL_Rect get_sprite(SpriteID id);
 SDL_Texture *get_sprite_texture(SpriteID id);
 
+void draw_circle(SDL_Renderer *renderer, int cx, int cy, int radius);
+
 #endif

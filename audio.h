@@ -11,6 +11,7 @@ typedef enum
     SND_PICKUP,
     SND_HIT,
     SND_COUNT,
+    SND_SHIELD_BREAK,
 } SoundID;
 
 typedef enum

@@ -67,6 +67,15 @@ void check_collisions(void)
         if (enemies[i].y > SCREEN_HEIGHT)
         {
             enemies[i].active = false;
+
+            if (hasShield)
+            {
+                hasShield = false; // Shield breaks, no damage
+
+                play_sound(SND_SHIELD_BREAK);
+                break;
+            }
+
             lose_life();
         }
     }

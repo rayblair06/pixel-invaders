@@ -1,3 +1,4 @@
+#include <math.h>
 #include <SDL2/SDL_mixer.h>
 #include "audio.h"
 #include "constants.h"
@@ -132,6 +133,26 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
     else
     {
         src = get_sprite(SPR_PLAYER);
+    }
+
+    // Render shield around player
+    if (hasShield)
+    {
+        float time = SDL_GetTicks() / 1000.0f;
+
+        float pulse = sinf(time * 4.0f) * 2.0f;
+
+        // Pulse Size
+        int baseRadius = 28;
+        int radius = baseRadius + (int)pulse;
+
+        // Pulse Colour
+        // Blue (0,128,255) to Cyan (0,255,255)
+        Uint8 green = (Uint8)(128 + (127 * (pulse + 1) / 2));
+
+        SDL_SetRenderDrawColor(renderer, 0, green, 255, 255);
+
+        draw_circle(renderer, player.x + player.w / 2, player.y + player.h / 2, radius);
     }
 
     SDL_Rect dst = player.rect;
