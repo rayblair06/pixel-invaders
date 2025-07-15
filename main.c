@@ -23,15 +23,6 @@ const char *mainMenuOptions[] = {"Start Game", "Quit"};
 int selectedMenuOption = 0;
 const int mainMenuOptionCount = 2;
 
-const char *upgrade_names[] = {
-    "Player Speed",
-    "Bullet Speed",
-    "Multi-Shot",
-    "Health Regen",
-    "Shield",
-    "Pickup Magnet",
-};
-
 void debug_log(const char *format, ...)
 {
     va_list args;

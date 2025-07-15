@@ -13,6 +13,7 @@ typedef enum
     UPGRADE_COUNT
 } UpgradeType;
 
+extern const char *upgrade_names[];
 extern UpgradeType options[UPGRADE_COUNT];
 extern int optionCount;
 

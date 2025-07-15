@@ -2,6 +2,15 @@
 #include "player.h"
 #include "upgrades.h"
 
+const char *upgrade_names[] = {
+    "Player Speed",
+    "Bullet Speed",
+    "Multi-Shot",
+    "Health Regen",
+    "Shield",
+    "Pickup Magnet",
+};
+
 UpgradeType options[UPGRADE_COUNT] = {
     UPGRADE_PLAYER_SPEED,
     UPGRADE_BULLET_SPEED,

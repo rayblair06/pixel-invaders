@@ -1,3 +1,4 @@
+#include <math.h>
 #include "constants.h"
 #include "pickups.h"
 #include "player.h"
@@ -73,6 +74,23 @@ void tick_pickups(void)
             pickups[i].active = false;
 
             add_experience(100);
+        }
+
+        // Player Magnet
+        if (hasPickupMagnet)
+        {
+            float dx = player.x + player.w / 2 - pickups[i].x;
+            float dy = player.y + player.h / 2 - pickups[i].y;
+            float distance = sqrtf(dx * dx + dy * dy);
+
+            float magnetRange = 150.f;    // How far the feffect pulls from
+            float managetStrength = 3.0f; // Pull speed
+
+            if (distance < magnetRange)
+            {
+                pickups[i].x += (dx / distance) * managetStrength;
+                pickups[i].y += (dy / distance) * managetStrength;
+            }
         }
     }
 }
