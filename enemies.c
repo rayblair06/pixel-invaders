@@ -11,6 +11,12 @@ Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
 
 // Enemy Animation Frames
+typedef struct
+{
+    SpriteID frameA;
+    SpriteID frameB;
+} EnemySpriteFrames;
+
 const EnemySpriteFrames enemySprites[] = {
     [ENEMY_BASIC] = {SPR_INVADER1_A, SPR_INVADER1_B},
     [ENEMY_FAST] = {SPR_INVADER2_A, SPR_INVADER2_B},
@@ -64,21 +70,12 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     Uint32 now = SDL_GetTicks();
 
-    // Toggle enemy animations
-    if (now - lastFrameSwitch > frameInterval)
-    {
-        enemyFrameToggle = !enemyFrameToggle;
-        lastFrameSwitch = SDL_GetTicks();
-    }
-
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         if (!enemies[i].active)
             continue;
 
-        // Alternative animation frame
-        EnemyType type = enemies[i].type;
-        SpriteID frame = enemyFrameToggle ? enemySprites[type].frameB : enemySprites[type].frameA;
+        SpriteID frame = get_enemy_sprite(&enemies[i]);
 
         SDL_Rect src = get_sprite(frame);
         SDL_Texture *texture = get_sprite_texture(frame);
@@ -88,6 +85,20 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.y += shakeY;
 
         SDL_RenderCopy(renderer, texture, &src, &dst);
+    }
+}
+
+/**
+ * Toggle enemy animations
+ */
+void update_enemy_animation_state(void)
+{
+    Uint32 now = SDL_GetTicks();
+
+    if (now - lastFrameSwitch > frameInterval)
+    {
+        enemyFrameToggle = !enemyFrameToggle;
+        lastFrameSwitch = now;
     }
 }
 
@@ -105,16 +116,16 @@ Enemy create_enemy(float x, float y, EnemyType type)
     switch (type)
     {
     case ENEMY_BASIC:
-        enemy.speed = 1.0f;
         enemy.health = 1;
+        enemy.speed = 1.0f;
         break;
     case ENEMY_FAST:
-        enemy.speed = 2.0f;
         enemy.health = 1;
+        enemy.speed = 2.0f;
         break;
     case ENEMY_TANK:
-        enemy.speed = 0.5;
         enemy.health = 3;
+        enemy.speed = 0.5;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing
@@ -122,4 +133,10 @@ Enemy create_enemy(float x, float y, EnemyType type)
     }
 
     return enemy;
+}
+
+SpriteID get_enemy_sprite(const Enemy *enemy)
+{
+    EnemySpriteFrames frames = enemySprites[enemy->type];
+    return enemyFrameToggle ? frames.frameB : frames.frameA;
 }

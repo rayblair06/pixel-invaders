@@ -159,6 +159,7 @@ int main(int argc, char *argv[])
             render_player(renderer, shakeOffsetX, shakeOffsetY);
             render_bullets(renderer, shakeOffsetX, shakeOffsetY);
             render_enemies(renderer, shakeOffsetX, shakeOffsetY);
+            update_enemy_animation_state();
             render_pickups(renderer, shakeOffsetX, shakeOffsetY);
 
             tick_player(keystate);

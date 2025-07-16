@@ -7,6 +7,8 @@
 
 #define MAX_ENEMIES 50
 
+struct Enemy;
+
 typedef enum
 {
     ENEMY_BASIC,
@@ -15,16 +17,13 @@ typedef enum
     ENEMY_TYPE_COUNT
 } EnemyType;
 
-typedef struct
-{
-    SpriteID frameA;
-    SpriteID frameB;
-} EnemySpriteFrames;
+typedef void (*EnemyBehaviour)(struct Enemy *);
 
 typedef struct
 {
     Entity entity;
     EnemyType type;
+    EnemyBehaviour tick;
     bool active;
 
     int health;
@@ -38,7 +37,9 @@ void init_enemies(void);
 void spawn_enemy(float x, float y, EnemyType type);
 void tick_enemies(void);
 void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY);
+void update_enemy_animation_state(void);
 
 Enemy create_enemy(float x, float y, EnemyType type);
+SpriteID get_enemy_sprite(const Enemy *enemy);
 
 #endif
