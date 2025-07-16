@@ -33,6 +33,9 @@ typedef struct
 extern Enemy enemies[MAX_ENEMIES];
 extern float enemySpeed;
 
+extern float enemyHealthMultiplier;
+extern float enemySpeedMultiplier;
+
 void init_enemies(void);
 void spawn_enemy(float x, float y, EnemyType type);
 void tick_enemies(void);

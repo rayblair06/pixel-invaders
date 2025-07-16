@@ -7,6 +7,9 @@
 Enemy enemies[MAX_ENEMIES];
 float enemySpeed = 1.0f;
 
+float enemyHealthMultiplier = 1.0f;
+float enemySpeedMultiplier = 1.0f;
+
 bool enemyFrameToggle = false;
 Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms

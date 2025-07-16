@@ -147,11 +147,21 @@ void tick_waves(void)
         int enemiesToSpawn = wave + 2;
         int spawned = 0;
 
+        const int cols = 6;
+        const int spacing = 60;
+        float startX = 100;
+        float startY = 50;
+
         for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
         {
+            int col = i % cols;
+            int row = i / cols;
+            float x = startX + col * spacing;
+            float y = startY + row * spacing;
+
             spawn_enemy(
-                rand() % (SCREEN_WIDTH - enemies[i].entity.rect.w),
-                0,
+                x,
+                y,
                 ENEMY_BASIC);
 
             spawned++;

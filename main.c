@@ -146,12 +146,6 @@ int main(int argc, char *argv[])
                 init_enemies();
                 init_pickups();
 
-                // Manually activate 5 enemies
-                for (int i = 0; i < 5; i++)
-                {
-                    spawn_enemy(100 + i * 120, 50, ENEMY_BASIC);
-                }
-
                 initialiseGameProps = false;
             }
 
