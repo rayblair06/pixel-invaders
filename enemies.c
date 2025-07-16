@@ -66,8 +66,13 @@ void tick_enemies(void)
 
         move(&enemies[i].entity, DOWN, enemySpeed);
 
+        if (enemies[i].entity.y > 0)
+        {
+            enemies[i].canShoot = true;
+        }
+
         // Only basic shoot
-        if (enemies[i].type == ENEMY_BASIC)
+        if (enemies[i].type == ENEMY_BASIC && enemies[i].canShoot)
         {
             if (rand() % 500 == 0)
             {
@@ -141,7 +146,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         break;
     case ENEMY_TANK:
         enemy.health = baseEnemyHealth * 3;
-        enemy.speed = baseEnemySpeed * 0.5;
+        enemy.speed = baseEnemySpeed * 0.5f;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing

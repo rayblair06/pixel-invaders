@@ -66,8 +66,11 @@ static void spawn_wave(void)
         int jitterX = (rand() % (JITTER * 2 + 1)) - JITTER;
         int jitterY = (rand() % (JITTER * 2 + 1)) - JITTER;
 
+        // Generate new enemies off screen
+        int offScreenDiff = (SCREEN_HEIGHT / 2);
+
         float x = gridX + col * CELL_WIDTH + jitterX;
-        float y = gridY + row * CELL_HEIGHT + jitterY;
+        float y = gridY + row * CELL_HEIGHT + jitterY - offScreenDiff;
 
         // Enemy Type based on wave
         EnemyType type = ENEMY_BASIC;

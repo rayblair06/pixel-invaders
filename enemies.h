@@ -25,6 +25,7 @@ typedef struct
     EnemyType type;
     EnemyBehaviour tick;
     bool active;
+    bool canShoot;
 
     int health;
     float speed;
