@@ -26,11 +26,6 @@ bool flashRed = false;
 Uint32 flashStartTime = 0;
 Uint32 flashDuration = 200; // ms
 
-// Waves
-int wave = 1;
-Uint32 lastWaveTime = 0;
-Uint32 waveInterval = 3000; // ms
-
 void init_game(void)
 {
     score = 0;
@@ -120,53 +115,6 @@ void trigger_red_flash(void)
 {
     flashRed = true;
     flashStartTime = SDL_GetTicks();
-}
-
-/**
- * Handle all of our 'tick' functionality of spawning new enemies within the main game loop
- */
-void tick_waves(void)
-{
-    // Waves!
-    Uint32 now = SDL_GetTicks();
-
-    // If we're making a selection, don't generate new waves
-    if (isLevelUpPending)
-    {
-        // lastWaveTime = lastWaveTime + now;
-    }
-
-    if (!isGameOver && now - lastWaveTime > waveInterval)
-    {
-        // Time for next wave!
-        lastWaveTime = now;
-        wave++;
-
-        // Spawn enemies for this wave
-        // Progressively more each wave
-        int enemiesToSpawn = wave + 2;
-        int spawned = 0;
-
-        const int cols = 6;
-        const int spacing = 60;
-        float startX = 100;
-        float startY = 50;
-
-        for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
-        {
-            int col = i % cols;
-            int row = i / cols;
-            float x = startX + col * spacing;
-            float y = startY + row * spacing;
-
-            spawn_enemy(
-                x,
-                y,
-                ENEMY_BASIC);
-
-            spawned++;
-        }
-    }
 }
 
 void add_score(int amount)

@@ -3,6 +3,7 @@
 #include "enemies.h"
 #include "game.h"
 #include "sprites.h"
+#include "waves.h"
 
 Enemy enemies[MAX_ENEMIES];
 float enemySpeed = 1.0f;
@@ -131,16 +132,16 @@ Enemy create_enemy(float x, float y, EnemyType type)
     switch (type)
     {
     case ENEMY_BASIC:
-        enemy.health = 1;
-        enemy.speed = 1.0f;
+        enemy.health = baseEnemyHealth * 1;
+        enemy.speed = baseEnemySpeed * 1.0f;
         break;
     case ENEMY_FAST:
-        enemy.health = 1;
-        enemy.speed = 2.0f;
+        enemy.health = baseEnemyHealth * 1;
+        enemy.speed = baseEnemySpeed * 2.0f;
         break;
     case ENEMY_TANK:
-        enemy.health = 3;
-        enemy.speed = 0.5;
+        enemy.health = baseEnemyHealth * 3;
+        enemy.speed = baseEnemySpeed * 0.5;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing

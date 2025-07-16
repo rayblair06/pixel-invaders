@@ -1,23 +1,130 @@
 #include <stdbool.h>
+#include "constants.h"
 #include "enemies.h"
+#include "game.h"
 #include "waves.h"
 
-WaveConfig get_wave_config(int waveNumber)
+int wave = 1;
+int baseEnemyHealth = 1;
+int baseEnemySpeed = 1;
+
+static Uint32 lastWaveTime = 0;
+static const Uint32 waveDelay = 3000;
+static bool waveActive = false;
+
+#define GRID_COLS 8
+#define GRID_ROWS 5
+#define CELL_WIDTH 80
+#define CELL_HEIGHT 50
+#define JITTER 12
+
+void init_waves(void)
 {
-    WaveConfig wave = {0};
+    wave = 1;
+    waveActive = true;
+    lastWaveTime = SDL_GetTicks();
+    baseEnemyHealth = 1;
+    baseEnemySpeed = 1;
+}
 
-    if (waveNumber % 5 == 0)
+static void spawn_wave(void)
+{
+    int totalEnemies = 5 + wave * 2;
+
+    int gridX = (SCREEN_WIDTH - GRID_COLS * CELL_WIDTH) / 2;
+    int gridY = 50;
+
+    // Prepare grid position
+    int positions[GRID_COLS * GRID_ROWS];
+    int available = 0;
+
+    for (int row = 0; row < GRID_ROWS; row++)
     {
-        wave.type = WAVE_TYPE_BOSS;
-        wave.isBoss = true;
-    }
-    else
-    {
-        wave.type = WAVE_TYPE_MIXED;
-        wave.basicCount = 3 + waveNumber;
-        wave.fastCount = waveNumber >= 3 ? 2 : 0;
-        wave.tankCount = waveNumber >= 4 ? 1 : 0;
+        for (int col = 0; col < GRID_COLS; col++)
+        {
+            positions[available++] = row * GRID_COLS + col;
+        }
     }
 
-    return wave;
+    // Shuffle grid positions
+    for (int i = available - 1; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+        int temp = positions[i];
+
+        positions[i] = positions[j];
+        positions[j] = temp;
+    }
+
+    // Spawn enemies
+    for (int i = 0; i < totalEnemies && i < available; i++)
+    {
+        int position = positions[i];
+        int row = position / GRID_COLS;
+        int col = position % GRID_COLS;
+
+        int jitterX = (rand() % (JITTER * 2 + 1)) - JITTER;
+        int jitterY = (rand() % (JITTER * 2 + 1)) - JITTER;
+
+        float x = gridX + col * CELL_WIDTH + jitterX;
+        float y = gridY + row * CELL_HEIGHT + jitterY;
+
+        // Enemy Type based on wave
+        EnemyType type = ENEMY_BASIC;
+        if (wave >= 3)
+            type = rand() % ENEMY_TYPE_COUNT;
+
+        spawn_enemy(x, y, type);
+    }
+
+    waveActive = true;
+}
+
+/**
+ * Handle all of our 'tick' functionality of spawning new enemies within the main game loop
+ */
+void tick_waves(void)
+{
+    int alive = 0;
+
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        if (enemies[i].active)
+            alive++;
+    }
+
+    if (alive == 0 && !waveActive)
+    {
+        Uint32 now = SDL_GetTicks();
+
+        if (now - lastWaveTime > waveDelay)
+        {
+            // check for boss
+            if (wave % 5 == 0)
+            {
+                // Spawn a boss here instead
+                spawn_enemy(SCREEN_WIDTH / 2 - 32, 50, ENEMY_TANK);
+            }
+            else
+            {
+                spawn_wave();
+            }
+
+            wave++;
+            waveActive = false;
+
+            // Every 5 waves, increase base difficulty
+            if (wave % 5 == 1)
+            {
+                baseEnemyHealth++;
+                baseEnemySpeed++;
+            }
+
+            lastWaveTime = now;
+        }
+    }
+
+    // If enemies still alive, keep wave marked active
+    if (alive > 0)
+        waveActive = false;
 }

@@ -19,6 +19,7 @@
         "sprites.c",
         "ui.c",
         "upgrades.c",
+        "waves.c",
         "-o",
         "build/game",
         "-I/opt/homebrew/include",

@@ -28,10 +28,6 @@ extern bool flashRed;
 extern Uint32 flashStartTime;
 extern Uint32 flashDuration;
 
-extern int wave;
-extern Uint32 lastWaveTime;
-extern Uint32 waveInterval;
-
 void init_game(void);
 void render_background(SDL_Renderer *renderer);
 
