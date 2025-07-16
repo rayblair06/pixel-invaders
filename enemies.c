@@ -1,4 +1,5 @@
 #include "constants.h"
+#include "bullets.h"
 #include "enemies.h"
 #include "game.h"
 #include "sprites.h"
@@ -60,6 +61,17 @@ void tick_enemies(void)
             continue;
 
         move(&enemies[i].entity, DOWN, enemySpeed);
+
+        // Only basic shoot
+        if (enemies[i].type == ENEMY_BASIC)
+        {
+            if (rand() % 500 == 0)
+            {
+                spawn_enemy_bullet(
+                    enemies[i].entity.x + enemies[i].entity.w / 2,
+                    enemies[i].entity.y + enemies[i].entity.h);
+            }
+        }
     }
 }
 

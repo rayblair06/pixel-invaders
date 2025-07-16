@@ -142,6 +142,7 @@ int main(int argc, char *argv[])
                 init_player();
 
                 init_bullets();
+                init_enemy_bullets();
                 init_enemies();
                 init_pickups();
 
@@ -158,12 +159,14 @@ int main(int argc, char *argv[])
 
             render_player(renderer, shakeOffsetX, shakeOffsetY);
             render_bullets(renderer, shakeOffsetX, shakeOffsetY);
+            render_enemy_bullets(renderer, shakeOffsetX, shakeOffsetY);
             render_enemies(renderer, shakeOffsetX, shakeOffsetY);
             update_enemy_animation_state();
             render_pickups(renderer, shakeOffsetX, shakeOffsetY);
 
             tick_player(keystate);
             tick_bullets();
+            tick_enemy_bullets();
             tick_enemies();
             tick_pickups();
             tick_waves();

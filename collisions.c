@@ -48,6 +48,20 @@ void check_collisions(void)
         }
     }
 
+    // --- Bullet vs Player ---
+    for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+    {
+        if (!enemyBullets[i].active)
+            continue;
+
+        if (check_overlap(enemyBullets[i].entity.rect, player.rect))
+        {
+            enemyBullets[i].active = false;
+
+            lose_life();
+        }
+    }
+
     // --- Pickup vs Player ---
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
