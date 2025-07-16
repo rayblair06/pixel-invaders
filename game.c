@@ -150,8 +150,9 @@ void tick_waves(void)
         for (int i = 0; i < MAX_ENEMIES && spawned < enemiesToSpawn; i++)
         {
             spawn_enemy(
-                rand() % (SCREEN_WIDTH - enemies[i].rect.w),
-                0);
+                rand() % (SCREEN_WIDTH - enemies[i].entity.rect.w),
+                0,
+                ENEMY_BASIC);
 
             spawned++;
         }

@@ -26,16 +26,22 @@ void check_collisions(void)
             if (!enemies[j].active)
                 continue;
 
-            if (check_overlap(bullets[i].rect, enemies[j].rect))
+            if (check_overlap(bullets[i].rect, enemies[j].entity.rect))
             {
                 bullets[i].active = false;
-                enemies[j].active = false;
 
-                play_sound(SND_EXPLOSION);
+                enemies[j].health--;
 
-                spawn_pickup(
-                    enemies[j].rect.x + (enemies[j].rect.w / 2),
-                    enemies[j].rect.y);
+                if (enemies[j].health <= 0)
+                {
+                    enemies[j].active = false;
+
+                    play_sound(SND_EXPLOSION);
+
+                    spawn_pickup(
+                        enemies[j].entity.rect.x + (enemies[j].entity.rect.w / 2),
+                        enemies[j].entity.rect.y);
+                }
 
                 break;
             }
@@ -64,7 +70,7 @@ void check_collisions(void)
         if (!enemies[i].active)
             continue;
 
-        if (enemies[i].y > SCREEN_HEIGHT)
+        if (enemies[i].entity.y > SCREEN_HEIGHT)
         {
             enemies[i].active = false;
 
