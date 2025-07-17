@@ -4,7 +4,7 @@
 #include "game.h"
 #include "waves.h"
 
-int wave = 1;
+int wave = 0;
 int baseEnemyHealth = 1;
 int baseEnemySpeed = 1;
 
@@ -20,7 +20,7 @@ static bool waveActive = false;
 
 void init_waves(void)
 {
-    wave = 1;
+    wave = 0;
     waveActive = true;
     lastWaveTime = SDL_GetTicks();
     baseEnemyHealth = 1;
