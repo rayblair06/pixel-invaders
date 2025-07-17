@@ -177,10 +177,16 @@ SpriteID get_enemy_sprite(const Enemy *enemy)
 void damage_enemy(Enemy *enemy)
 {
     enemy->health--;
-    enemy->damageFlashTimer = SDL_GetTicks();
 
-    if (enemy->health <= 0)
+    if (enemy->health > 0)
     {
+        enemy->damageFlashTimer = SDL_GetTicks();
+
+        play_sound(SND_HIT);
+    }
+    else
+    {
+        // They dead, explode
         enemy->active = false;
 
         play_sound(SND_EXPLOSION);
