@@ -29,6 +29,8 @@ typedef struct
 
     int health;
     float speed;
+
+    Uint32 damageFlashTimer;
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];
@@ -45,5 +47,6 @@ void update_enemy_animation_state(void);
 
 Enemy create_enemy(float x, float y, EnemyType type);
 SpriteID get_enemy_sprite(const Enemy *enemy);
+void damage_enemy(Enemy *enemy);
 
 #endif

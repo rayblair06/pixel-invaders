@@ -30,18 +30,7 @@ void check_collisions(void)
             {
                 bullets[i].active = false;
 
-                enemies[j].health--;
-
-                if (enemies[j].health <= 0)
-                {
-                    enemies[j].active = false;
-
-                    play_sound(SND_EXPLOSION);
-
-                    spawn_pickup(
-                        enemies[j].entity.rect.x + (enemies[j].entity.rect.w / 2),
-                        enemies[j].entity.rect.y);
-                }
+                damage_enemy(&enemies[j]);
 
                 break;
             }

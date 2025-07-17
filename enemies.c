@@ -1,7 +1,9 @@
-#include "constants.h"
+#include "audio.h"
 #include "bullets.h"
+#include "constants.h"
 #include "enemies.h"
 #include "game.h"
+#include "pickups.h"
 #include "sprites.h"
 #include "waves.h"
 
@@ -105,7 +107,17 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
+        // Check if recently damaged
+        Uint32 flashDuration = 100; // ms
+        if (now - enemies[i].damageFlashTimer < flashDuration)
+        {
+            SDL_SetTextureColorMod(texture, 255, 64, 64);
+        }
+
         SDL_RenderCopy(renderer, texture, &src, &dst);
+
+        // Reset colour modulartion after drawing
+        SDL_SetTextureColorMod(texture, 255, 255, 255);
     }
 }
 
@@ -137,7 +149,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
     switch (type)
     {
     case ENEMY_BASIC:
-        enemy.health = baseEnemyHealth * 1;
+        enemy.health = baseEnemyHealth * 2;
         enemy.speed = baseEnemySpeed * 1.0f;
         break;
     case ENEMY_FAST:
@@ -145,7 +157,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         enemy.speed = baseEnemySpeed * 2.0f;
         break;
     case ENEMY_TANK:
-        enemy.health = baseEnemyHealth * 3;
+        enemy.health = baseEnemyHealth * 5;
         enemy.speed = baseEnemySpeed * 0.5f;
         break;
     case ENEMY_TYPE_COUNT:
@@ -160,4 +172,21 @@ SpriteID get_enemy_sprite(const Enemy *enemy)
 {
     EnemySpriteFrames frames = enemySprites[enemy->type];
     return enemyFrameToggle ? frames.frameB : frames.frameA;
+}
+
+void damage_enemy(Enemy *enemy)
+{
+    enemy->health--;
+    enemy->damageFlashTimer = SDL_GetTicks();
+
+    if (enemy->health <= 0)
+    {
+        enemy->active = false;
+
+        play_sound(SND_EXPLOSION);
+
+        spawn_pickup(
+            enemy->entity.rect.x + (enemy->entity.rect.w / 2),
+            enemy->entity.rect.y);
+    }
 }
