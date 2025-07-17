@@ -128,7 +128,7 @@ void tick_waves(void)
         if (now - lastWaveTime > waveDelay)
         {
             // check for boss
-            if (wave % 5 == 0)
+            if (wave % 5 == 0 && wave != 0)
             {
                 // Spawn a boss here instead
                 spawn_enemy(SCREEN_WIDTH / 2 - 32, 50, ENEMY_BOSS);
