@@ -15,7 +15,7 @@ bool isPlayerVisible = true;
 int experience = 0;
 int experienceToNextLevel = 300;
 
-int level = 0;
+int level = 1;
 bool isLevelUpPending = false;
 
 bool isPlayerExploding = false;
