@@ -8,7 +8,6 @@
 #include "waves.h"
 
 Enemy enemies[MAX_ENEMIES];
-float enemySpeed = 1.0f;
 
 float enemyHealthMultiplier = 1.0f;
 float enemySpeedMultiplier = 1.0f;
@@ -66,7 +65,36 @@ void tick_enemies(void)
         if (!enemies[i].active)
             continue;
 
-        move(&enemies[i].entity, DOWN, enemySpeed);
+        Uint32 fadeDuration = 500; // ms
+
+        Uint32 now = SDL_GetTicks();
+
+        // Fade out on death
+        if (enemies[i].isFadingOut)
+        {
+            Uint32 elapsed = now - enemies[i].fadeStartTime;
+            float t = elapsed / (float)fadeDuration;
+            if (t >= 1.0f)
+            {
+                enemies[i].active = false;
+                enemies[i].isFadingOut = false;
+
+                play_sound(SND_EXPLOSION);
+
+                spawn_pickup(
+                    enemies[i].entity.rect.x + (enemies[i].entity.rect.w / 2),
+                    enemies[i].entity.rect.y);
+            }
+            else
+            {
+                enemies[i].alpha = 255 * (1.0f - t);
+            }
+
+            // Skip all actions dying
+            continue;
+        }
+
+        move(&enemies[i].entity, DOWN, enemies[i].speed);
 
         if (enemies[i].entity.y > 0)
         {
@@ -98,6 +126,8 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         if (!enemies[i].active)
             continue;
 
+        Uint32 flashDuration = 100; // ms
+
         SpriteID frame = get_enemy_sprite(&enemies[i]);
 
         SDL_Rect src = get_sprite(frame);
@@ -107,8 +137,12 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
+        if (enemies[i].isFadingOut)
+        {
+            SDL_SetTextureAlphaMod(texture, enemies[i].alpha);
+        }
+
         // Check if recently damaged
-        Uint32 flashDuration = 100; // ms
         if (now - enemies[i].damageFlashTimer < flashDuration)
         {
             SDL_SetTextureColorMod(texture, 255, 64, 64);
@@ -116,8 +150,9 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         SDL_RenderCopy(renderer, texture, &src, &dst);
 
-        // Reset colour modulartion after drawing
+        // Reset colours and alpha
         SDL_SetTextureColorMod(texture, 255, 255, 255);
+        SDL_SetTextureAlphaMod(texture, 255);
     }
 }
 
@@ -186,13 +221,9 @@ void damage_enemy(Enemy *enemy)
     }
     else
     {
-        // They dead, explode
-        enemy->active = false;
-
-        play_sound(SND_EXPLOSION);
-
-        spawn_pickup(
-            enemy->entity.rect.x + (enemy->entity.rect.w / 2),
-            enemy->entity.rect.y);
+        // They dead, fade out and deactivate
+        enemy->isFadingOut = true;
+        enemy->fadeStartTime = SDL_GetTicks();
+        enemy->alpha = 255;
     }
 }

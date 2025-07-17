@@ -26,6 +26,9 @@ void check_collisions(void)
             if (!enemies[j].active)
                 continue;
 
+            if (enemies[j].isFadingOut)
+                continue;
+
             if (check_overlap(bullets[i].rect, enemies[j].entity.rect))
             {
                 bullets[i].active = false;

@@ -31,6 +31,10 @@ typedef struct
     float speed;
 
     Uint32 damageFlashTimer;
+
+    bool isFadingOut;
+    Uint32 fadeStartTime;
+    Uint8 alpha;
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];
