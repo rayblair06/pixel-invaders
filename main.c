@@ -42,9 +42,6 @@ bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
 
 int main(int argc, char *argv[])
 {
-    // Initialized game state
-    init_game();
-
     bool choosingUpgrade = false;
     int selectedOption = 0;
 

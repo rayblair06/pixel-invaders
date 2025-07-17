@@ -5,6 +5,7 @@
 #include "game.h"
 #include "player.h"
 #include "sprites.h"
+#include "waves.h"
 
 int score = 0;
 int lives = 3;
@@ -33,6 +34,8 @@ void init_game(void)
     isGameOver = isEntitiesFrozen = false;
     shakeOffsetX = shakeOffsetY = 0;
     shakeTimer = 0;
+
+    init_waves();
 }
 
 /**

@@ -21,7 +21,7 @@ static bool waveActive = false;
 void init_waves(void)
 {
     wave = 0;
-    waveActive = true;
+    waveActive = false;
     lastWaveTime = SDL_GetTicks();
     baseEnemyHealth = 1;
     baseEnemySpeed = 1;
