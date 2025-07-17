@@ -14,6 +14,8 @@ typedef enum
     ENEMY_BASIC,
     ENEMY_FAST,
     ENEMY_TANK,
+    ENEMY_SHOOTER,
+    ENEMY_BOSS,
     ENEMY_TYPE_COUNT
 } EnemyType;
 

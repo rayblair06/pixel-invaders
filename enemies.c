@@ -27,6 +27,8 @@ const EnemySpriteFrames enemySprites[] = {
     [ENEMY_BASIC] = {SPR_INVADER1_A, SPR_INVADER1_B},
     [ENEMY_FAST] = {SPR_INVADER2_A, SPR_INVADER2_B},
     [ENEMY_TANK] = {SPR_INVADER3_A, SPR_INVADER3_B},
+    [ENEMY_SHOOTER] = {SPR_INVADER4_A, SPR_INVADER4_B},
+    [ENEMY_BOSS] = {SPR_INVADER5_A, SPR_INVADER5_B},
 };
 
 /**
@@ -193,6 +195,14 @@ Enemy create_enemy(float x, float y, EnemyType type)
         break;
     case ENEMY_TANK:
         enemy.health = baseEnemyHealth * 5;
+        enemy.speed = baseEnemySpeed * 0.5f;
+        break;
+    case ENEMY_SHOOTER:
+        enemy.health = baseEnemyHealth * 2;
+        enemy.speed = baseEnemySpeed * 2.0f;
+        break;
+    case ENEMY_BOSS:
+        enemy.health = baseEnemyHealth * 8;
         enemy.speed = baseEnemySpeed * 0.5f;
         break;
     case ENEMY_TYPE_COUNT:

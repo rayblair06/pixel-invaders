@@ -73,9 +73,34 @@ static void spawn_wave(void)
         float y = gridY + row * CELL_HEIGHT + jitterY - offScreenDiff;
 
         // Enemy Type based on wave
-        EnemyType type = ENEMY_BASIC;
-        if (wave >= 3)
-            type = rand() % ENEMY_TYPE_COUNT;
+        EnemyType typesAvailable[ENEMY_TYPE_COUNT];
+        int typesCount = 0;
+
+        // Only basic before wave 3
+        if (wave < 3)
+        {
+            typesAvailable[typesCount++] = ENEMY_BASIC;
+        }
+        else if (wave < 7)
+        {
+            typesAvailable[typesCount++] = ENEMY_BASIC;
+            typesAvailable[typesCount++] = ENEMY_FAST;
+        }
+        else if (wave < 10)
+        {
+            typesAvailable[typesCount++] = ENEMY_BASIC;
+            typesAvailable[typesCount++] = ENEMY_FAST;
+            typesAvailable[typesCount++] = ENEMY_TANK;
+        }
+        else
+        {
+            typesAvailable[typesCount++] = ENEMY_BASIC;
+            typesAvailable[typesCount++] = ENEMY_FAST;
+            typesAvailable[typesCount++] = ENEMY_TANK;
+            typesAvailable[typesCount++] = ENEMY_SHOOTER;
+        }
+
+        EnemyType type = typesAvailable[rand() % typesCount];
 
         spawn_enemy(x, y, type);
     }
@@ -106,7 +131,7 @@ void tick_waves(void)
             if (wave % 5 == 0)
             {
                 // Spawn a boss here instead
-                spawn_enemy(SCREEN_WIDTH / 2 - 32, 50, ENEMY_TANK);
+                spawn_enemy(SCREEN_WIDTH / 2 - 32, 50, ENEMY_BOSS);
             }
             else
             {
