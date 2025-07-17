@@ -1,6 +1,52 @@
+#include <stdbool.h>
 #include "constants.h"
+#include "game.h"
+#include "player.h"
 #include "sprites.h"
 #include "ui.h"
+#include "waves.h"
+
+/**
+ * Helper function for generating text on screen
+ */
+void generate_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y, SDL_Color color)
+{
+    // Create surface and texture from text
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, color);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+    // Define destination rectrangle
+    SDL_Rect textRect = {x, y, textSurface->w, textSurface->h};
+
+    // Render the text
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
+}
+
+/**
+ * Helper function to generate a single stat
+ */
+void render_stat(SDL_Renderer *renderer, TTF_Font *font, const char *label, int value, int x, int y, SDL_Color color)
+{
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "%s : %d", label, value);
+    generate_text(renderer, font, buffer, x, y, color);
+}
+
+/**
+ * Render stats panel
+ */
+void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int lineHeight)
+{
+    SDL_Color white = {225, 255, 255, 255};
+
+    render_stat(renderer, font, "Level", level, x, y, white);
+    render_stat(renderer, font, "Experience", experience, x, y + lineHeight, white);
+    render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 2, white);
+    render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 3, white);
+}
 
 void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
 {

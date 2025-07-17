@@ -170,37 +170,7 @@ int main(int argc, char *argv[])
             update_screen_shake();
             update_red_flash();
 
-            // Convert Experience to string
-            char experienceText[32];
-            sprintf(experienceText, "Experience: %d", experience);
-
-            // Create surface and texture from text
-            SDL_Surface *experienceSurface = TTF_RenderText_Solid(font, experienceText, white);
-            SDL_Texture *experienceTexture = SDL_CreateTextureFromSurface(renderer, experienceSurface);
-
-            // Define destination rectrangle
-            SDL_Rect experienceRect = {10, 10, experienceSurface->w, experienceSurface->h};
-
-            // Render the experience text
-            SDL_RenderCopy(renderer, experienceTexture, NULL, &experienceRect);
-
-            // Display current wave
-            char waveText[32];
-            sprintf(waveText, "Wave: %d", wave);
-
-            SDL_Surface *waveSurface = TTF_RenderText_Solid(font, waveText, white);
-            SDL_Texture *waveTexture = SDL_CreateTextureFromSurface(renderer, waveSurface);
-            SDL_Rect waveRect = {10, 40, waveSurface->w, waveSurface->h};
-            SDL_RenderCopy(renderer, waveTexture, NULL, &waveRect);
-
-            // Draw lives on screen
-            char livesText[32];
-            sprintf(livesText, "Lives: %d", lives);
-
-            SDL_Surface *livesSurface = TTF_RenderText_Solid(font, livesText, white);
-            SDL_Texture *livesTexture = SDL_CreateTextureFromSurface(renderer, livesSurface);
-            SDL_Rect livesRect = {10, 70, livesSurface->w, livesSurface->h};
-            SDL_RenderCopy(renderer, livesTexture, NULL, &livesRect);
+            render_stats_panel(renderer, font, 10, 10, 30);
 
             // Trigger Upgrade Menu delay
             if (isLevelUpPending && !choosingUpgrade)
@@ -253,16 +223,6 @@ int main(int argc, char *argv[])
                     isLevelUpPending = false;
                 }
             }
-
-            // Clean up
-            SDL_FreeSurface(livesSurface);
-            SDL_DestroyTexture(livesTexture);
-
-            SDL_FreeSurface(waveSurface);
-            SDL_DestroyTexture(waveTexture);
-
-            SDL_FreeSurface(experienceSurface);
-            SDL_DestroyTexture(experienceTexture);
 
             // Game Over Screen
             if (isGameOver)
