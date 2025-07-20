@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    TTF_Font *font = TTF_OpenFont("fonts/Roboto-Regular.ttf", 24);
+    TTF_Font *font = TTF_OpenFont("assets/fonts/Roboto-Regular.ttf", 24);
 
     if (!font)
     {
