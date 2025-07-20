@@ -11,7 +11,7 @@ extern Entity player;
 extern float playerSpeed;
 extern bool isPlayerVisible;
 
-extern int experience, experienceToNextLevel;
+extern int experience, experienceTotal, experienceToNextLevel;
 
 extern int level;
 extern bool isLevelUpPending;

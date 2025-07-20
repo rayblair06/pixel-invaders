@@ -13,6 +13,7 @@ float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
 int experience = 0;
+int experienceTotal = 0;
 int experienceToNextLevel = 300;
 
 int level = 1;
@@ -43,7 +44,8 @@ void init_player(void)
 {
     lives = 3;
     level = 1;
-    experience = 0;
+    experience = 0; // Experience this current level
+    experienceTotal = 0;
     experienceToNextLevel = 300;
 
     playerSpeed = 4.0f;
@@ -212,12 +214,13 @@ void trigger_player_explosion()
 void add_experience(int amount)
 {
     experience += amount;
+    experienceTotal += amount;
 
     if (experience >= experienceToNextLevel)
     {
         experience -= experienceToNextLevel;
         level++;
-        experienceToNextLevel += 300;
+        experienceToNextLevel += (int)(100 * pow(level, 1.5));
 
         // generate_upgrade_choices();
         isLevelUpPending = true;

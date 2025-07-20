@@ -2,35 +2,54 @@
 #include "player.h"
 #include "upgrades.h"
 
-const char *upgrade_names[] = {
-    "Player Speed",
-    "Bullet Speed",
-    "Multi-Shot",
-    "Health Regen",
-    "Shield",
-    "Pickup Magnet",
-};
+/**
+ * Upgrade List
+ */
+UpgradeInfo upgrades[UPGRADE_COUNT] = {
+    {UPGRADE_PLAYER_SPEED_1, "Player Speed I", 1, -1},
+    {UPGRADE_PLAYER_SPEED_2, "Player Speed II", 1, UPGRADE_PLAYER_SPEED_1},
+    {UPGRADE_PLAYER_SPEED_3, "Player Speed III", UPGRADE_PLAYER_SPEED_2},
 
-UpgradeType options[UPGRADE_COUNT] = {
-    UPGRADE_PLAYER_SPEED,
-    UPGRADE_BULLET_SPEED,
-    UPGRADE_MULTI_SHOT,
-    UPGRADE_HEALTH_REGEN,
-    UPGRADE_SHIELD,
-    UPGRADE_PICKUP_MAGNET};
+    {UPGRADE_BULLET_SPEED_1, "Bullet Speed I", 1, -1},
+    {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", 1, UPGRADE_BULLET_SPEED_1},
+    {UPGRADE_BULLET_SPEED_3, "Bullet Speed III", 1, UPGRADE_BULLET_SPEED_2},
 
+    {UPGRADE_MULTI_SHOT, "Multi-Shot", 4, -1},
+    {UPGRADE_HEALTH_REGEN, "Health Regen", 4, -1},
+    {UPGRADE_SHIELD, "Shield", 6, -1},
+    {UPGRADE_PICKUP_MAGNET, "Pickup Magnet", 8, -1}};
+
+/**
+ * Which upgrades are active
+ */
+bool upgradesApplied[UPGRADE_COUNT] = {false};
+UpgradeType options[3];
+
+/**
+ * Options for upgrade menu
+ */
 int optionCount = 0;
 
-bool upgradesApplied[UPGRADE_COUNT] = {false};
+void init_upgrades(void)
+{
+    for (int i = 0; i < UPGRADE_COUNT; i++)
+    {
+        upgradesApplied[i] = false;
+    }
+}
 
 void apply_upgrade(UpgradeType upgrade)
 {
     switch (upgrade)
     {
-    case UPGRADE_PLAYER_SPEED:
+    case UPGRADE_PLAYER_SPEED_1:
+    case UPGRADE_PLAYER_SPEED_2:
+    case UPGRADE_PLAYER_SPEED_3:
         playerSpeed += 1.0f;
         break;
-    case UPGRADE_BULLET_SPEED:
+    case UPGRADE_BULLET_SPEED_1:
+    case UPGRADE_BULLET_SPEED_2:
+    case UPGRADE_BULLET_SPEED_3:
         bulletSpeed += 1.5f;
         break;
     case UPGRADE_MULTI_SHOT:
@@ -45,12 +64,21 @@ void apply_upgrade(UpgradeType upgrade)
     case UPGRADE_PICKUP_MAGNET:
         hasPickupMagnet = true;
         break;
-    case UPGRADE_COUNT:
+    default:
         // do nothing
         break;
     }
 
     upgradesApplied[upgrade] = true;
+}
+
+static bool upgrade_is_unlocked(UpgradeInfo upgrade, int playerLevel)
+{
+    if (playerLevel < upgrade.unlockLevel)
+        return false;
+    if (upgrade.prerequisite != -1 && !upgradesApplied[upgrade.prerequisite])
+        return false;
+    return !upgradesApplied[upgrade.type];
 }
 
 void generate_upgrade_choices()
@@ -63,9 +91,9 @@ void generate_upgrade_choices()
 
     for (int i = 0; i < UPGRADE_COUNT; i++)
     {
-        if (!upgradesApplied[i])
+        if (upgrade_is_unlocked(upgrades[i], level))
         {
-            available[availableCount++] = (UpgradeType)i;
+            available[availableCount++] = upgrades[i].type;
         }
     }
 
@@ -79,12 +107,10 @@ void generate_upgrade_choices()
     }
 
     // Pick up to 3 from the shuffled list
-    int maxOptions = (availableCount < 3) ? availableCount : 3;
+    optionCount = (availableCount < 3) ? availableCount : 3;
 
-    for (int i = 0; i < maxOptions; i++)
+    for (int i = 0; i < optionCount; i++)
     {
         options[i] = available[i];
     }
-
-    optionCount = maxOptions;
 }

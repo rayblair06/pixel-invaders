@@ -141,6 +141,7 @@ int main(int argc, char *argv[])
             {
                 // Initialize player position
                 init_player();
+                init_upgrades();
 
                 init_bullets();
                 init_enemy_bullets();
@@ -174,6 +175,10 @@ int main(int argc, char *argv[])
 
             render_stats_panel(renderer, font, 10, 10, 30);
 
+            // Render level up bar
+            float progress = (float)(experienceTotal - experience) / (experienceToNextLevel - experience);
+            SDL_Rect experienceProcessBar = {10, SCREEN_HEIGHT - 20, (int)(progress * 200), 10};
+
             // Trigger Upgrade Menu delay
             if (isLevelUpPending && !choosingUpgrade)
             {
@@ -191,7 +196,7 @@ int main(int argc, char *argv[])
 
                 for (int i = 0; i < optionCount; i++)
                 {
-                    upgrade_labels[i] = upgrade_names[options[i]];
+                    upgrade_labels[i] = upgrades[options[i]].name;
                 }
 
                 render_menu(renderer, font, "Choose an Upgrade", upgrade_labels, optionCount, selectedOption, 32, 32);
