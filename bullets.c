@@ -5,6 +5,7 @@
 
 Entity bullets[MAX_BULLETS];
 float bulletSpeed = 6.0f;
+float bulletDamage = 1.0f;
 
 EnemyBullet enemyBullets[MAX_ENEMY_BULLETS];
 float enemyBulletSpeed = 6.0f;
@@ -62,6 +63,7 @@ void tick_bullets(void)
         if (bullets[i].angle != 0)
         {
             bullets[i].x += cosf(bullets[i].angle) * bulletSpeed;
+            update_entity_rect(&bullets[i]);
         }
 
         // Disactivate when off screen

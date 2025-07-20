@@ -4,7 +4,7 @@
 /**
  * Creates an entity
  */
-Entity create_entity(float x, float y, int w, int h, float angle)
+Entity create_entity(float x, float y, int w, int h)
 {
     Entity entity;
 

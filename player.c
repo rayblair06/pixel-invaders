@@ -176,29 +176,25 @@ void trigger_player_shoot()
         return;
 
     int bulletsFired = hasMultiShot ? 3 : 1;
-    float offSets[] = {0, -10, 10}; // Center, left, right
-    float spreadAngles[] = {-0.2f, 0.0f, 0.2f};
+    float offSets[3] = {0, -10, 10}; // Center, left, right
+    float spreadAngles[3] = {0.0f, 0.0f, 0.0f};
+
+    if (hasSpreadShot)
+    {
+        spreadAngles[0] = -0.2f;
+        spreadAngles[1] = 0.0f;
+        spreadAngles[2] = 0.2f;
+    }
 
     SoundID fireSound = hasMultiShot ? SND_SHOOT : SND_SHOOT;
 
     play_sound(fireSound);
 
-    if (hasSpreadShot)
-    {
-        for (int i = 0; i < bulletsFired; i++)
-        {
-            spawn_bullet(
-                player.x + player.w / 2 + offSets[i],
-                player.y, spreadAngles[i]);
-        }
-
-        return;
-    }
     for (int i = 0; i < bulletsFired; i++)
     {
         spawn_bullet(
             player.x + player.w / 2 + offSets[i],
-            player.y, 0);
+            player.y, spreadAngles[i]);
     }
 }
 

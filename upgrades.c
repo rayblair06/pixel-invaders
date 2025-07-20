@@ -15,6 +15,10 @@ UpgradeInfo upgrades[UPGRADE_COUNT] = {
     {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", 1, UPGRADE_BULLET_SPEED_1},
     {UPGRADE_BULLET_SPEED_3, "Bullet Speed III", 1, UPGRADE_BULLET_SPEED_2},
 
+    {UPGRADE_BULLET_DAMAGE_1, "Bullet Damage I", 1, -1},
+    {UPGRADE_BULLET_DAMAGE_2, "Bullet Damage II", 1, UPGRADE_BULLET_DAMAGE_1},
+    {UPGRADE_BULLET_DAMAGE_3, "Bullet Damage III", 1, UPGRADE_BULLET_SPEED_2},
+
     {UPGRADE_MULTI_SHOT, "Multi-Shot", 4, -1},
     {UPGRADE_SPREAD_SHOT, "Spread-Shot", 4, UPGRADE_MULTI_SHOT},
     {UPGRADE_HEALTH_REGEN, "Health Regen", 4, -1},
@@ -53,6 +57,11 @@ void apply_upgrade(UpgradeType upgrade)
     case UPGRADE_BULLET_SPEED_2:
     case UPGRADE_BULLET_SPEED_3:
         bulletSpeed += 1.5f;
+        break;
+    case UPGRADE_BULLET_DAMAGE_1:
+    case UPGRADE_BULLET_DAMAGE_2:
+    case UPGRADE_BULLET_DAMAGE_3:
+        bulletDamage += 1.5f;
         break;
     case UPGRADE_MULTI_SHOT:
         hasMultiShot = true;

@@ -10,6 +10,7 @@ typedef Entity Bullet;
 
 extern Entity bullets[MAX_BULLETS];
 extern float bulletSpeed;
+extern float bulletDamage;
 
 #define MAX_ENEMY_BULLETS 50
 typedef struct
