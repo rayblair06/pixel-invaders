@@ -84,10 +84,7 @@ jobs:
     # =======================
     - name: Package Game
       run: |
-        OS=${{ matrix.os }}
         ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
-
-        fi
 
     # =======================
     # UPLOAD ARTIFACT
