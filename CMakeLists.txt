@@ -44,16 +44,20 @@ endif()
 # Source files
 # -------------------------------
 set(SOURCES
-    main.c
-    game.c
-    player.c
-    bullets.c
-    enemies.c
-    waves.c
     audio.c
+    bullets.c
+    constants.c
+    collisions.c
+    entity.c
+    enemies.c
+    game.c
+    main.c
+    pickups.c
+    player.c
     sprites.c
     ui.c
-    pickups.c
+    upgrades.c
+    waves.c
 )
 
 # -------------------------------
