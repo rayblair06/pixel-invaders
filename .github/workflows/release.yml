@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # =======================
     # LINUX DEPENDENCIES
@@ -83,14 +83,11 @@ jobs:
     # =======================
     - name: Package Game
       run: |
-        OS=${{ matrix.os }}
         ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
-
-        fi
 
     # Upload build artifacts for use in release job
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: PixelInvaders-${{ matrix.os }}
         path: PixelInvaders-${{ matrix.os }}.zip
@@ -100,7 +97,7 @@ jobs:
     needs: build
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./release-assets
 
