@@ -9,6 +9,7 @@ typedef struct
     bool active;
     float x, y; // Position
     int w, h;   // Size
+    float angle;
 
     SDL_Rect rect;
 

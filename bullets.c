@@ -1,3 +1,4 @@
+#include <math.h>
 #include "constants.h"
 #include "bullets.h"
 #include "sprites.h"
@@ -25,7 +26,7 @@ void init_bullets(void)
 /**
  * Spawn a single Bullet entity
  */
-void spawn_bullet(float x, float y)
+void spawn_bullet(float x, float y, float angle)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -39,6 +40,7 @@ void spawn_bullet(float x, float y)
                 y,
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
+            bullets[i].angle = angle;
 
             break;
         }
@@ -56,6 +58,11 @@ void tick_bullets(void)
             continue;
 
         move(&bullets[i], UP, bulletSpeed);
+
+        if (bullets[i].angle != 0)
+        {
+            bullets[i].x += cosf(bullets[i].angle) * bulletSpeed;
+        }
 
         // Disactivate when off screen
         if (bullets[i].y + bullets[i].h < 0)

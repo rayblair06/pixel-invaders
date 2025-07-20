@@ -22,7 +22,7 @@ extern EnemyBullet enemyBullets[MAX_ENEMY_BULLETS];
 extern float enemyBulletSpeed;
 
 void init_bullets(void);
-void spawn_bullet(float x, float y);
+void spawn_bullet(float x, float y, float angle);
 void tick_bullets(void);
 void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
 

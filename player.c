@@ -20,6 +20,7 @@ int explosionFrameCount = 2;
 
 // Upgrades
 bool hasMultiShot = false;
+bool hasSpreadShot = false;
 bool hasHealthRegen = false;
 bool hasShield = false;
 bool hasPickupMagnet = false;
@@ -176,16 +177,28 @@ void trigger_player_shoot()
 
     int bulletsFired = hasMultiShot ? 3 : 1;
     float offSets[] = {0, -10, 10}; // Center, left, right
+    float spreadAngles[] = {-0.2f, 0.0f, 0.2f};
 
     SoundID fireSound = hasMultiShot ? SND_SHOOT : SND_SHOOT;
 
     play_sound(fireSound);
 
+    if (hasSpreadShot)
+    {
+        for (int i = 0; i < bulletsFired; i++)
+        {
+            spawn_bullet(
+                player.x + player.w / 2 + offSets[i],
+                player.y, spreadAngles[i]);
+        }
+
+        return;
+    }
     for (int i = 0; i < bulletsFired; i++)
     {
         spawn_bullet(
             player.x + player.w / 2 + offSets[i],
-            player.y);
+            player.y, 0);
     }
 }
 
