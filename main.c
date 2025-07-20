@@ -185,6 +185,7 @@ int main(int argc, char *argv[])
             render_stats_panel(renderer, font, 10, 10, 30);
 
             update_experience_visual(deltaTime);
+            render_health_bar(renderer, font, SCREEN_WIDTH - 220, SCREEN_HEIGHT - 20, 200, 10);
             render_xp_bar(renderer, font, 10, SCREEN_HEIGHT - 20, 200, 10);
 
             // Trigger Upgrade Menu delay

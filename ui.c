@@ -44,7 +44,7 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
     SDL_Color white = {225, 255, 255, 255};
 
     render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 0, white);
-    render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 1, white);
+    // render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 1, white);
 }
 
 void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
@@ -144,6 +144,42 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
         SDL_FreeSurface(surface);
         SDL_DestroyTexture(texture);
     }
+}
+
+void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
+{
+    // TODO: Replace these with health
+    int health = lives;
+    int healthTotal = 5;
+
+    SDL_Color white = {255, 255, 255, 255};
+
+    // Draw background bar
+    SDL_Rect bgRect = {x, y, width, height};
+    SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255); // dark grey
+    SDL_RenderFillRect(renderer, &bgRect);
+
+    // Draw filled bar
+    SDL_Rect fillRect = {x, y, (int)(width * ((float)health / healthTotal)), height};
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // red
+    SDL_RenderFillRect(renderer, &fillRect);
+
+    // Draw border
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer, &bgRect);
+
+    // Draw experience text "current / total"
+    char healthLabel[32];
+    sprintf(healthLabel, "%d / %d", health, healthTotal);
+
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, healthLabel, white);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+    SDL_Rect textRect = {x + (width - textSurface->w / 2) / 2, y + (height - textSurface->h / 2) / 2, textSurface->w / 2, textSurface->h / 2};
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
 
 void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
