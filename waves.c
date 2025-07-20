@@ -144,8 +144,8 @@ void tick_waves(void)
             // Every 5 waves, increase base difficulty
             if (wave % 5 == 1)
             {
-                enemyHealthMultiplier + 0.5f;
-                enemySpeedMultiplier + 0.5f;
+                enemyHealthMultiplier = enemyHealthMultiplier + 0.5f;
+                enemySpeedMultiplier = enemySpeedMultiplier + 0.5f;
             }
 
             lastWaveTime = now;
