@@ -1,4 +1,5 @@
 #include "bullets.h"
+#include "level_manager.h"
 #include "player.h"
 #include "upgrades.h"
 
@@ -91,7 +92,7 @@ void generate_upgrade_choices()
 
     for (int i = 0; i < UPGRADE_COUNT; i++)
     {
-        if (upgrade_is_unlocked(upgrades[i], level))
+        if (upgrade_is_unlocked(upgrades[i], playerLevel))
         {
             available[availableCount++] = upgrades[i].type;
         }

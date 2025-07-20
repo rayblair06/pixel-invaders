@@ -9,6 +9,7 @@
 #include "bullets.h"
 #include "enemies.h"
 #include "entity.h"
+#include "level_manager.h"
 #include "game.h"
 #include "sprites.h"
 #include "pickups.h"
@@ -141,6 +142,7 @@ int main(int argc, char *argv[])
             {
                 // Initialize player position
                 init_player();
+                init_level_manager();
                 init_upgrades();
 
                 init_bullets();
@@ -180,7 +182,7 @@ int main(int argc, char *argv[])
             SDL_Rect experienceProcessBar = {10, SCREEN_HEIGHT - 20, (int)(progress * 200), 10};
 
             // Trigger Upgrade Menu delay
-            if (isLevelUpPending && !choosingUpgrade)
+            if (is_level_up_pending() && !choosingUpgrade)
             {
                 generate_upgrade_choices();
 
@@ -227,7 +229,7 @@ int main(int argc, char *argv[])
 
                     choosingUpgrade = false;
                     isEntitiesFrozen = false;
-                    isLevelUpPending = false;
+                    consume_level_up_pending();
                 }
             }
 
@@ -252,7 +254,7 @@ int main(int argc, char *argv[])
             // Debugging!
             debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
             debug_log("Enemy count: %d", sizeof(enemies));
-            debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
+            debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");
 
             debug_log("Options count: %d", optionCount);
 

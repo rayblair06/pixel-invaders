@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include "constants.h"
 #include "game.h"
+#include "level_manager.h"
 #include "player.h"
 #include "sprites.h"
 #include "ui.h"
@@ -42,7 +43,7 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
 {
     SDL_Color white = {225, 255, 255, 255};
 
-    render_stat(renderer, font, "Level", level, x, y, white);
+    render_stat(renderer, font, "Level", playerLevel, x, y, white);
     render_stat(renderer, font, "Experience", experience, x, y + lineHeight, white);
     render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 2, white);
     render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 3, white);

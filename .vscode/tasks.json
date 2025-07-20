@@ -12,6 +12,7 @@
         "collisions.c",
         "entity.c",
         "enemies.c",
+        "level_manager.c",
         "game.c",
         "main.c",
         "pickups.c",

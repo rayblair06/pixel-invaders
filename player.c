@@ -12,13 +12,6 @@ Entity player;
 float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
-int experience = 0;
-int experienceTotal = 0;
-int experienceToNextLevel = 300;
-
-int level = 1;
-bool isLevelUpPending = false;
-
 bool isPlayerExploding = false;
 int explosionFrame = 0;
 Uint32 explosionStartTime = 0;
@@ -43,15 +36,10 @@ Uint32 regenHealthCooldown = 10000; // ms
 void init_player(void)
 {
     lives = 3;
-    level = 1;
-    experience = 0; // Experience this current level
-    experienceTotal = 0;
-    experienceToNextLevel = 300;
 
     playerSpeed = 4.0f;
 
     isPlayerVisible = true;
-    isLevelUpPending = false;
     isPlayerExploding = false;
 
     hasMultiShot = false;
@@ -206,23 +194,4 @@ void trigger_player_explosion()
     isPlayerExploding = true;
     explosionStartTime = SDL_GetTicks();
     explosionFrame = 0;
-}
-
-/**
- * Add experience to player
- */
-void add_experience(int amount)
-{
-    experience += amount;
-    experienceTotal += amount;
-
-    if (experience >= experienceToNextLevel)
-    {
-        experience -= experienceToNextLevel;
-        level++;
-        experienceToNextLevel += (int)(100 * pow(level, 1.5));
-
-        // generate_upgrade_choices();
-        isLevelUpPending = true;
-    }
 }
