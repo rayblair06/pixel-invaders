@@ -13,7 +13,7 @@
 void generate_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y, SDL_Color color)
 {
     // Create surface and texture from text
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, color);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, text, color);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     // Define destination rectrangle
@@ -102,7 +102,7 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     if (title != NULL)
     {
         SDL_Color titleColor = white;
-        SDL_Surface *titleSurface = TTF_RenderText_Solid(font, title, titleColor);
+        SDL_Surface *titleSurface = TTF_RenderText_Blended(font, title, titleColor);
         SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
         SDL_Rect titleRect = {
@@ -123,7 +123,7 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     {
         const char *label = options[i];
 
-        SDL_Surface *surface = TTF_RenderText_Solid(font, label, i == selectedIndex ? yellow : white);
+        SDL_Surface *surface = TTF_RenderText_Blended(font, label, i == selectedIndex ? yellow : white);
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 
         SDL_Rect dst = {
@@ -172,7 +172,7 @@ void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int
     char healthLabel[32];
     sprintf(healthLabel, "%d / %d", health, healthTotal);
 
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, healthLabel, white);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, healthLabel, white);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_Rect textRect = {x + (width - textSurface->w / 2) / 2, y + (height - textSurface->h / 2) / 2, textSurface->w / 2, textSurface->h / 2};
@@ -205,7 +205,7 @@ void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int wid
     char experienceLabel[32];
     sprintf(experienceLabel, "%d / %d", experience, experienceToNextLevel);
 
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, experienceLabel, white);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, experienceLabel, white);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_Rect textRect = {x + (width - textSurface->w / 2) / 2, y + (height - textSurface->h / 2) / 2, textSurface->w / 2, textSurface->h / 2};

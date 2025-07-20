@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
             // Game Over Screen
             if (isGameOver)
             {
-                SDL_Surface *overSurface = TTF_RenderText_Solid(font, "GAME OVER", white);
+                SDL_Surface *overSurface = TTF_RenderText_Blended(font, "GAME OVER", white);
                 SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
                 SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};
                 SDL_RenderCopy(renderer, overTexture, NULL, &overRect);
