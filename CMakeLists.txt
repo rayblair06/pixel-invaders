@@ -56,3 +56,28 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
+
+# Get Git tab or commit hash
+execute_process(
+    COMMAND git describe --tag --always
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_TAG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get build date
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
+
+# Configure version.h
+configure_file(
+    ${CMAKE_SOURCE_DIR}/version.h.in
+    ${CMAKE_BINARY_DIR}/version.h
+)
+
+# Include the generated version.h
+include_directories(${CMAKE_BINARY_DIR})
+
+# Fallback if no version
+if(NOT GIT_TAG)
+    set(GIT_TAG "v0.0.0-unknown")
+endif

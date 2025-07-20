@@ -15,6 +15,7 @@
 #include "player.h"
 #include "ui.h"
 #include "upgrades.h"
+#include "version.h"
 
 GameState gameState = STATE_MAIN_MENU;
 
@@ -106,6 +107,8 @@ int main(int argc, char *argv[])
         {
             render_background(renderer);
             render_menu(renderer, font, "Pixel Invaders", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
+
+            generate_text(renderer, font, GAME_VERSION, 10, SCREEN_HEIGHT - 30, white);
 
             if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
                 selectedMenuOption = (selectedMenuOption - 1 + mainMenuOptionCount) % mainMenuOptionCount;
