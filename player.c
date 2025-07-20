@@ -41,6 +41,7 @@ Uint32 regenHealthCooldown = 10000; // ms
  */
 void init_player(void)
 {
+    lives = 3;
     level = 1;
     experience = 0;
     experienceToNextLevel = 300;
