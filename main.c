@@ -15,6 +15,7 @@
 #include "player.h"
 #include "ui.h"
 #include "upgrades.h"
+#include "waves.h"
 #include "version.h"
 
 GameState gameState = STATE_MAIN_MENU;
@@ -145,6 +146,7 @@ int main(int argc, char *argv[])
                 init_enemy_bullets();
                 init_enemies();
                 init_pickups();
+                init_waves();
 
                 initialiseGameProps = false;
             }
@@ -241,6 +243,20 @@ int main(int argc, char *argv[])
                     gameState = STATE_MAIN_MENU;
                 }
             }
+
+            // Debugging!
+            debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
+            debug_log("Enemy count: %d", sizeof(enemies));
+            debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
+
+            debug_log("Options count: %d", optionCount);
+
+            debug_log("Player move speed: %.f2", playerSpeed);
+            debug_log("Player bullet speed: %f.f2", bulletSpeed);
+            debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
+            debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
+            debug_log("Player hasShield: %s", hasShield ? "true" : "false");
+            debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
         }
 
         memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
@@ -249,20 +265,6 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(renderer);
 
         SDL_Delay(16); // ~60 FPS
-
-        // Debugging!
-        debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
-        debug_log("Enemy count: %d", sizeof(enemies));
-        debug_log("Level up triggered: %s", isLevelUpPending ? "true" : "false");
-
-        debug_log("Options count: %d", optionCount);
-
-        debug_log("Player move speed: %.f2", playerSpeed);
-        debug_log("Player bullet speed: %f.f2", bulletSpeed);
-        debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
-        debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
-        debug_log("Player hasShield: %s", hasShield ? "true" : "false");
-        debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
 
         fflush(stdout);
     }

@@ -13,6 +13,9 @@ float enemyBulletSpeed = 6.0f;
  */
 void init_bullets(void)
 {
+    bulletSpeed = 6.0f;
+    enemyBulletSpeed = 6.0f;
+
     for (int i = 0; i < MAX_BULLETS; i++)
     {
         bullets[i].active = false;

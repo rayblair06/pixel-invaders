@@ -41,6 +41,21 @@ Uint32 regenHealthCooldown = 10000; // ms
  */
 void init_player(void)
 {
+    level = 1;
+    experience = 0;
+    experienceToNextLevel = 300;
+
+    playerSpeed = 4.0f;
+
+    isPlayerVisible = true;
+    isLevelUpPending = false;
+    isPlayerExploding = false;
+
+    hasMultiShot = false;
+    hasHealthRegen = false;
+    hasShield = false;
+    hasPickupMagnet = false;
+
     player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
 }
 
