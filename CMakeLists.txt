@@ -4,13 +4,22 @@ project(PixelInvaders C)
 # Use C11 standard
 set(CMAKE_C_STANDARD 11)
 
+# Windows-specific SDL2 paths
+if (WIN32)
+    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/SDL2/cmake")
+    set(SDL2_IMAGE_DIR "${CMAKE_SOURCE_DIR}/SDL2_image/cmake")
+    set(SDL2_TTF_DIR "${CMAKE_SOURCE_DIR}/SDL2_ttf/cmake")
+    set(SDL2_MIXER_DIR "${CMAKE_SOURCE_DIR}/SDL2_mixer/cmake")
+    set(CMAKE_PREFIX_PATH "${SDL2_DIR};${SDL2_IMAGE_DIR};${SDL2_TTF_DIR};${SDL2_MIXER_DIR}")
+endif()
+
 # Find SDL2 and its extensions
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
-# Add source files
+# Source files
 set(SOURCES
     main.c
     game.c
@@ -24,6 +33,7 @@ set(SOURCES
     pickups.c
 )
 
+# Create executable
 add_executable(PixelInvaders ${SOURCES})
 
 # Include SDL2 headers
@@ -42,22 +52,8 @@ target_link_libraries(PixelInvaders
     ${SDL2_MIXER_LIBRARIES}
 )
 
-# Link SDL2 for Windows
-if (WIN32)
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/SDL2/cmake")
-    set(SDL2_IMAGE_DIR "${CMAKE_SOURCE_DIR}/SDL2_image/cmake")
-    set(SDL2_TTF_DIR "${CMAKE_SOURCE_DIR}/SDL2_ttf/cmake")
-    set(SDL2_MIXER_DIR "${CMAKE_SOURCE_DIR}/SDL2_mixer/cmake")
-
-    set(CMAKE_PREFIX_PATH "${SDL2_DIR};${SDL2_IMAGE_DIR};${SDL2_TTF_DIR};${SDL2_MIXER_DIR}")
-endif()
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-
-# Get Git tab or commit hash
+# --- Versioning ---
+# Get Git tag or commit hash
 execute_process(
     COMMAND git describe --tags --always
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -65,7 +61,12 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Get build date
+# Fallback if no version is found
+if(NOT GIT_TAG)
+    set(GIT_TAG "v0.0.0-unknown")
+endif()
+
+# Build date
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
 # Configure version.h
@@ -74,10 +75,5 @@ configure_file(
     ${CMAKE_BINARY_DIR}/version.h
 )
 
-# Include the generated version.h
+# Include generated version.h
 include_directories(${CMAKE_BINARY_DIR})
-
-# Fallback if no version
-if(NOT GIT_TAG)
-    set(GIT_TAG "v0.0.0-unknown")
-endif
