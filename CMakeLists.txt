@@ -11,7 +11,7 @@ find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 
 # Add source files
-set(SOURECES
+set(SOURCES
     main.c
     game.c
     player.c
@@ -27,7 +27,7 @@ set(SOURECES
 add_executable(PixelInvaders ${SOURCES})
 
 # Include SDL2 headers
-target_include_directories(PixelInvaders, PRIVATE
+target_include_directories(PixelInvaders PRIVATE
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_IMAGE_INCLUDE_DIRS}
     ${SDL2_TTF_INCLUDE_DIRS}
@@ -59,7 +59,7 @@ find_package(SDL2_mixer REQUIRED)
 
 # Get Git tab or commit hash
 execute_process(
-    COMMAND git describe --tag --always
+    COMMAND git describe --tags --always
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE GIT_TAG
     OUTPUT_STRIP_TRAILING_WHITESPACE
