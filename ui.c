@@ -43,10 +43,8 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
 {
     SDL_Color white = {225, 255, 255, 255};
 
-    render_stat(renderer, font, "Level", playerLevel, x, y, white);
-    render_stat(renderer, font, "Experience", experience, x, y + lineHeight, white);
-    render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 2, white);
-    render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 3, white);
+    render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 0, white);
+    render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 1, white);
 }
 
 void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
@@ -146,4 +144,42 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
         SDL_FreeSurface(surface);
         SDL_DestroyTexture(texture);
     }
+}
+
+void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
+{
+    SDL_Color white = {255, 255, 255, 255};
+    float experienceProgress = experienceVisual / (float)experienceToNextLevel;
+
+    // Draw background bar
+    SDL_Rect bgRect = {x, y, width, height};
+    SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255); // dark grey
+    SDL_RenderFillRect(renderer, &bgRect);
+
+    // Draw filled bar
+    SDL_Rect fillRect = {x, y, (int)(width * experienceProgress), height};
+    SDL_SetRenderDrawColor(renderer, 0, 200, 255, 255); // cyan blue
+    SDL_RenderFillRect(renderer, &fillRect);
+
+    // Draw border
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer, &bgRect);
+
+    // Draw experience text "current / required"
+    char experienceLabel[32];
+    sprintf(experienceLabel, "%d / %d", experience, experienceToNextLevel);
+
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, experienceLabel, white);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+    SDL_Rect textRect = {x + (width - textSurface->w / 2) / 2, y + (height - textSurface->h / 2) / 2, textSurface->w / 2, textSurface->h / 2};
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
+
+    // Draw level number overlay
+    char levelLabel[16];
+    sprintf(levelLabel, "Lv %d", playerLevel);
+    generate_text(renderer, font, levelLabel, 220, SCREEN_HEIGHT - 28, white);
 }

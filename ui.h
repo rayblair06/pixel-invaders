@@ -11,4 +11,6 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
 void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h);
 void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY);
 
+void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height);
+
 #endif

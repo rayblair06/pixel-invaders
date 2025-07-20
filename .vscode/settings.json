@@ -16,6 +16,7 @@
     "enemies.h": "c",
     "audio.h": "c",
     "level_manager.h": "c",
-    "upgrades.h": "c"
+    "upgrades.h": "c",
+    "collisions.h": "c"
   }
 }

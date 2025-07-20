@@ -89,9 +89,16 @@ int main(int argc, char *argv[])
 
     SDL_Color white = {225, 255, 255, 255};
 
+    // Start of deltaTime
+    Uint32 lastTick = SDL_GetTicks();
+
     // Main loop
     while (running)
     {
+        Uint32 now = SDL_GetTicks();
+        float deltaTime = (now - lastTick) / 1000.0f;
+        lastTick = now;
+
         // Handle events and keystates
         while (SDL_PollEvent(&event))
         {
@@ -177,9 +184,8 @@ int main(int argc, char *argv[])
 
             render_stats_panel(renderer, font, 10, 10, 30);
 
-            // Render level up bar
-            float progress = (float)(experienceTotal - experience) / (experienceToNextLevel - experience);
-            SDL_Rect experienceProcessBar = {10, SCREEN_HEIGHT - 20, (int)(progress * 200), 10};
+            update_experience_visual(deltaTime);
+            render_xp_bar(renderer, font, 10, SCREEN_HEIGHT - 20, 200, 10);
 
             // Trigger Upgrade Menu delay
             if (is_level_up_pending() && !choosingUpgrade)

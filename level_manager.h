@@ -8,6 +8,7 @@ extern int playerLevel;
 extern int experience;
 extern int experienceTotal;
 extern int experienceToNextLevel;
+extern float experienceVisual;
 
 /**
  * Initialise Level Manager
@@ -28,5 +29,7 @@ bool is_level_up_pending(void);
  * Reset level-up pending flag (after upgrade selection)
  */
 void consume_level_up_pending(void);
+
+void update_experience_visual(float deltaTime);
 
 #endif

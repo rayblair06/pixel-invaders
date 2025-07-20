@@ -8,6 +8,7 @@ int experienceTotal = 0;         // Total amount of experience
 int experienceToNextLevel = 300; // Level 1 starts at 300
 
 static bool isLevelUpPending = false;
+float experienceVisual = 0.0f; // Smoothly animated XP progress
 
 void init_level_manager(void)
 {
@@ -48,4 +49,11 @@ bool is_level_up_pending(void)
 void consume_level_up_pending(void)
 {
     isLevelUpPending = false;
+}
+
+void update_experience_visual(float deltaTime)
+{
+    float targetExperience = (float)experience;
+    float speed = 10.0f; // higher = faster smoothing
+    experienceVisual += (targetExperience - experienceVisual) * deltaTime * speed;
 }
