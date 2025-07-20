@@ -5,10 +5,10 @@ project(PixelInvaders C)
 set(CMAKE_C_STANDARD 11)
 
 # -------------------------------
-# Detect platform
+# Platform-specific SDL2 handling
 # -------------------------------
 if(WIN32)
-    # Windows-specific SDL2 setup (using prebuilt libraries)
+    # Prebuilt SDL2 for Windows
     set(SDL2_DIR "${CMAKE_SOURCE_DIR}/SDL2/cmake")
     set(SDL2_IMAGE_DIR "${CMAKE_SOURCE_DIR}/SDL2_image/cmake")
     set(SDL2_TTF_DIR "${CMAKE_SOURCE_DIR}/SDL2_ttf/cmake")
@@ -22,10 +22,22 @@ if(WIN32)
 else()
     # Use pkg-config on macOS and Linux
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SDL2 REQUIRED sdl2)
-    pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
-    pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
-    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
+
+    # Collect cflags (includes) from pkg-config
+    execute_process(
+        COMMAND pkg-config --cflags sdl2 SDL2_image SDL2_ttf SDL2_mixer
+        OUTPUT_VARIABLE SDL2_PKG_CFLAGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    separate_arguments(SDL2_PKG_CFLAGS)
+
+    # Collect libs (with -L and -l) from pkg-config
+    execute_process(
+        COMMAND pkg-config --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer
+        OUTPUT_VARIABLE SDL2_PKG_LIBS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    separate_arguments(SDL2_PKG_LIBS)
 endif()
 
 # -------------------------------
@@ -45,12 +57,12 @@ set(SOURCES
 )
 
 # -------------------------------
-# Executable
+# Build executable
 # -------------------------------
 add_executable(PixelInvaders ${SOURCES})
 
 # -------------------------------
-# Include directories
+# Include and link
 # -------------------------------
 if(WIN32)
     target_include_directories(PixelInvaders PRIVATE
@@ -66,18 +78,9 @@ if(WIN32)
         ${SDL2_MIXER_LIBRARIES}
     )
 else()
-    target_include_directories(PixelInvaders PRIVATE
-        ${SDL2_INCLUDE_DIRS}
-        ${SDL2_IMAGE_INCLUDE_DIRS}
-        ${SDL2_TTF_INCLUDE_DIRS}
-        ${SDL2_MIXER_INCLUDE_DIRS}
-    )
-    target_link_libraries(PixelInvaders
-        ${SDL2_LIBRARIES}
-        ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES}
-        ${SDL2_MIXER_LIBRARIES}
-    )
+    # Add pkg-config CFLAGS and LIBS
+    target_compile_options(PixelInvaders PRIVATE ${SDL2_PKG_CFLAGS})
+    target_link_options(PixelInvaders PRIVATE ${SDL2_PKG_LIBS})
 endif()
 
 # -------------------------------
