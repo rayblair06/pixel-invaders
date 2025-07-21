@@ -173,7 +173,7 @@ void tick_waves(void)
             waveActive = true;
 
             // Every 5 waves, increase base difficulty
-            if (wave % 5 == 1)
+            if (wave % 5 == 1 && wave != 0)
             {
                 enemyHealthMultiplier = enemyHealthMultiplier + increaseEnemyHealthMultiplier;
                 enemySpeedMultiplier = enemySpeedMultiplier + increaseEnemySpeedMultiplier;
