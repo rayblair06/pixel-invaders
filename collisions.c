@@ -29,11 +29,15 @@ void check_collisions(void)
             if (enemies[j].isFadingOut)
                 continue;
 
-            if (check_overlap(bullets[i].rect, enemies[j].entity.rect))
+            if (check_overlap(bullets[i].entity.rect, enemies[j].entity.rect))
             {
-                bullets[i].active = false;
-
                 damage_enemy(&enemies[j]);
+                bullets[i].pierceCount--;
+
+                if (bullets[i].pierceCount <= 0)
+                {
+                    bullets[i].active = false;
+                }
 
                 break;
             }

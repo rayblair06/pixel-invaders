@@ -9,7 +9,7 @@
 UpgradeInfo upgrades[UPGRADE_COUNT] = {
     {UPGRADE_PLAYER_SPEED_1, "Player Speed I", 1, -1},
     {UPGRADE_PLAYER_SPEED_2, "Player Speed II", 1, UPGRADE_PLAYER_SPEED_1},
-    {UPGRADE_PLAYER_SPEED_3, "Player Speed III", UPGRADE_PLAYER_SPEED_2},
+    {UPGRADE_PLAYER_SPEED_3, "Player Speed III", 1, UPGRADE_PLAYER_SPEED_2},
 
     {UPGRADE_BULLET_SPEED_1, "Bullet Speed I", 1, -1},
     {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", 1, UPGRADE_BULLET_SPEED_1},
@@ -19,8 +19,10 @@ UpgradeInfo upgrades[UPGRADE_COUNT] = {
     {UPGRADE_BULLET_DAMAGE_2, "Bullet Damage II", 1, UPGRADE_BULLET_DAMAGE_1},
     {UPGRADE_BULLET_DAMAGE_3, "Bullet Damage III", 1, UPGRADE_BULLET_SPEED_2},
 
-    {UPGRADE_MULTI_SHOT, "Multi-Shot", 4, -1},
-    {UPGRADE_SPREAD_SHOT, "Spread-Shot", 4, UPGRADE_MULTI_SHOT},
+    {UPGRADE_PIERCE, "Piercing Bullets", 4, -1},
+    {UPGRADE_MULTI_SHOT, "Multi-Shot", 8, -1},
+    {UPGRADE_SPREAD_SHOT, "Spread-Shot", 10, UPGRADE_MULTI_SHOT},
+
     {UPGRADE_HEALTH_REGEN, "Health Regen", 4, -1},
     {UPGRADE_SHIELD, "Shield", 6, -1},
     {UPGRADE_PICKUP_MAGNET, "Pickup Magnet", 8, -1}};
@@ -68,6 +70,9 @@ void apply_upgrade(UpgradeType upgrade)
         break;
     case UPGRADE_SPREAD_SHOT:
         hasSpreadShot = true;
+        break;
+    case UPGRADE_PIERCE:
+        hasPiercing = true;
         break;
     case UPGRADE_HEALTH_REGEN:
         hasHealthRegen = true;

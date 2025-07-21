@@ -21,6 +21,7 @@ int explosionFrameCount = 2;
 // Upgrades
 bool hasMultiShot = false;
 bool hasSpreadShot = false;
+bool hasPiercing = false;
 bool hasHealthRegen = false;
 bool hasShield = false;
 bool hasPickupMagnet = false;

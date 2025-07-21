@@ -22,6 +22,7 @@ extern int explosionFrameCount;
 // Upgrades
 extern bool hasMultiShot;
 extern bool hasSpreadShot;
+extern bool hasPiercing;
 extern bool hasHealthRegen;
 extern bool hasShield;
 extern bool hasPickupMagnet;

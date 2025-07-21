@@ -1,9 +1,10 @@
 #include <math.h>
 #include "constants.h"
 #include "bullets.h"
+#include "player.h"
 #include "sprites.h"
 
-Entity bullets[MAX_BULLETS];
+Bullet bullets[MAX_BULLETS];
 float bulletSpeed = 6.0f;
 float bulletDamage = 1.0f;
 
@@ -36,12 +37,14 @@ void spawn_bullet(float x, float y, float angle)
             // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
             const int entityCenter = SPRITE_DRAW_SIZE / 2;
 
-            bullets[i] = create_entity(
+            bullets[i].active = true;
+            bullets[i].pierceCount = hasPiercing ? 3 : 1;
+            bullets[i].entity = create_entity(
                 x - entityCenter,
                 y,
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
-            bullets[i].angle = angle;
+            bullets[i].entity.angle = angle;
 
             break;
         }
@@ -58,16 +61,16 @@ void tick_bullets(void)
         if (!bullets[i].active)
             continue;
 
-        move(&bullets[i], UP, bulletSpeed);
+        move(&bullets[i].entity, UP, bulletSpeed);
 
-        if (bullets[i].angle != 0)
+        if (bullets[i].entity.angle != 0)
         {
-            bullets[i].x += cosf(bullets[i].angle) * bulletSpeed;
-            update_entity_rect(&bullets[i]);
+            bullets[i].entity.x += cosf(bullets[i].entity.angle) * bulletSpeed;
+            update_entity_rect(&bullets[i].entity);
         }
 
         // Disactivate when off screen
-        if (bullets[i].y + bullets[i].h < 0)
+        if (bullets[i].entity.y + bullets[i].entity.h < 0)
         {
             bullets[i].active = false;
         }
@@ -87,7 +90,7 @@ void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
         if (!bullets[i].active)
             continue;
 
-        SDL_Rect dst = bullets[i].rect;
+        SDL_Rect dst = bullets[i].entity.rect;
         dst.x += shakeX;
         dst.y += shakeY;
 

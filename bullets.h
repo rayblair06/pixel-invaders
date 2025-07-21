@@ -6,13 +6,19 @@
 
 #define MAX_BULLETS 100
 
-typedef Entity Bullet;
+typedef struct
+{
+    Entity entity;
+    bool active;
+    int pierceCount; // number of hits before disappearing
+} Bullet;
 
-extern Entity bullets[MAX_BULLETS];
+extern Bullet bullets[MAX_BULLETS];
 extern float bulletSpeed;
 extern float bulletDamage;
 
 #define MAX_ENEMY_BULLETS 50
+
 typedef struct
 {
     Entity entity;
