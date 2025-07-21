@@ -7,7 +7,6 @@
 #include "sprites.h"
 #include "waves.h"
 
-int score = 0;
 int lives = 3;
 
 bool initialiseGameProps = false;
@@ -29,13 +28,10 @@ Uint32 flashDuration = 200; // ms
 
 void init_game(void)
 {
-    score = 0;
-    score = 3;
+    lives = 3;
     isGameOver = isEntitiesFrozen = false;
     shakeOffsetX = shakeOffsetY = 0;
     shakeTimer = 0;
-
-    init_waves();
 }
 
 /**
@@ -118,11 +114,6 @@ void trigger_red_flash(void)
 {
     flashRed = true;
     flashStartTime = SDL_GetTicks();
-}
-
-void add_score(int amount)
-{
-    score += amount;
 }
 
 /**

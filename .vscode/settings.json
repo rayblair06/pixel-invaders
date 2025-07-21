@@ -17,6 +17,7 @@
     "audio.h": "c",
     "level_manager.h": "c",
     "upgrades.h": "c",
-    "collisions.h": "c"
+    "collisions.h": "c",
+    "bullets.h": "c"
   }
 }

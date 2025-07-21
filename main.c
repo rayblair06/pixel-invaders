@@ -271,6 +271,10 @@ int main(int argc, char *argv[])
             debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
             debug_log("Player hasShield: %s", hasShield ? "true" : "false");
             debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
+            debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
+            debug_log("Spawning wave %d with enemyHealthMultiplier=%.2f\n", wave, enemyHealthMultiplier);
+            debug_log("Spawning wave %d with enemySpeedMultiplier=%.2f\n", wave, enemySpeedMultiplier);
+            debug_log("Spawning wave %d with enemyDamageMultiplier=%.2f\n", wave, enemyDamageMultiplier);
         }
 
         memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);

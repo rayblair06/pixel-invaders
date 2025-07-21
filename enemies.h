@@ -31,6 +31,7 @@ typedef struct
 
     int health;
     float speed;
+    float damage;
 
     Uint32 damageFlashTimer;
 
@@ -40,10 +41,6 @@ typedef struct
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];
-extern float enemySpeed;
-
-extern float enemyHealthMultiplier;
-extern float enemySpeedMultiplier;
 
 void init_enemies(void);
 void spawn_enemy(float x, float y, EnemyType type);

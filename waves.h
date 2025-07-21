@@ -7,6 +7,11 @@ void tick_waves(void);
 extern int wave;
 extern int baseEnemyHealth;
 extern int baseEnemySpeed;
+extern int baseEnemyDamage;
+
+extern float enemyHealthMultiplier;
+extern float enemySpeedMultiplier;
+extern float enemyDamageMultiplier;
 
 // #define GRID_COLS 10
 // #define GRID_ROWS 4

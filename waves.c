@@ -5,8 +5,29 @@
 #include "waves.h"
 
 int wave = 0;
+
+/**
+ * Base Values are starting values, these start at 1 as if 1 is normal.
+ * Maybe if we introduce a 'hardcore' or more difficult mode, these will be set at 2+
+ */
 int baseEnemyHealth = 1;
 int baseEnemySpeed = 1;
+int baseEnemyDamage = 1;
+
+/**
+ * Multipliers start at 1.0f and increase each wave.
+ * Like base values you could maybe start these at a higher value for more difficult modes?
+ */
+float enemyHealthMultiplier = 1.0f;
+float enemySpeedMultiplier = 1.0f;
+float enemyDamageMultiplier = 1.0f;
+
+/**
+ * The amount by which we increase each wave
+ */
+float increaseEnemyHealthMultiplier = 0.5f;
+float increaseEnemySpeedMultiplier = 0.5f;
+float increaseEnemyDamageMultiplier = 0.5f;
 
 static Uint32 lastWaveTime = 0;
 static const Uint32 waveDelay = 3000;
@@ -25,6 +46,15 @@ void init_waves(void)
     lastWaveTime = SDL_GetTicks();
     baseEnemyHealth = 1;
     baseEnemySpeed = 1;
+    baseEnemyDamage = 1;
+
+    enemyHealthMultiplier = 1.0f;
+    enemySpeedMultiplier = 1.0f;
+    enemyDamageMultiplier = 1.0f;
+
+    increaseEnemyHealthMultiplier = 0.5f;
+    increaseEnemySpeedMultiplier = 0.5f;
+    increaseEnemyDamageMultiplier = 0.5f;
 }
 
 static void spawn_wave(void)
@@ -121,6 +151,7 @@ void tick_waves(void)
             alive++;
     }
 
+    // Enemies dead and no wave active, let's spawn some new enemies!
     if (alive == 0 && !waveActive)
     {
         Uint32 now = SDL_GetTicks();
@@ -139,20 +170,27 @@ void tick_waves(void)
             }
 
             wave++;
-            waveActive = false;
+            waveActive = true;
 
             // Every 5 waves, increase base difficulty
             if (wave % 5 == 1)
             {
-                enemyHealthMultiplier = enemyHealthMultiplier + 0.5f;
-                enemySpeedMultiplier = enemySpeedMultiplier + 0.5f;
+                enemyHealthMultiplier = enemyHealthMultiplier + increaseEnemyHealthMultiplier;
+                enemySpeedMultiplier = enemySpeedMultiplier + increaseEnemySpeedMultiplier;
+                enemyDamageMultiplier = enemyDamageMultiplier + increaseEnemyDamageMultiplier;
             }
 
             lastWaveTime = now;
         }
     }
-
     // If enemies still alive, keep wave marked active
-    if (alive > 0)
+    else if (alive > 0)
+    {
+
+        waveActive = true;
+    }
+    else
+    {
         waveActive = false;
+    }
 }

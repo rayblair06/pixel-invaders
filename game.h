@@ -10,7 +10,6 @@ typedef enum
     STATE_GAME_OVER
 } GameState;
 
-extern int score;
 extern int lives;
 extern int wave;
 
@@ -39,7 +38,6 @@ void trigger_red_flash(void);
 
 void tick_waves(void);
 
-void add_score(int amount);
 void lose_life(void);
 
 #endif

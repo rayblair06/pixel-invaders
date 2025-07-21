@@ -9,9 +9,6 @@
 
 Enemy enemies[MAX_ENEMIES];
 
-float enemyHealthMultiplier = 1.0f;
-float enemySpeedMultiplier = 1.0f;
-
 bool enemyFrameToggle = false;
 Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
@@ -177,7 +174,7 @@ void update_enemy_animation_state(void)
  */
 Enemy create_enemy(float x, float y, EnemyType type)
 {
-    Enemy enemy;
+    Enemy enemy = {0}; // Zero all fields
 
     enemy.active = true;
     enemy.type = type;
@@ -186,24 +183,29 @@ Enemy create_enemy(float x, float y, EnemyType type)
     switch (type)
     {
     case ENEMY_BASIC:
-        enemy.health = baseEnemyHealth * 2;
-        enemy.speed = baseEnemySpeed * 1.0f;
+        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.0f;
+        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
     case ENEMY_FAST:
-        enemy.health = baseEnemyHealth * 1;
-        enemy.speed = baseEnemySpeed * 2.0f;
+        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 1.0f);
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 2.0f;
+        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 0.8f;
         break;
     case ENEMY_TANK:
-        enemy.health = baseEnemyHealth * 5;
-        enemy.speed = baseEnemySpeed * 0.5f;
+        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 5.0f);
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
+        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.5f;
         break;
     case ENEMY_SHOOTER:
-        enemy.health = baseEnemyHealth * 2;
-        enemy.speed = baseEnemySpeed * 2.0f;
+        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.5f;
+        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
     case ENEMY_BOSS:
-        enemy.health = baseEnemyHealth * 8;
-        enemy.speed = baseEnemySpeed * 0.5f;
+        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 8.0f);
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
+        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 2.5f;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing
