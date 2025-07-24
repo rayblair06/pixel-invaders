@@ -22,6 +22,7 @@ int explosionFrameCount = 2;
 bool hasMultiShot = false;
 bool hasSpreadShot = false;
 bool hasPiercing = false;
+bool hasExplosive = false;
 bool hasHealthRegen = false;
 bool hasShield = false;
 bool hasPickupMagnet = false;
@@ -204,4 +205,5 @@ void trigger_player_explosion()
     isPlayerExploding = true;
     explosionStartTime = SDL_GetTicks();
     explosionFrame = 0;
+    play_sound(SND_EXPLOSION);
 }

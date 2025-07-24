@@ -32,11 +32,21 @@ void check_collisions(void)
             if (check_overlap(bullets[i].entity.rect, enemies[j].entity.rect))
             {
                 damage_enemy(&enemies[j]);
+
                 bullets[i].pierceCount--;
 
                 if (bullets[i].pierceCount <= 0)
                 {
-                    bullets[i].active = false;
+                    // Explode else disappear
+                    if (hasExplosive)
+                    {
+                        trigger_bullet_explosion(&bullets[i]);
+                        trigger_damage_radius(bullets[i].entity.x, bullets[i].entity.y, 50);
+                    }
+                    else
+                    {
+                        bullets[i].active = false;
+                    }
                 }
 
                 break;
@@ -93,6 +103,19 @@ void check_collisions(void)
             }
 
             lose_life();
+        }
+    }
+
+    // --- Bullets vs top screen ---
+    for (int i = 0; i < MAX_BULLETS; i++)
+    {
+        if (!bullets[i].active)
+            continue;
+
+        // Disactivate when off screen
+        if (bullets[i].entity.y + bullets[i].entity.h < 0)
+        {
+            bullets[i].active = false;
         }
     }
 }

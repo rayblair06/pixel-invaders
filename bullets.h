@@ -11,6 +11,14 @@ typedef struct
     Entity entity;
     bool active;
     int pierceCount; // number of hits before disappearing
+    bool isMoving;
+
+    // Explosion Effect
+    bool isExploding;
+    int explosionFrame;
+    Uint32 explosionStartTime;
+    int explosionFrameDuration; // ms
+    int explosionFrameCount;
 } Bullet;
 
 extern Bullet bullets[MAX_BULLETS];
@@ -32,6 +40,7 @@ void init_bullets(void);
 void spawn_bullet(float x, float y, float angle);
 void tick_bullets(void);
 void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
+void trigger_bullet_explosion(Bullet *bullet);
 
 void init_enemy_bullets(void);
 void spawn_enemy_bullet(float x, float y);

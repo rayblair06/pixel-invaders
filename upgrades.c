@@ -21,7 +21,8 @@ UpgradeInfo upgrades[UPGRADE_COUNT] = {
 
     {UPGRADE_PIERCE, "Piercing Bullets", 4, -1},
     {UPGRADE_MULTI_SHOT, "Multi-Shot", 8, -1},
-    {UPGRADE_SPREAD_SHOT, "Spread-Shot", 10, UPGRADE_MULTI_SHOT},
+    {UPGRADE_EXPLOSIVE, "Explosive Bullets", 10, -1},
+    {UPGRADE_SPREAD_SHOT, "Spread-Shot", 12, UPGRADE_MULTI_SHOT},
 
     {UPGRADE_HEALTH_REGEN, "Health Regen", 4, -1},
     {UPGRADE_SHIELD, "Shield", 6, -1},
@@ -70,6 +71,9 @@ void apply_upgrade(UpgradeType upgrade)
         break;
     case UPGRADE_SPREAD_SHOT:
         hasSpreadShot = true;
+        break;
+    case UPGRADE_EXPLOSIVE:
+        hasExplosive = true;
         break;
     case UPGRADE_PIERCE:
         hasPiercing = true;

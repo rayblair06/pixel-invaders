@@ -1,4 +1,5 @@
 #include <math.h>
+#include "audio.h"
 #include "constants.h"
 #include "bullets.h"
 #include "player.h"
@@ -38,6 +39,7 @@ void spawn_bullet(float x, float y, float angle)
             const int entityCenter = SPRITE_DRAW_SIZE / 2;
 
             bullets[i].active = true;
+            bullets[i].isMoving = true;
             bullets[i].pierceCount = hasPiercing ? 3 : 1;
             bullets[i].entity = create_entity(
                 x - entityCenter,
@@ -45,6 +47,12 @@ void spawn_bullet(float x, float y, float angle)
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
             bullets[i].entity.angle = angle;
+
+            bullets[i].isExploding = false;
+            bullets[i].explosionFrame = 0;
+            bullets[i].explosionStartTime = 0;
+            bullets[i].explosionFrameDuration = 250; // ms
+            bullets[i].explosionFrameCount = 2;
 
             break;
         }
@@ -61,18 +69,29 @@ void tick_bullets(void)
         if (!bullets[i].active)
             continue;
 
-        move(&bullets[i].entity, UP, bulletSpeed);
-
-        if (bullets[i].entity.angle != 0)
+        if (bullets[i].isMoving)
         {
-            bullets[i].entity.x += cosf(bullets[i].entity.angle) * bulletSpeed;
-            update_entity_rect(&bullets[i].entity);
+            move(&bullets[i].entity, UP, bulletSpeed);
+
+            if (bullets[i].entity.angle != 0)
+            {
+                bullets[i].entity.x += cosf(bullets[i].entity.angle) * bulletSpeed;
+                update_entity_rect(&bullets[i].entity);
+            }
         }
 
-        // Disactivate when off screen
-        if (bullets[i].entity.y + bullets[i].entity.h < 0)
+        // Animate Bullet Explosion
+        if (bullets[i].isExploding)
         {
-            bullets[i].active = false;
+            Uint32 elapsed = SDL_GetTicks() - bullets[i].explosionStartTime;
+            bullets[i].explosionFrame = elapsed / bullets[i].explosionFrameDuration;
+
+            if (bullets[i].explosionFrame >= bullets[i].explosionFrameCount)
+            {
+                bullets[i].explosionFrame = bullets[i].explosionFrame - 1;
+                bullets[i].isExploding = false;
+                bullets[i].active = false;
+            }
         }
     }
 }
@@ -82,7 +101,7 @@ void tick_bullets(void)
  */
 void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    SDL_Rect src = get_sprite(SPR_BULLET1);
+    SDL_Rect src;
     SDL_Texture *texture = get_sprite_texture(SPR_BULLET1);
 
     for (int i = 0; i < MAX_BULLETS; i++)
@@ -94,8 +113,28 @@ void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
+        if (bullets[i].isExploding)
+        {
+            SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
+
+            src = get_sprite(explosionSprites[bullets[i].explosionFrame]);
+        }
+        else
+        {
+            src = get_sprite(SPR_BULLET1);
+        }
+
         SDL_RenderCopy(renderer, texture, &src, &dst);
     }
+}
+
+void trigger_bullet_explosion(Bullet *bullet)
+{
+    bullet->isMoving = false;
+    bullet->isExploding = true;
+    bullet->explosionStartTime = SDL_GetTicks();
+    bullet->explosionFrame = 0;
+    play_sound(SND_EXPLOSION);
 }
 
 void init_enemy_bullets(void)

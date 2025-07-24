@@ -30,7 +30,7 @@ float increaseEnemySpeedMultiplier = 0.5f;
 float increaseEnemyDamageMultiplier = 0.5f;
 
 static Uint32 lastWaveTime = 0;
-static const Uint32 waveDelay = 3000;
+static Uint32 waveDelay = 3000;
 static bool waveActive = false;
 
 #define GRID_COLS 8
@@ -48,9 +48,14 @@ void init_waves(void)
     baseEnemySpeed = 1;
     baseEnemyDamage = 1;
 
-    enemyHealthMultiplier = 1.0f;
+    // enemyHealthMultiplier = 1.0f;
+    // enemySpeedMultiplier = 1.0f;
+    // enemyDamageMultiplier = 1.0f;
+
+    // Reduced because I suck at my own game
+    enemyHealthMultiplier = 0.2f;
     enemySpeedMultiplier = 1.0f;
-    enemyDamageMultiplier = 1.0f;
+    enemyDamageMultiplier = 0.2f;
 
     increaseEnemyHealthMultiplier = 0.5f;
     increaseEnemySpeedMultiplier = 0.5f;

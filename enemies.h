@@ -52,4 +52,7 @@ Enemy create_enemy(float x, float y, EnemyType type);
 SpriteID get_enemy_sprite(const Enemy *enemy);
 void damage_enemy(Enemy *enemy);
 
+// Move these to effects?
+void trigger_damage_radius(float x, float y, float radius);
+
 #endif

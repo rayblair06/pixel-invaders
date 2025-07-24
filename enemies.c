@@ -189,7 +189,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         break;
     case ENEMY_FAST:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 1.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 2.0f;
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
         enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 0.8f;
         break;
     case ENEMY_TANK:
@@ -199,7 +199,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         break;
     case ENEMY_SHOOTER:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.5f;
+        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
         enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
     case ENEMY_BOSS:
@@ -237,5 +237,26 @@ void damage_enemy(Enemy *enemy)
         enemy->isFadingOut = true;
         enemy->fadeStartTime = SDL_GetTicks();
         enemy->alpha = 255;
+    }
+}
+
+void trigger_damage_radius(float x, float y, float radius)
+{
+    // Damage all enemies within the radius
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        if (!enemies[i].active)
+        {
+            continue;
+        }
+
+        float dx = enemies[i].entity.x - x;
+        float dy = enemies[i].entity.y - y;
+        float distance = sqrtf(dx * dx + dy * dy);
+
+        if (distance < radius)
+        {
+            damage_enemy(&enemies[i]);
+        }
     }
 }
