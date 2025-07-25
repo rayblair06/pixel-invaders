@@ -68,6 +68,21 @@ void check_collisions(void)
         }
     }
 
+    // --- Enemy vs Player ---
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        if (!enemies[i].active)
+            continue;
+
+        if (check_overlap(enemies[i].entity.rect, player.rect))
+        {
+            // Double damage but enemy instantly disappears
+            reduce_health(enemies[i].damage * 2);
+
+            enemies[i].active = false;
+        }
+    }
+
     // --- Pickup vs Player ---
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
