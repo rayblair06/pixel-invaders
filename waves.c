@@ -10,24 +10,41 @@ int wave = 0;
  * Base Values are starting values, these start at 1 as if 1 is normal.
  * Maybe if we introduce a 'hardcore' or more difficult mode, these will be set at 2+
  */
-int baseEnemyHealth = 1;
-int baseEnemySpeed = 1;
-int baseEnemyDamage = 1;
+const int BASE_ENEMY_HEALTH = 1;
+const int BASE_ENEMY_SPEED = 1;
+const int BASE_ENEMY_DAMAGE = 10;
+
+int baseEnemyHealth;
+int baseEnemySpeed;
+int baseEnemyDamage;
 
 /**
  * Multipliers start at 1.0f and increase each wave.
  * Like base values you could maybe start these at a higher value for more difficult modes?
  */
-float enemyHealthMultiplier = 1.0f;
-float enemySpeedMultiplier = 1.0f;
-float enemyDamageMultiplier = 1.0f;
+const float BASE_HEALTH_MULTLIPLIER = 1.0f;
+const float BASE_SPEED_MULTLIPLIER = 1.0f;
+const float BASE_DAMAGE_MULTLIPLIER = 1.0f;
+
+// Reduced because I suck at my own game
+// BASE_HEALTH_MULTLIPLIER = 0.2f;
+// BASE_SPEED_MULTLIPLIER = 1.0f;
+// BASE_DAMAGE_MULTLIPLIER = 0.2f;
+
+float enemyHealthMultiplier;
+float enemySpeedMultiplier;
+float enemyDamageMultiplier;
 
 /**
  * The amount by which we increase each wave
  */
-float increaseEnemyHealthMultiplier = 0.5f;
-float increaseEnemySpeedMultiplier = 0.5f;
-float increaseEnemyDamageMultiplier = 0.5f;
+const float INCREASE_ENEMY_HEALTH_MULTIPLIER = 0.5f;
+const float INCREASE_ENEMY_SPEED_MULTIPLIER = 0.5f;
+const float INCREASE_ENEMY_DAMAGE_MULTIPLIER = 0.5f;
+
+float increaseEnemyHealthMultiplier;
+float increaseEnemySpeedMultiplier;
+float increaseEnemyDamageMultiplier;
 
 static Uint32 lastWaveTime = 0;
 static Uint32 waveDelay = 3000;
@@ -44,22 +61,18 @@ void init_waves(void)
     wave = 0;
     waveActive = false;
     lastWaveTime = SDL_GetTicks();
-    baseEnemyHealth = 1;
-    baseEnemySpeed = 1;
-    baseEnemyDamage = 1;
 
-    // enemyHealthMultiplier = 1.0f;
-    // enemySpeedMultiplier = 1.0f;
-    // enemyDamageMultiplier = 1.0f;
+    baseEnemyHealth = BASE_ENEMY_HEALTH;
+    baseEnemySpeed = BASE_ENEMY_SPEED;
+    baseEnemyDamage = BASE_ENEMY_DAMAGE;
 
-    // Reduced because I suck at my own game
-    enemyHealthMultiplier = 0.2f;
-    enemySpeedMultiplier = 1.0f;
-    enemyDamageMultiplier = 0.2f;
+    enemyHealthMultiplier = BASE_HEALTH_MULTLIPLIER;
+    enemySpeedMultiplier = BASE_SPEED_MULTLIPLIER;
+    enemyDamageMultiplier = BASE_DAMAGE_MULTLIPLIER;
 
-    increaseEnemyHealthMultiplier = 0.5f;
-    increaseEnemySpeedMultiplier = 0.5f;
-    increaseEnemyDamageMultiplier = 0.5f;
+    increaseEnemyHealthMultiplier = INCREASE_ENEMY_HEALTH_MULTIPLIER;
+    increaseEnemySpeedMultiplier = INCREASE_ENEMY_SPEED_MULTIPLIER;
+    increaseEnemyDamageMultiplier = INCREASE_ENEMY_DAMAGE_MULTIPLIER;
 }
 
 static void spawn_wave(void)
@@ -178,7 +191,7 @@ void tick_waves(void)
             waveActive = true;
 
             // Every 5 waves, increase base difficulty
-            if (wave % 5 == 1 && wave != 0)
+            if (wave % 5 == 1 && wave != 1)
             {
                 enemyHealthMultiplier = enemyHealthMultiplier + increaseEnemyHealthMultiplier;
                 enemySpeedMultiplier = enemySpeedMultiplier + increaseEnemySpeedMultiplier;

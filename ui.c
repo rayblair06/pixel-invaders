@@ -44,7 +44,6 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
     SDL_Color white = {225, 255, 255, 255};
 
     render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 0, white);
-    // render_stat(renderer, font, "Lives", lives, x, y + lineHeight * 1, white);
 }
 
 void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
@@ -148,10 +147,6 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
 
 void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
 {
-    // TODO: Replace these with health
-    int health = lives;
-    int healthTotal = 5;
-
     SDL_Color white = {255, 255, 255, 255};
 
     // Draw background bar
@@ -160,7 +155,7 @@ void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int
     SDL_RenderFillRect(renderer, &bgRect);
 
     // Draw filled bar
-    SDL_Rect fillRect = {x, y, (int)(width * ((float)health / healthTotal)), height};
+    SDL_Rect fillRect = {x, y, (int)(width * ((float)health / healthMax)), height};
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // red
     SDL_RenderFillRect(renderer, &fillRect);
 
@@ -170,7 +165,7 @@ void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int
 
     // Draw experience text "current / total"
     char healthLabel[32];
-    sprintf(healthLabel, "%d / %d", health, healthTotal);
+    sprintf(healthLabel, "%d / %d", health, healthMax);
 
     SDL_Surface *textSurface = TTF_RenderText_Blended(font, healthLabel, white);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);

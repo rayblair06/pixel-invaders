@@ -145,7 +145,7 @@ void init_enemy_bullets(void)
     }
 }
 
-void spawn_enemy_bullet(float x, float y)
+void spawn_enemy_bullet(float x, float y, int damage)
 {
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
@@ -160,6 +160,7 @@ void spawn_enemy_bullet(float x, float y)
                 y,
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
+            enemyBullets[i].damage = damage;
 
             break;
         }

@@ -31,7 +31,7 @@ typedef struct
 
     int health;
     float speed;
-    float damage;
+    int damage;
 
     Uint32 damageFlashTimer;
 

@@ -12,6 +12,9 @@ Entity player;
 float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
+int health = 100;
+int healthMax = 100;
+
 bool isPlayerExploding = false;
 int explosionFrame = 0;
 Uint32 explosionStartTime = 0;
@@ -30,6 +33,7 @@ bool hasPickupMagnet = false;
 Uint32 lastRegenTime = 0;
 const Uint32 regenCooldown = 2000; // ms
 
+int regenAmount = 10;
 Uint32 lastRegenHealthTime = 0;
 Uint32 regenHealthCooldown = 10000; // ms
 
@@ -38,7 +42,8 @@ Uint32 regenHealthCooldown = 10000; // ms
  */
 void init_player(void)
 {
-    lives = 3;
+    health = 100;
+    healthMax = 100;
 
     playerSpeed = 4.0f;
 
@@ -109,14 +114,14 @@ void tick_player(const Uint8 *keystate)
         }
     }
 
-    // Regenerate lives
-    if (hasHealthRegen && lives < MAX_LIVES)
+    // Regenerate health
+    if (hasHealthRegen && health < healthMax)
     {
         Uint32 now = SDL_GetTicks();
 
         if (now - lastRegenHealthTime > regenHealthCooldown)
         {
-            lives++;
+            health = health + regenAmount;
             lastRegenHealthTime = now;
         }
     }

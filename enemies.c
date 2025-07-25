@@ -107,7 +107,8 @@ void tick_enemies(void)
             {
                 spawn_enemy_bullet(
                     enemies[i].entity.x + enemies[i].entity.w / 2,
-                    enemies[i].entity.y + enemies[i].entity.h);
+                    enemies[i].entity.y + enemies[i].entity.h,
+                    enemies[i].damage);
             }
         }
     }
@@ -185,7 +186,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
     case ENEMY_BASIC:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.0f;
-        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.0f;
+        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
     case ENEMY_FAST:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 1.0f);
@@ -195,17 +196,17 @@ Enemy create_enemy(float x, float y, EnemyType type)
     case ENEMY_TANK:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 5.0f);
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
-        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.5f;
+        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.5f;
         break;
     case ENEMY_SHOOTER:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
-        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 1.0f;
+        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
     case ENEMY_BOSS:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 8.0f);
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
-        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 2.5f;
+        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 2.5f;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing

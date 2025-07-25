@@ -62,9 +62,9 @@ void check_collisions(void)
 
         if (check_overlap(enemyBullets[i].entity.rect, player.rect))
         {
-            enemyBullets[i].active = false;
+            reduce_health(enemyBullets[i].damage);
 
-            lose_life();
+            enemyBullets[i].active = false;
         }
     }
 
@@ -102,7 +102,7 @@ void check_collisions(void)
                 break;
             }
 
-            lose_life();
+            reduce_health(enemies[i].damage);
         }
     }
 

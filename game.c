@@ -7,8 +7,6 @@
 #include "sprites.h"
 #include "waves.h"
 
-int lives = 3;
-
 bool initialiseGameProps = false;
 bool isGameOver = false;
 bool isEntitiesFrozen = false;
@@ -28,7 +26,6 @@ Uint32 flashDuration = 200; // ms
 
 void init_game(void)
 {
-    lives = 3;
     isGameOver = isEntitiesFrozen = false;
     shakeOffsetX = shakeOffsetY = 0;
     shakeTimer = 0;
@@ -117,18 +114,18 @@ void trigger_red_flash(void)
 }
 
 /**
- * Handle when a life is losed
+ * Handle when a reduction of health
  */
-void lose_life(void)
+void reduce_health(int amount)
 {
-    lives--;
+    health = health - amount;
 
     play_sound(SND_HIT);
 
     trigger_screen_shake();
     trigger_red_flash();
 
-    if (lives <= 0)
+    if (health <= 0)
     {
         trigger_player_explosion();
 

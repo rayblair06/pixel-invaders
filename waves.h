@@ -13,6 +13,10 @@ extern float enemyHealthMultiplier;
 extern float enemySpeedMultiplier;
 extern float enemyDamageMultiplier;
 
+extern float increaseEnemyHealthMultiplier;
+extern float increaseEnemySpeedMultiplier;
+extern float increaseEnemyDamageMultiplier;
+
 // #define GRID_COLS 10
 // #define GRID_ROWS 4
 // #define GRID_CELL_WIDTH 64

@@ -31,6 +31,7 @@ typedef struct
 {
     Entity entity;
     bool active;
+    int damage;
 } EnemyBullet;
 
 extern EnemyBullet enemyBullets[MAX_ENEMY_BULLETS];
@@ -43,7 +44,7 @@ void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
 void trigger_bullet_explosion(Bullet *bullet);
 
 void init_enemy_bullets(void);
-void spawn_enemy_bullet(float x, float y);
+void spawn_enemy_bullet(float x, float y, int damage);
 void tick_enemy_bullets(void);
 void render_enemy_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
 

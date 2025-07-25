@@ -5,13 +5,14 @@
 #include <stdbool.h>
 #include "entity.h"
 
-#define MAX_LIVES 5
-
 extern Entity player;
 extern float playerSpeed;
 extern bool isPlayerVisible;
 
 extern int level;
+
+extern int health;
+extern int healthMax;
 
 extern bool isPlayerExploding;
 extern int explosionFrame;
