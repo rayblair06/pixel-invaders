@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "constants.h"
 #include "bullets.h"
+#include "particles.h"
 #include "player.h"
 #include "sprites.h"
 
@@ -134,6 +135,8 @@ void trigger_bullet_explosion(Bullet *bullet)
     bullet->isExploding = true;
     bullet->explosionStartTime = SDL_GetTicks();
     bullet->explosionFrame = 0;
+
+    spawn_explosion_particles(bullet->entity.x, bullet->entity.y, 20);
     play_sound(SND_EXPLOSION);
 }
 

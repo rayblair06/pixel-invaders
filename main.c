@@ -12,6 +12,7 @@
 #include "level_manager.h"
 #include "game.h"
 #include "sprites.h"
+#include "particles.h"
 #include "pickups.h"
 #include "player.h"
 #include "ui.h"
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
             render_enemies(renderer, shakeOffsetX, shakeOffsetY);
             update_enemy_animation_state();
             render_pickups(renderer, shakeOffsetX, shakeOffsetY);
+            render_particles(renderer);
 
             tick_player(keystate);
             tick_bullets();
@@ -176,6 +178,7 @@ int main(int argc, char *argv[])
             tick_enemies();
             tick_pickups();
             tick_waves();
+            tick_particles(deltaTime);
 
             check_collisions();
 

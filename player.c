@@ -5,6 +5,7 @@
 #include "bullets.h"
 #include "entity.h"
 #include "game.h"
+#include "particles.h"
 #include "player.h"
 #include "sprites.h"
 
@@ -210,5 +211,7 @@ void trigger_player_explosion()
     isPlayerExploding = true;
     explosionStartTime = SDL_GetTicks();
     explosionFrame = 0;
+
+    spawn_explosion_particles(player.x, player.y, 20);
     play_sound(SND_EXPLOSION);
 }

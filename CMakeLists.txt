@@ -52,6 +52,7 @@ set(SOURCES
     enemies.c
     game.c
     main.c
+    particles.c
     pickups.c
     player.c
     sprites.c
