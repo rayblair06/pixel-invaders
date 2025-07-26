@@ -7,6 +7,8 @@
 typedef enum
 {
     SND_SHOOT,
+    SND_CHARGE1,
+    SND_CHARGE2,
     SND_LASER,
     SND_ENEMY_DEATH,
     SND_EXPLOSION,

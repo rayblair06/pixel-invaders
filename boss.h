@@ -11,10 +11,16 @@ typedef struct
     Entity entity;
     int health;
     int healthMax;
+
     float attackTimer;
+    float telegraphTime;
+    bool telegraphing;
+
     bool active;
+
     bool spawning; // Boss does a little entry
     float spawningSpeed;
+
     bool moveDirection; // Direction boss moves (false - left, true - right)
     float movementSpeed;
     bool phaseTwo;
@@ -22,6 +28,7 @@ typedef struct
 
 extern Boss currentBoss;
 extern bool bossActive;
+extern Uint32 bossSpawnTime;
 
 void init_boss(void);
 void spawn_boss(float x, float y, int wave);

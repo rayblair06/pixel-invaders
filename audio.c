@@ -14,6 +14,8 @@ void init_audio(void)
 
     // Load sounds
     sounds[SND_SHOOT] = Mix_LoadWAV("assets/sounds/shoot.wav");
+    sounds[SND_CHARGE1] = Mix_LoadWAV("assets/sounds/charge1.wav");
+    sounds[SND_CHARGE2] = Mix_LoadWAV("assets/sounds/charge2.wav");
     sounds[SND_LASER] = Mix_LoadWAV("assets/sounds/laser.wav");
     sounds[SND_ENEMY_DEATH] = Mix_LoadWAV("assets/sounds/enemy-death.wav");
     sounds[SND_EXPLOSION] = Mix_LoadWAV("assets/sounds/explosion.wav");

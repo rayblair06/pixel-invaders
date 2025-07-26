@@ -10,6 +10,7 @@
 
 Boss currentBoss;
 bool bossActive = false;
+Uint32 bossSpawnTime;
 
 void init_boss(void)
 {
@@ -20,11 +21,18 @@ void spawn_boss(float x, float y, int wave)
 {
     currentBoss.entity = create_entity(x, y, SPRITE_DRAW_SIZE * 4, SPRITE_DRAW_SIZE * 4);
     currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
+
     currentBoss.attackTimer = 3.0f;
+    currentBoss.telegraphing = false;
+    currentBoss.telegraphTime = 0.0f;
+
     currentBoss.phaseTwo = false;
     currentBoss.active = true;
+
     currentBoss.spawning = true;
+    bossSpawnTime = SDL_GetTicks();
     currentBoss.spawningSpeed = 0.5f;
+
     currentBoss.moveDirection = (bool)rand() % 2;
     currentBoss.movementSpeed = 2.0f + (1.0f * (wave % bossWave));
     bossActive = true;
@@ -92,10 +100,31 @@ void tick_boss(float deltaTime)
     // Attack pattern
     currentBoss.attackTimer -= deltaTime;
 
-    if (currentBoss.attackTimer <= 0)
+    if (currentBoss.telegraphing)
     {
-        boss_fire_laser();
-        currentBoss.attackTimer = currentBoss.phaseTwo ? 1.5f : 3.0f;
+        currentBoss.telegraphTime -= deltaTime;
+
+        if (currentBoss.telegraphTime <= 0)
+        {
+            boss_fire_laser();
+            currentBoss.telegraphing = false;
+            currentBoss.attackTimer = currentBoss.phaseTwo ? 1.5f : 3.0f; // Reset attack timer
+        }
+    }
+    else if (currentBoss.attackTimer <= 0)
+    {
+        // Start telegraph phase (flash warning)
+        currentBoss.telegraphing = true;
+        currentBoss.telegraphTime = 1.0f; // 1 second telegraph
+
+        if (!currentBoss.phaseTwo)
+        {
+            play_sound(SND_CHARGE1);
+        }
+        else
+        {
+            play_sound(SND_CHARGE2);
+        }
     }
 
     // Phase 2
@@ -129,6 +158,24 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     SDL_Rect dst = currentBoss.entity.rect;
     dst.x += shakeX;
     dst.y += shakeY;
+
+    if (currentBoss.telegraphing)
+    {
+        // Alternative between red and normal for flashing effect
+        if ((SDL_GetTicks() / 100) % 2 == 0)
+        {
+            SDL_SetTextureColorMod(texture, 255, 50, 50); // reddish
+        }
+        else
+        {
+            SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
+        }
+    }
+    else
+    {
+        SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
+    }
+
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 

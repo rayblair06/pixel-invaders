@@ -14,4 +14,6 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
 void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height);
 void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height);
 
+void render_vignette(SDL_Renderer *renderer);
+
 #endif

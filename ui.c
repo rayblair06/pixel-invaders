@@ -214,3 +214,23 @@ void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int wid
     sprintf(levelLabel, "Lv %d", playerLevel);
     generate_text(renderer, font, levelLabel, 220, SCREEN_HEIGHT - 28, white);
 }
+
+void render_vignette(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100); // dim
+
+    int border = 25; // thickness of dark edges
+
+    SDL_Rect top = {0, 0, SCREEN_WIDTH, border};
+    SDL_Rect bottom = {0, SCREEN_HEIGHT - border, SCREEN_WIDTH, border};
+    SDL_Rect left = {0, 0, border, SCREEN_HEIGHT};
+    SDL_Rect right = {SCREEN_WIDTH - border, 0, border, SCREEN_HEIGHT};
+
+    SDL_RenderFillRect(renderer, &top);
+    SDL_RenderFillRect(renderer, &bottom);
+    SDL_RenderFillRect(renderer, &left);
+    SDL_RenderFillRect(renderer, &right);
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+}

@@ -202,6 +202,17 @@ int main(int argc, char *argv[])
             render_health_bar(renderer, font, SCREEN_WIDTH - 220, SCREEN_HEIGHT - 20, 200, 10);
             render_xp_bar(renderer, font, 10, SCREEN_HEIGHT - 20, 200, 10);
 
+            // Boss overlay
+            if (bossActive)
+            {
+                render_vignette(renderer);
+            }
+
+            if (bossActive && SDL_GetTicks() - bossSpawnTime < 2000)
+            {
+                generate_text(renderer, font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
+            }
+
             // Trigger Upgrade Menu delay
             if (is_level_up_pending() && !choosingUpgrade)
             {
