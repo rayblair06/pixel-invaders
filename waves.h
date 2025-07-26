@@ -5,6 +5,8 @@ void init_waves(void);
 void tick_waves(void);
 
 extern int wave;
+extern const int bossWave;
+
 extern int baseEnemyHealth;
 extern int baseEnemySpeed;
 extern int baseEnemyDamage;

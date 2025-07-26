@@ -78,14 +78,15 @@ void check_collisions(void)
         if (!currentBoss.active)
             continue;
 
-        // If our boss is still spawning, just remove bullet
-        if (currentBoss.spawning)
-        {
-            bullets[i].active = false;
-        }
-
         if (check_overlap(bullets[i].entity.rect, currentBoss.entity.rect))
         {
+            // If our boss is still spawning, just remove bullet
+            if (currentBoss.spawning)
+            {
+                bullets[i].active = false;
+                continue;
+            }
+
             currentBoss.health = currentBoss.health - bulletDamage;
 
             bullets[i].pierceCount--;

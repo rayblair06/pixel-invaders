@@ -6,6 +6,7 @@
 #include "player.h"
 #include "particles.h"
 #include "ui.h"
+#include "waves.h"
 
 Boss currentBoss;
 bool bossActive = false;
@@ -18,11 +19,14 @@ void init_boss(void)
 void spawn_boss(float x, float y, int wave)
 {
     currentBoss.entity = create_entity(x, y, SPRITE_DRAW_SIZE * 4, SPRITE_DRAW_SIZE * 4);
-    currentBoss.health = currentBoss.healthMax = 25 + (25 * (wave % 5));
+    currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
     currentBoss.attackTimer = 3.0f;
-    currentBoss.spawning = true;
     currentBoss.phaseTwo = false;
     currentBoss.active = true;
+    currentBoss.spawning = true;
+    currentBoss.spawningSpeed = 0.5f;
+    currentBoss.moveDirection = (bool)rand() % 2;
+    currentBoss.movementSpeed = 2.0f + (1.0f * (wave % bossWave));
     bossActive = true;
 
     play_music(MUS_BOSS, true);
@@ -41,25 +45,48 @@ void tick_boss(float deltaTime)
         return;
 
     // Move boss into view
-    if (currentBoss.spawning && currentBoss.entity.y < 50)
+    if (currentBoss.spawning)
     {
-        move(&currentBoss.entity, DOWN, 0.5f);
+        if (currentBoss.entity.y < 70)
+        {
+            move(&currentBoss.entity, DOWN, currentBoss.spawningSpeed);
+        }
+        else
+        {
+            currentBoss.spawning = false;
+        }
+
+        // Nothing beyond this should run if spawning
+        return;
+    }
+
+    // Randomly change direction once per frame
+    if (rand() % 100 == 0)
+    {
+        currentBoss.moveDirection = !currentBoss.moveDirection;
     }
 
     // Move left or right
-    if (currentBoss.entity.y >= 50)
+
+    if (currentBoss.moveDirection)
     {
-        currentBoss.spawning = false;
+        move(&currentBoss.entity, RIGHT, currentBoss.movementSpeed);
+    }
 
-        if (currentBoss.entity.x <= 0)
-        {
-            move(&currentBoss.entity, RIGHT, 2.0f);
-        }
+    if (!currentBoss.moveDirection)
+    {
+        move(&currentBoss.entity, LEFT, currentBoss.movementSpeed);
+    }
 
-        if (currentBoss.entity.x >= 0)
-        {
-            move(&currentBoss.entity, LEFT, 2.0f);
-        }
+    // Check boundaries
+    if (currentBoss.entity.x >= SCREEN_WIDTH - currentBoss.entity.rect.w)
+    {
+        currentBoss.moveDirection = false; // Go left
+    }
+
+    if (currentBoss.entity.x <= 0)
+    {
+        currentBoss.moveDirection = true; // Go right
     }
 
     // Attack pattern
