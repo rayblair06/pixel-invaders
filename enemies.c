@@ -25,7 +25,7 @@ const EnemySpriteFrames enemySprites[] = {
     [ENEMY_FAST] = {SPR_INVADER2_A, SPR_INVADER2_B},
     [ENEMY_TANK] = {SPR_INVADER3_A, SPR_INVADER3_B},
     [ENEMY_SHOOTER] = {SPR_INVADER4_A, SPR_INVADER4_B},
-    [ENEMY_BOSS] = {SPR_INVADER5_A, SPR_INVADER5_B},
+    [ENEMY_BRUTE] = {SPR_INVADER5_A, SPR_INVADER5_B},
 };
 
 /**
@@ -78,7 +78,7 @@ void tick_enemies(void)
                 enemies[i].active = false;
                 enemies[i].isFadingOut = false;
 
-                play_sound(SND_EXPLOSION);
+                play_sound(SND_ENEMY_DEATH);
 
                 spawn_pickup(
                     enemies[i].entity.rect.x + (enemies[i].entity.rect.w / 2),
@@ -203,7 +203,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
         enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.0f;
         break;
-    case ENEMY_BOSS:
+    case ENEMY_BRUTE:
         enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 8.0f);
         enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
         enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 2.5f;
@@ -224,7 +224,7 @@ SpriteID get_enemy_sprite(const Enemy *enemy)
 
 void damage_enemy(Enemy *enemy)
 {
-    enemy->health--;
+    enemy->health = enemy->health - bulletDamage;
 
     if (enemy->health > 0)
     {

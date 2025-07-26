@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include "boss.h"
 #include "constants.h"
 #include "enemies.h"
 #include "game.h"
@@ -140,12 +141,20 @@ static void spawn_wave(void)
             typesAvailable[typesCount++] = ENEMY_FAST;
             typesAvailable[typesCount++] = ENEMY_TANK;
         }
+        else if (wave < 12)
+        {
+            typesAvailable[typesCount++] = ENEMY_BASIC;
+            typesAvailable[typesCount++] = ENEMY_FAST;
+            typesAvailable[typesCount++] = ENEMY_TANK;
+            typesAvailable[typesCount++] = ENEMY_SHOOTER;
+        }
         else
         {
             typesAvailable[typesCount++] = ENEMY_BASIC;
             typesAvailable[typesCount++] = ENEMY_FAST;
             typesAvailable[typesCount++] = ENEMY_TANK;
             typesAvailable[typesCount++] = ENEMY_SHOOTER;
+            typesAvailable[typesCount++] = ENEMY_BRUTE;
         }
 
         EnemyType type = typesAvailable[rand() % typesCount];
@@ -167,6 +176,9 @@ void tick_waves(void)
     {
         if (enemies[i].active)
             alive++;
+
+        if (bossActive)
+            alive++;
     }
 
     // Enemies dead and no wave active, let's spawn some new enemies!
@@ -180,7 +192,7 @@ void tick_waves(void)
             if (wave % 5 == 0 && wave != 0)
             {
                 // Spawn a boss here instead
-                spawn_enemy(SCREEN_WIDTH / 2 - 32, 50, ENEMY_BOSS);
+                spawn_boss(SCREEN_WIDTH / 2 - 64, -200, wave);
             }
             else
             {

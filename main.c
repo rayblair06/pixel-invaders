@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include "audio.h"
+#include "boss.h"
 #include "constants.h"
 #include "collisions.h"
 #include "bullets.h"
@@ -77,7 +78,9 @@ int main(int argc, char *argv[])
 
     init_sprites(renderer);
     init_audio();
-    play_music(MUS_GAME, true);
+
+    // Play menu music
+    play_music(MUS_MENU, true);
 
     bool running = true;
 
@@ -134,6 +137,8 @@ int main(int argc, char *argv[])
                     init_game();
                     gameState = STATE_PLAYING;
                     initialiseGameProps = true;
+                    play_music(MUS_GAME, true);
+
                     break;
                 case 1:
                     running = false;
@@ -179,6 +184,12 @@ int main(int argc, char *argv[])
             tick_pickups();
             tick_waves();
             tick_particles(deltaTime);
+
+            if (bossActive)
+                tick_boss(deltaTime);
+
+            render_boss(renderer, shakeOffsetX, shakeOffsetY);
+            render_boss_health(renderer, font);
 
             check_collisions();
 

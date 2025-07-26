@@ -7,17 +7,22 @@
 typedef enum
 {
     SND_SHOOT,
+    SND_LASER,
+    SND_ENEMY_DEATH,
     SND_EXPLOSION,
     SND_PICKUP,
     SND_HIT,
     SND_SHIELD_BREAK,
+    SND_BOSS_ROAR,
     SND_COUNT,
 } SoundID;
 
 typedef enum
 {
+    MUS_MENU,
     MUS_GAME,
     MUS_GAMEOVER,
+    MUS_BOSS,
     MUS_COUNT
 } MusicID;
 

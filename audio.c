@@ -14,15 +14,19 @@ void init_audio(void)
 
     // Load sounds
     sounds[SND_SHOOT] = Mix_LoadWAV("assets/sounds/shoot.wav");
-    sounds[SND_EXPLOSION] = Mix_LoadWAV("assets/sounds/shoot.wav");
-    sounds[SND_PICKUP] = Mix_LoadWAV("assets/sounds/hit.wav");
+    sounds[SND_LASER] = Mix_LoadWAV("assets/sounds/laser.wav");
+    sounds[SND_ENEMY_DEATH] = Mix_LoadWAV("assets/sounds/enemy-death.wav");
+    sounds[SND_EXPLOSION] = Mix_LoadWAV("assets/sounds/explosion.wav");
+    sounds[SND_PICKUP] = Mix_LoadWAV("assets/sounds/pickup.wav");
     sounds[SND_HIT] = Mix_LoadWAV("assets/sounds/hit.wav");
-    sounds[SND_SHIELD_BREAK] = Mix_LoadWAV("assets/sounds/hit.wav");
+    sounds[SND_SHIELD_BREAK] = Mix_LoadWAV("assets/sounds/shield-break.wav");
+    sounds[SND_BOSS_ROAR] = Mix_LoadWAV("assets/sounds/roar.wav");
 
     // Load Music
-    // music[MUS_GAME] = Mix_LoadMUS("assets/game-music.mp3");
-    music[MUS_GAME] = Mix_LoadMUS("assets/music/Music for a Space Inavders-like minigame v1.wav");
+    music[MUS_MENU] = Mix_LoadMUS("assets/music/menu-music.mp3");
+    music[MUS_GAME] = Mix_LoadMUS("assets/music/game.wav");
     music[MUS_GAMEOVER] = Mix_LoadMUS("assets/music/game-over-music.mp3");
+    music[MUS_BOSS] = Mix_LoadMUS("assets/music/boss-music.wav");
 }
 
 void play_sound(SoundID id)

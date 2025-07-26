@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "audio.h"
+#include "boss.h"
 #include "collisions.h"
 #include "constants.h"
 #include "bullets.h"
@@ -65,6 +66,39 @@ void check_collisions(void)
             reduce_health(enemyBullets[i].damage);
 
             enemyBullets[i].active = false;
+        }
+    }
+
+    // --- Bullet vs Boss ---
+    for (int i = 0; i < MAX_BULLETS; i++)
+    {
+        if (!bullets[i].active)
+            continue;
+
+        if (!currentBoss.active)
+            continue;
+
+        if (check_overlap(bullets[i].entity.rect, currentBoss.entity.rect))
+        {
+            currentBoss.health = currentBoss.health - bulletDamage;
+
+            bullets[i].pierceCount--;
+
+            if (bullets[i].pierceCount <= 0)
+            {
+                // Explode else disappear
+                if (hasExplosive)
+                {
+                    trigger_bullet_explosion(&bullets[i]);
+                    trigger_damage_radius(bullets[i].entity.x, bullets[i].entity.y, 50);
+                }
+                else
+                {
+                    bullets[i].active = false;
+                }
+            }
+
+            break;
         }
     }
 

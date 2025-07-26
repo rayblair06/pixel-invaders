@@ -45,6 +45,7 @@ endif()
 # -------------------------------
 set(SOURCES
     audio.c
+    boss.c
     bullets.c
     constants.c
     collisions.c
