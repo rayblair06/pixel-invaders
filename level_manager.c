@@ -5,7 +5,7 @@
 int playerLevel = 1;
 int experience = 0;
 int experienceTotal = 0;         // Total amount of experience
-int experienceToNextLevel = 300; // Level 1 starts at 300
+int experienceToNextLevel = 100; // Level 1 starts at 100
 
 static bool isLevelUpPending = false;
 float experienceVisual = 0.0f; // Smoothly animated XP progress
@@ -14,7 +14,7 @@ void init_level_manager(void)
 {
     playerLevel = 1;
     experience = 0;
-    experienceToNextLevel = 300;
+    experienceToNextLevel = 100;
     isLevelUpPending = false;
 }
 

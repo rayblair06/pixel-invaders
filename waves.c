@@ -6,6 +6,7 @@
 #include "waves.h"
 
 int wave = 0;
+const int bossWave = 10;
 
 /**
  * Base Values are starting values, these start at 1 as if 1 is normal.
@@ -189,7 +190,7 @@ void tick_waves(void)
         if (now - lastWaveTime > waveDelay)
         {
             // check for boss
-            if (wave % 5 == 0 && wave != 0)
+            if (wave % bossWave == 0 && wave != 0)
             {
                 // Spawn a boss here instead
                 spawn_boss(SCREEN_WIDTH / 2 - 64, -200, wave);
@@ -202,8 +203,8 @@ void tick_waves(void)
             wave++;
             waveActive = true;
 
-            // Every 5 waves, increase base difficulty
-            if (wave % 5 == 1 && wave != 1)
+            // After boss wave, increase base difficulty
+            if (wave % bossWave == 1 && wave != 1)
             {
                 enemyHealthMultiplier = enemyHealthMultiplier + increaseEnemyHealthMultiplier;
                 enemySpeedMultiplier = enemySpeedMultiplier + increaseEnemySpeedMultiplier;

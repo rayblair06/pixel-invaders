@@ -13,6 +13,7 @@ typedef struct
     int healthMax;
     float attackTimer;
     bool active;
+    bool spawning; // Boss does a little entry
     bool phaseTwo;
 } Boss;
 

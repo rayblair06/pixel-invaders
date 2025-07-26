@@ -20,6 +20,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.entity = create_entity(x, y, SPRITE_DRAW_SIZE * 4, SPRITE_DRAW_SIZE * 4);
     currentBoss.health = currentBoss.healthMax = 25 + (25 * (wave % 5));
     currentBoss.attackTimer = 3.0f;
+    currentBoss.spawning = true;
     currentBoss.phaseTwo = false;
     currentBoss.active = true;
     bossActive = true;
@@ -40,7 +41,7 @@ void tick_boss(float deltaTime)
         return;
 
     // Move boss into view
-    if (currentBoss.entity.y < 50)
+    if (currentBoss.spawning && currentBoss.entity.y < 50)
     {
         move(&currentBoss.entity, DOWN, 0.5f);
     }
@@ -48,6 +49,8 @@ void tick_boss(float deltaTime)
     // Move left or right
     if (currentBoss.entity.y >= 50)
     {
+        currentBoss.spawning = false;
+
         if (currentBoss.entity.x <= 0)
         {
             move(&currentBoss.entity, RIGHT, 2.0f);
@@ -109,8 +112,8 @@ void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)
 
     float healthRatio = (float)currentBoss.health / (float)currentBoss.healthMax;
 
-    SDL_Rect bg = {100, SCREEN_HEIGHT - 30, SCREEN_WIDTH - 200, 20};
-    SDL_Rect fill = {100, SCREEN_HEIGHT - 30, (int)((SCREEN_WIDTH - 200) * healthRatio), 20};
+    SDL_Rect bg = {100, 30, SCREEN_WIDTH - 200, 20};
+    SDL_Rect fill = {100, 30, (int)((SCREEN_WIDTH - 200) * healthRatio), 20};
 
     SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255);
     SDL_RenderFillRect(renderer, &bg);
@@ -119,7 +122,7 @@ void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)
     SDL_RenderFillRect(renderer, &fill);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &bg);
+    SDL_RenderDrawRect(renderer, &bg);
 
-    generate_text(renderer, font, "The Abyssal Wraith", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT - 50, (SDL_Color){255, 255, 255});
+    generate_text(renderer, font, "The Abyssal Wraith", SCREEN_WIDTH / 2 - 100, 50, (SDL_Color){255, 255, 255});
 }

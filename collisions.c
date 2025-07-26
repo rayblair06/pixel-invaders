@@ -78,6 +78,12 @@ void check_collisions(void)
         if (!currentBoss.active)
             continue;
 
+        // If our boss is still spawning, just remove bullet
+        if (currentBoss.spawning)
+        {
+            bullets[i].active = false;
+        }
+
         if (check_overlap(bullets[i].entity.rect, currentBoss.entity.rect))
         {
             currentBoss.health = currentBoss.health - bulletDamage;
@@ -129,7 +135,7 @@ void check_collisions(void)
 
             play_sound(SND_PICKUP);
 
-            add_experience(100);
+            add_experience(10);
         }
     }
 

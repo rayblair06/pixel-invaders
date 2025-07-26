@@ -68,14 +68,6 @@ void tick_pickups(void)
             pickups[i].y = player.y;
         }
 
-        // Check for collision with player
-        if (SDL_HasIntersection(&player.rect, &pickups[i].rect))
-        {
-            pickups[i].active = false;
-
-            add_experience(100);
-        }
-
         // Player Magnet
         if (hasPickupMagnet)
         {
