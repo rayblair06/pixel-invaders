@@ -15,6 +15,7 @@ typedef struct
     bool active;
 
     float attackTimer;
+    float targetX; // Desired horizontal position (e.g. follow the player)
 
     bool chargingLaser;
     float laserChargeTime; // Time left before firing

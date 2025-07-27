@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 
             if (bossActive && SDL_GetTicks() - bossSpawnTime < 2000)
             {
-                generate_text(renderer, font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
+                generate_text(renderer, font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 175, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
             }
 
             // Trigger Upgrade Menu delay
@@ -285,6 +285,7 @@ int main(int argc, char *argv[])
             }
 
             // Debugging!
+            debug_log("Time: %d", SDL_GetTicks);
             debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
             debug_log("Enemy count: %d", sizeof(enemies));
             debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");

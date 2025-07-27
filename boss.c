@@ -26,6 +26,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.active = true;
 
     currentBoss.attackTimer = 3.0f;
+    currentBoss.targetX = currentBoss.entity.x;
 
     currentBoss.chargingLaser = false;
     currentBoss.laserFiring = false;
@@ -78,38 +79,86 @@ void tick_boss(float deltaTime)
         return;
     }
 
-    // Randomly change direction once per frame
+    // Bobbing
+    float bobbing = 5.0f * sinf(SDL_GetTicks() / 500.0f);
+    currentBoss.entity.rect.y = currentBoss.entity.y + bobbing;
+
     if (currentBoss.isMoving)
     {
-        if (rand() % 100 == 0)
+        static float wanderTimer = 0.0f;
+        static float randomOffset = 0.0f;
+
+        // Randomly wander
+        wanderTimer -= deltaTime;
+
+        if (wanderTimer <= 0.0f)
         {
-            currentBoss.moveDirection = !currentBoss.moveDirection;
+            wanderTimer = 1.5f + (rand() % 1500) / 1000.0f; // random 1.5 to 3.0 seconds
+            randomOffset = (rand() % 41 - 20);              // Random offset between -20 and +20 pixels
         }
 
-        // Move left or right
+        // Slowly decay draftOffset back towards 0
+        randomOffset *= (1.0f - 2.0f * deltaTime);
+        if (fabs(randomOffset) < 0.1f)
+            randomOffset = 0.0f; // Avoid jitter
+
+        // Determine target position (player's x + some random offset)
+        float playerCenter = player.rect.x + player.rect.w / 2;
+        float bossCenter = currentBoss.entity.rect.x - currentBoss.entity.rect.w / 2;
+        currentBoss.targetX = playerCenter + randomOffset;
+
+        // Move towards targetX
         float bossMovementSpeed = !currentBoss.phaseTwo ? currentBoss.movementSpeed : currentBoss.movementSpeed + 0.5f;
+        float smoothing = bossMovementSpeed * deltaTime;
+        if (smoothing > 1.0f)
+            smoothing = 1.0f;
 
-        if (currentBoss.moveDirection)
-        {
-            move(&currentBoss.entity, RIGHT, currentBoss.movementSpeed);
-        }
-
-        if (!currentBoss.moveDirection)
-        {
-            move(&currentBoss.entity, LEFT, currentBoss.movementSpeed);
-        }
-
-        // Check boundaries
-        if (currentBoss.entity.x >= SCREEN_WIDTH - currentBoss.entity.rect.w)
-        {
-            currentBoss.moveDirection = false; // Go left
-        }
-
-        if (currentBoss.entity.x <= 0)
-        {
-            currentBoss.moveDirection = true; // Go right
-        }
+        currentBoss.entity.rect.x += (currentBoss.targetX - bossCenter) * smoothing;
     }
+
+    // Keep within screen bounds
+    if (currentBoss.entity.rect.x < 0)
+    {
+        currentBoss.entity.rect.x = 0;
+    }
+
+    if (currentBoss.entity.rect.x > SCREEN_WIDTH - currentBoss.entity.rect.w)
+    {
+        currentBoss.entity.rect.x = SCREEN_WIDTH - currentBoss.entity.rect.w;
+    }
+
+    // // Randomly change direction once per frame
+    // if (currentBoss.isMoving)
+    // {
+    //     if (rand() % 100 == 0)
+    //     {
+    //         currentBoss.moveDirection = !currentBoss.moveDirection;
+    //     }
+
+    //     // Move left or right
+    //     float bossMovementSpeed = !currentBoss.phaseTwo ? currentBoss.movementSpeed : currentBoss.movementSpeed + 0.5f;
+
+    //     if (currentBoss.moveDirection)
+    //     {
+    //         move(&currentBoss.entity, RIGHT, currentBoss.movementSpeed);
+    //     }
+
+    //     if (!currentBoss.moveDirection)
+    //     {
+    //         move(&currentBoss.entity, LEFT, currentBoss.movementSpeed);
+    //     }
+
+    //     // Check boundaries
+    //     if (currentBoss.entity.x >= SCREEN_WIDTH - currentBoss.entity.rect.w)
+    //     {
+    //         currentBoss.moveDirection = false; // Go left
+    //     }
+
+    //     if (currentBoss.entity.x <= 0)
+    //     {
+    //         currentBoss.moveDirection = true; // Go right
+    //     }
+    // }
 
     // Laser Attack logic
     if (!currentBoss.chargingLaser && !currentBoss.laserFiring)
