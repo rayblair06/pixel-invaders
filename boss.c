@@ -22,12 +22,18 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.entity = create_entity(x, y, SPRITE_DRAW_SIZE * 4, SPRITE_DRAW_SIZE * 4);
     currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
 
+    currentBoss.phaseTwo = false;
+    currentBoss.active = true;
+
     currentBoss.attackTimer = 3.0f;
     currentBoss.telegraphing = false;
     currentBoss.telegraphTime = 0.0f;
 
-    currentBoss.phaseTwo = false;
-    currentBoss.active = true;
+    currentBoss.chargingLaser = false;
+    currentBoss.laserFiring = false;
+    currentBoss.laserChargeTime = 0.0f;
+    currentBoss.laserDuration = 0.0f;
+    currentBoss.laserX = SCREEN_WIDTH / 2;
 
     currentBoss.spawning = true;
     bossSpawnTime = SDL_GetTicks();
@@ -98,32 +104,78 @@ void tick_boss(float deltaTime)
     }
 
     // Attack pattern
-    currentBoss.attackTimer -= deltaTime;
+    // currentBoss.attackTimer -= deltaTime;
 
-    if (currentBoss.telegraphing)
+    // if (currentBoss.telegraphing)
+    // {
+    //     currentBoss.telegraphTime -= deltaTime;
+
+    //     if (currentBoss.telegraphTime <= 0)
+    //     {
+    //         boss_fire_laser();
+    //         currentBoss.telegraphing = false;
+    //         currentBoss.attackTimer = currentBoss.phaseTwo ? 1.5f : 3.0f; // Reset attack timer
+    //     }
+    // }
+    // else if (currentBoss.attackTimer <= 0)
+    // {
+    //     // Start telegraph phase (flash warning)
+    //     currentBoss.telegraphing = true;
+    //     currentBoss.telegraphTime = 1.0f; // 1 second telegraph
+
+    //     if (!currentBoss.phaseTwo)
+    //     {
+    //         play_sound(SND_CHARGE1);
+    //     }
+    //     else
+    //     {
+    //         play_sound(SND_CHARGE2);
+    //     }
+    // }
+
+    // Laser Attack logic
+    if (!currentBoss.chargingLaser && !currentBoss.laserFiring)
     {
-        currentBoss.telegraphTime -= deltaTime;
+        currentBoss.attackTimer -= deltaTime;
 
-        if (currentBoss.telegraphTime <= 0)
+        if (currentBoss.attackTimer <= 0)
         {
-            boss_fire_laser();
-            currentBoss.telegraphing = false;
-            currentBoss.attackTimer = currentBoss.phaseTwo ? 1.5f : 3.0f; // Reset attack timer
+            // Start charing the laster
+            currentBoss.chargingLaser = true;
+            currentBoss.laserChargeTime = !currentBoss.phaseTwo ? 1.5f : 1.0f; // Telegraph for 1.5 / 1.0 seconds
+            currentBoss.laserX = player.x + player.w / 2;                      // Aim ay player
+
+            if (!currentBoss.phaseTwo)
+            {
+                play_sound(SND_CHARGE1);
+            }
+            else
+            {
+                play_sound(SND_CHARGE2);
+            }
         }
     }
-    else if (currentBoss.attackTimer <= 0)
+    else if (currentBoss.chargingLaser)
     {
-        // Start telegraph phase (flash warning)
-        currentBoss.telegraphing = true;
-        currentBoss.telegraphTime = 1.0f; // 1 second telegraph
+        currentBoss.laserChargeTime -= deltaTime;
 
-        if (!currentBoss.phaseTwo)
+        if (currentBoss.laserChargeTime <= 0)
         {
-            play_sound(SND_CHARGE1);
+            // Fire laser
+            currentBoss.chargingLaser = false;
+            currentBoss.laserFiring = true;
+            currentBoss.laserDuration = !currentBoss.phaseTwo ? 1.0f : 1.5f; // Laser lasts for 1.0 / 1.5 seconds
+            play_sound(SND_LASER);
         }
-        else
+    }
+    else if (currentBoss.laserFiring)
+    {
+        currentBoss.laserDuration -= deltaTime;
+
+        if (currentBoss.laserDuration <= 0)
         {
-            play_sound(SND_CHARGE2);
+            currentBoss.laserFiring = false;
+            currentBoss.attackTimer = !currentBoss.phaseTwo ? 3.5f : 2.0f; // Reset timer
         }
     }
 
@@ -159,21 +211,40 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     dst.x += shakeX;
     dst.y += shakeY;
 
-    if (currentBoss.telegraphing)
+    if (currentBoss.chargingLaser)
     {
         // Alternative between red and normal for flashing effect
-        if ((SDL_GetTicks() / 100) % 2 == 0)
-        {
-            SDL_SetTextureColorMod(texture, 255, 50, 50); // reddish
-        }
-        else
-        {
-            SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
-        }
+        // if ((SDL_GetTicks() / 100) % 2 == 0)
+        // {
+        //     SDL_SetTextureColorMod(texture, 255, 50, 50); // reddish
+        // }
+        // else
+        // {
+        //     SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
+        // }
+
+        // Draw a red line where the laser will fire
+        SDL_SetRenderDrawColor(renderer, 255, 50, 50, 150);
+        SDL_RenderDrawLine(renderer,
+                           (int)currentBoss.laserX, currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                           (int)currentBoss.laserX, SCREEN_HEIGHT);
     }
-    else
+    // else
+    // {
+    //     SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
+    // }
+
+    if (currentBoss.laserFiring)
     {
-        SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
+        // Draw the actual laser beam
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 220);
+        SDL_Rect laser = {
+            (int)currentBoss.laserX - 4,
+            currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+            8,
+            SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
+
+        SDL_RenderFillRect(renderer, &laser);
     }
 
     SDL_RenderCopy(renderer, texture, &src, &dst);

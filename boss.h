@@ -12,11 +12,17 @@ typedef struct
     int health;
     int healthMax;
 
+    bool active;
+
     float attackTimer;
     float telegraphTime;
     bool telegraphing;
 
-    bool active;
+    bool chargingLaser;
+    float laserChargeTime; // Time left before firing
+    float laserDuration;   // How long the laser stays
+    bool laserFiring;
+    float laserX;
 
     bool spawning; // Boss does a little entry
     float spawningSpeed;

@@ -205,7 +205,8 @@ int main(int argc, char *argv[])
             // Boss overlay
             if (bossActive)
             {
-                render_vignette(renderer);
+                // TODO: Looks shite
+                // render_vignette(renderer);
             }
 
             if (bossActive && SDL_GetTicks() - bossSpawnTime < 2000)

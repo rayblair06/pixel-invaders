@@ -140,6 +140,22 @@ void check_collisions(void)
         }
     }
 
+    // --- Boss Beam vs Player ---
+    if (currentBoss.laserFiring)
+    {
+        SDL_Rect laserHitbox = {
+            (int)currentBoss.laserX - 4,
+            currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+            8,
+            SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
+
+        if (check_overlap(player.rect, laserHitbox))
+        {
+            // TODO: Move to boss variable
+            reduce_health(50);
+        }
+    }
+
     // --- Enemy vs bottom screen ---
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
