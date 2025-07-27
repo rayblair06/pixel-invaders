@@ -28,6 +28,7 @@ typedef struct
     bool spawning; // Boss does a little entry
     float spawningSpeed;
 
+    bool isMoving;      // Moving on the x axis
     bool moveDirection; // Direction boss moves (false - left, true - right)
     float movementSpeed;
     bool phaseTwo;
