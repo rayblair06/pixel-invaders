@@ -26,8 +26,6 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.active = true;
 
     currentBoss.attackTimer = 3.0f;
-    currentBoss.telegraphing = false;
-    currentBoss.telegraphTime = 0.0f;
 
     currentBoss.chargingLaser = false;
     currentBoss.laserFiring = false;
@@ -102,36 +100,6 @@ void tick_boss(float deltaTime)
     {
         currentBoss.moveDirection = true; // Go right
     }
-
-    // Attack pattern
-    // currentBoss.attackTimer -= deltaTime;
-
-    // if (currentBoss.telegraphing)
-    // {
-    //     currentBoss.telegraphTime -= deltaTime;
-
-    //     if (currentBoss.telegraphTime <= 0)
-    //     {
-    //         boss_fire_laser();
-    //         currentBoss.telegraphing = false;
-    //         currentBoss.attackTimer = currentBoss.phaseTwo ? 1.5f : 3.0f; // Reset attack timer
-    //     }
-    // }
-    // else if (currentBoss.attackTimer <= 0)
-    // {
-    //     // Start telegraph phase (flash warning)
-    //     currentBoss.telegraphing = true;
-    //     currentBoss.telegraphTime = 1.0f; // 1 second telegraph
-
-    //     if (!currentBoss.phaseTwo)
-    //     {
-    //         play_sound(SND_CHARGE1);
-    //     }
-    //     else
-    //     {
-    //         play_sound(SND_CHARGE2);
-    //     }
-    // }
 
     // Laser Attack logic
     if (!currentBoss.chargingLaser && !currentBoss.laserFiring)

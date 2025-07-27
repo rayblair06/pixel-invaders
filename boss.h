@@ -15,8 +15,6 @@ typedef struct
     bool active;
 
     float attackTimer;
-    float telegraphTime;
-    bool telegraphing;
 
     bool chargingLaser;
     float laserChargeTime; // Time left before firing
