@@ -23,6 +23,8 @@ typedef struct
     bool laserFiring;
     float laserX;
     float laserImpactPulse; // For pulsing brightness
+    float laserDamageCooldown;
+    float laserDamageTimer;
 
     float laserSweepSpeed; // How fast the last sweeps left/right
     int laserDirection;    // -1 for left, +1 for right

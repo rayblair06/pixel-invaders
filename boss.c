@@ -35,6 +35,9 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.laserX = SCREEN_WIDTH / 2;
     currentBoss.laserImpactPulse = 0.0f;
 
+    currentBoss.laserDamageCooldown = 0.5f;
+    currentBoss.laserDamageTimer = 0.0f;
+
     currentBoss.laserSweepSpeed = 200.0f; // pixels per second
     currentBoss.laserDirection = 1;
 

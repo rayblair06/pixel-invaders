@@ -143,16 +143,19 @@ void check_collisions(void)
     // --- Boss Beam vs Player ---
     if (currentBoss.laserFiring)
     {
+        currentBoss.laserDamageTimer -= deltaTime;
+
         SDL_Rect laserHitbox = {
             (int)currentBoss.laserX - 4,
             currentBoss.entity.rect.y + currentBoss.entity.rect.h,
             8,
             SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
 
-        if (check_overlap(player.rect, laserHitbox))
+        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(player.rect, laserHitbox))
         {
             // TODO: Move to boss variable
             reduce_health(25);
+            currentBoss.laserDamageTimer = currentBoss.laserDamageCooldown;
         }
     }
 
