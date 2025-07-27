@@ -104,7 +104,6 @@ void tick_boss(float deltaTime)
 
         // Determine target position (player's x + some random offset)
         float playerCenter = player.rect.x + player.rect.w / 2;
-        float bossCenter = currentBoss.entity.rect.x - currentBoss.entity.rect.w / 2;
         currentBoss.targetX = playerCenter + randomOffset;
 
         // Move towards targetX
@@ -113,7 +112,7 @@ void tick_boss(float deltaTime)
         if (smoothing > 1.0f)
             smoothing = 1.0f;
 
-        currentBoss.entity.rect.x += (currentBoss.targetX - bossCenter) * smoothing;
+        currentBoss.entity.rect.x += (currentBoss.targetX - currentBoss.entity.rect.x - currentBoss.entity.rect.w / 2) * smoothing;
     }
 
     // Keep within screen bounds
