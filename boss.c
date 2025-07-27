@@ -219,11 +219,11 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
         float pulse = (sinf(SDL_GetTicks() / 200.0f) + 1.0f) / 2.0f;
         Uint8 alpha = (Uint8)(50 + 150 * pulse);
 
-        SDL_SetRenderDrawColor(renderer, 255, 50, 50, alpha);
-
         if (currentBoss.phaseTwo)
         {
             // Draw a vertical band indicating sweep area
+            SDL_SetRenderDrawColor(renderer, 255, 50, 50, alpha);
+
             SDL_Rect warningLine = {
                 (int)currentBoss.laserX - 2,
                 currentBoss.entity.rect.y + currentBoss.entity.rect.h,
@@ -235,11 +235,16 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
         else
         {
             // Draw a red line where the laser will fire
-            SDL_RenderDrawLine(renderer,
-                               (int)currentBoss.laserX,
-                               currentBoss.entity.rect.y + currentBoss.entity.rect.h,
-                               (int)currentBoss.laserX,
-                               SCREEN_HEIGHT);
+            for (int i = -2; i <= 2; i++)
+            {
+                Uint8 glowAlpha = alpha / (1 + abs(i));
+                SDL_SetRenderDrawColor(renderer, 255, 50, 50, glowAlpha);
+                SDL_RenderDrawLine(renderer,
+                                   (int)currentBoss.laserX + i,
+                                   currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                                   (int)currentBoss.laserX + i,
+                                   SCREEN_HEIGHT);
+            }
         }
 
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
