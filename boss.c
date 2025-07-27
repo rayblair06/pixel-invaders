@@ -155,15 +155,16 @@ void tick_boss(float deltaTime)
         // In Phase 2, sweep the laser horizontally
         if (currentBoss.phaseTwo)
         {
+            // Phase 2: Sweeping laser
             currentBoss.laserX += currentBoss.laserDirection * currentBoss.laserSweepSpeed * deltaTime;
 
             // Reverse direction if we hit screen bounds
-            if (currentBoss.laserX < 20)
+            if (currentBoss.laserX <= 20)
             {
                 currentBoss.laserX = 20;
                 currentBoss.laserDirection = 1;
             }
-            else if (currentBoss.laserX > SCREEN_WIDTH - 20)
+            else if (currentBoss.laserX >= SCREEN_WIDTH - 20)
             {
                 currentBoss.laserX = SCREEN_WIDTH - 20;
                 currentBoss.laserDirection = -1;
@@ -221,20 +222,26 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         if (currentBoss.phaseTwo)
         {
-            // Draw a vertical band indicating sweep area
-            SDL_SetRenderDrawColor(renderer, 255, 50, 50, alpha);
+            // Phase 2: Sweep telegtaph - multiple vertical lines
+            int lineSpacing = 40; // Distance between telegraph lines
 
-            SDL_Rect warningLine = {
-                (int)currentBoss.laserX - 2,
-                currentBoss.entity.rect.y + currentBoss.entity.rect.h,
-                4,
-                SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
-
-            SDL_RenderFillRect(renderer, &warningLine);
+            for (int x = 20; x < SCREEN_WIDTH - 20; x += lineSpacing)
+            {
+                for (int i = -2; i <= 2; i++)
+                {
+                    Uint8 glowAlpha = alpha / (1 + abs(i));
+                    SDL_SetRenderDrawColor(renderer, 255, 50, 50, glowAlpha);
+                    SDL_RenderDrawLine(renderer,
+                                       x + i,
+                                       currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                                       x + i,
+                                       SCREEN_HEIGHT);
+                }
+            }
         }
         else
         {
-            // Draw a red line where the laser will fire
+            // Phase 1: Single glowing telegraph line
             for (int i = -2; i <= 2; i++)
             {
                 Uint8 glowAlpha = alpha / (1 + abs(i));
