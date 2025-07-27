@@ -10,6 +10,7 @@ typedef enum
     STATE_GAME_OVER
 } GameState;
 
+extern float deltaTime;
 extern int wave;
 
 extern bool initialiseGameProps;

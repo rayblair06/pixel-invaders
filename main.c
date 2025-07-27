@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     while (running)
     {
         Uint32 now = SDL_GetTicks();
-        float deltaTime = (now - lastTick) / 1000.0f;
+        deltaTime = (now - lastTick) / 1000.0f;
         lastTick = now;
 
         // Handle events and keystates

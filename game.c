@@ -7,6 +7,8 @@
 #include "sprites.h"
 #include "waves.h"
 
+float deltaTime;
+
 bool initialiseGameProps = false;
 bool isGameOver = false;
 bool isEntitiesFrozen = false;
