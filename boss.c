@@ -32,6 +32,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.laserChargeTime = 0.0f;
     currentBoss.laserDuration = 0.0f;
     currentBoss.laserX = SCREEN_WIDTH / 2;
+    currentBoss.laserImpactPulse = 0.0f;
 
     currentBoss.laserSweepSpeed = 200.0f; // pixels per second
     currentBoss.laserDirection = 1;
@@ -152,6 +153,12 @@ void tick_boss(float deltaTime)
 
         currentBoss.isMoving = false; // Stop to fire
 
+        currentBoss.laserImpactPulse += deltaTime * 6.0f; // Fast oscillation
+        if (currentBoss.laserImpactPulse > 2 * M_PI)
+        {
+            currentBoss.laserImpactPulse -= 2 * M_PI;
+        }
+
         // In Phase 2, sweep the laser horizontally
         if (currentBoss.phaseTwo)
         {
@@ -268,6 +275,37 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
             SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
 
         SDL_RenderFillRect(renderer, &laser);
+
+        // TODO: Lol, this looks shit but kind of works?!
+        // Pulse alpha and size
+        float pulse = (sinf(currentBoss.laserImpactPulse) + 1.0f) / 2.0f;
+        int impactSize = 20 + (int)(10 * pulse); // Size oscillates slightly
+        Uint8 alpha = 180 + (Uint8)(75 * pulse); // Alpha oscillates 180-255
+
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer, 255, 200, 50, alpha); // Bright yelllowish spark
+
+        SDL_Rect impact = {
+            (int)currentBoss.laserX - impactSize / 2,
+            SCREEN_HEIGHT - impactSize, // Floor impact
+            impactSize,
+            impactSize / 2};
+        SDL_RenderFillRect(renderer, &impact);
+
+        // Draw a second softer glow around it
+        SDL_SetRenderDrawColor(renderer, 255, 100, 50, alpha / 2);
+        SDL_Rect glow = {
+            impact.x - 5,
+            impact.y - 5,
+            impact.w + 10,
+            impact.h + 10};
+        SDL_RenderFillRect(renderer, &glow);
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+
+        // Particles!
+        spawn_explosion_particles(currentBoss.laserX, SCREEN_HEIGHT, 10);
+
+        trigger_screen_shake();
     }
 
     SDL_RenderCopy(renderer, texture, &src, &dst);

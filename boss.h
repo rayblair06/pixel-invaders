@@ -21,6 +21,7 @@ typedef struct
     float laserDuration;   // How long the laser stays
     bool laserFiring;
     float laserX;
+    float laserImpactPulse; // For pulsing brightness
 
     float laserSweepSpeed; // How fast the last sweeps left/right
     int laserDirection;    // -1 for left, +1 for right
