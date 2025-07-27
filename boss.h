@@ -22,6 +22,9 @@ typedef struct
     bool laserFiring;
     float laserX;
 
+    float laserSweepSpeed; // How fast the last sweeps left/right
+    int laserDirection;    // -1 for left, +1 for right
+
     bool spawning; // Boss does a little entry
     float spawningSpeed;
 

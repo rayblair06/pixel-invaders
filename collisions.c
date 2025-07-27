@@ -152,7 +152,7 @@ void check_collisions(void)
         if (check_overlap(player.rect, laserHitbox))
         {
             // TODO: Move to boss variable
-            reduce_health(50);
+            reduce_health(25);
         }
     }
 

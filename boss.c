@@ -33,6 +33,9 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.laserDuration = 0.0f;
     currentBoss.laserX = SCREEN_WIDTH / 2;
 
+    currentBoss.laserSweepSpeed = 200.0f; // pixels per second
+    currentBoss.laserDirection = 1;
+
     currentBoss.spawning = true;
     bossSpawnTime = SDL_GetTicks();
     currentBoss.spawningSpeed = 0.5f;
@@ -79,6 +82,7 @@ void tick_boss(float deltaTime)
     }
 
     // Move left or right
+    float bossMovementSpeed = !currentBoss.phaseTwo ? currentBoss.movementSpeed : currentBoss.movementSpeed + 0.5f;
 
     if (currentBoss.moveDirection)
     {
@@ -140,6 +144,24 @@ void tick_boss(float deltaTime)
     {
         currentBoss.laserDuration -= deltaTime;
 
+        // In Phase 2, sweep the laser horizontally
+        if (currentBoss.phaseTwo)
+        {
+            currentBoss.laserX += currentBoss.laserDirection * currentBoss.laserSweepSpeed * deltaTime;
+
+            // Reverse direction if we hit screen bounds
+            if (currentBoss.laserX < 20)
+            {
+                currentBoss.laserX = 20;
+                currentBoss.laserDirection = 1;
+            }
+            else if (currentBoss.laserX > SCREEN_WIDTH - 20)
+            {
+                currentBoss.laserX = SCREEN_WIDTH - 20;
+                currentBoss.laserDirection = -1;
+            }
+        }
+
         if (currentBoss.laserDuration <= 0)
         {
             currentBoss.laserFiring = false;
@@ -153,6 +175,7 @@ void tick_boss(float deltaTime)
         // Regains health for phase 2
         currentBoss.phaseTwo = true;
         currentBoss.health = currentBoss.healthMax;
+        currentBoss.laserSweepSpeed = currentBoss.laserSweepSpeed + 50.0f;
 
         play_sound(SND_BOSS_ROAR);
     }
@@ -181,26 +204,37 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     if (currentBoss.chargingLaser)
     {
-        // Alternative between red and normal for flashing effect
-        // if ((SDL_GetTicks() / 100) % 2 == 0)
-        // {
-        //     SDL_SetTextureColorMod(texture, 255, 50, 50); // reddish
-        // }
-        // else
-        // {
-        //     SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
-        // }
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-        // Draw a red line where the laser will fire
-        SDL_SetRenderDrawColor(renderer, 255, 50, 50, 150);
-        SDL_RenderDrawLine(renderer,
-                           (int)currentBoss.laserX, currentBoss.entity.rect.y + currentBoss.entity.rect.h,
-                           (int)currentBoss.laserX, SCREEN_HEIGHT);
+        // Pulse effect
+        float pulse = (sinf(SDL_GetTicks() / 200.0f) + 1.0f) / 2.0f;
+        Uint8 alpha = (Uint8)(50 + 150 * pulse);
+
+        SDL_SetRenderDrawColor(renderer, 255, 50, 50, alpha);
+
+        if (currentBoss.phaseTwo)
+        {
+            // Draw a vertical band indicating sweep area
+            SDL_Rect warningLine = {
+                (int)currentBoss.laserX - 2,
+                currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                4,
+                SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
+
+            SDL_RenderFillRect(renderer, &warningLine);
+        }
+        else
+        {
+            // Draw a red line where the laser will fire
+            SDL_RenderDrawLine(renderer,
+                               (int)currentBoss.laserX,
+                               currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                               (int)currentBoss.laserX,
+                               SCREEN_HEIGHT);
+        }
+
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
     }
-    // else
-    // {
-    //     SDL_SetTextureColorMod(texture, 255, 255, 255); // normal
-    // }
 
     if (currentBoss.laserFiring)
     {
