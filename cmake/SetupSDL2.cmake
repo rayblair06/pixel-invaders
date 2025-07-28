@@ -32,7 +32,7 @@ macro(download_sdl2_package name version url)
         file(RENAME "${extracted_dir}" "${dest}")
     endif()
 
-    list(APPEND SDL2_ALL_INCLUDE_DIRS "${dest}/include")
+    list(APPEND SDL2_ALL_INCLUDE_DIRS "${dest}/include/SDL2")
     list(APPEND SDL2_ALL_LIB_DIRS "${dest}/lib/x64")
 endmacro()
 
