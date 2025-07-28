@@ -63,3 +63,17 @@ endif()
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/version.h)
 include_directories(${CMAKE_BINARY_DIR})
+
+# -------------------------------
+# Install Rules
+# -------------------------------
+install(TARGETS PixelInvaders
+    RUNTIME DESTINATION .
+)
+
+# Install assets folder if it exists
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    install(DIRECTORY assets/
+        DESTINATION assets
+    )
+endif()
