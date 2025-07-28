@@ -1,16 +1,34 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(SDL2_DOWNLOAD_DIR "${CMAKE_SOURCE_DIR}/build")
+
+# Helper: download a file with curl
+function(download_file url dest)
+    if(EXISTS ${dest})
+        message(STATUS "Already downloaded: ${dest}")
+    else()
+        message(STATUS "Downloading ${url} -> ${dest}")
+        execute_process(
+            COMMAND curl -L -C - -o ${dest} ${url}
+            RESULT_VARIABLE result
+        )
+        if(NOT result EQUAL 0)
+            message(FATAL_ERROR "Failed to download ${url}")
+        endif()
+    endif()
+endfunction()
+
 # Helper macro to download and extract SDL2 package
 macro(download_sdl2_package name version url)
-    set(archive "${CMAKE_BINARY_DIR}/${name}.zip")
-    set(dest "${CMAKE_BINARY_DIR}/${name}")
+    set(archive "${SDL2_DOWNLOAD_DIR}/${name}.zip")
+    set(dest "${SDL2_DOWNLOAD_DIR}/${name}")
 
     if(NOT EXISTS ${dest})
-        message(STATUS "Downloading ${name} ${version}...")
-        file(DOWNLOAD ${url} ${archive} SHOW_PROGRESS)
+        download_file(${url} ${archive})
+        message(STATUS "Extracting ${name}...")
         execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${archive}
-                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-        file(GLOB extracted_dir "${CMAKE_BINARY_DIR}/${name}-*")
+                        WORKING_DIRECTORY ${SDL2_DOWNLOAD_DIR})
+        file(GLOB extracted_dir "${SDL2_DOWNLOAD_DIR}/${name}-*")
         file(RENAME "${extracted_dir}" "${dest}")
     endif()
 

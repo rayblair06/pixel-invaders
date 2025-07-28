@@ -47,7 +47,7 @@ else() # Linux
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
         ${SDL2_MIXER_LIBRARIES}
-        m # math lib
+        m # math library for Linux
     )
     set(SDL2_ALL_FOUND TRUE)
 endif()
@@ -56,5 +56,6 @@ if(NOT SDL2_ALL_FOUND)
     message(FATAL_ERROR "SDL2 libraries not found!")
 endif()
 
+# Expose vars
 set(SDL2_ALL_INCLUDE_DIRS ${SDL2_ALL_INCLUDE_DIRS} PARENT_SCOPE)
 set(SDL2_ALL_LIBS ${SDL2_ALL_LIBS} PARENT_SCOPE)

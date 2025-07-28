@@ -18,9 +18,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # =======================
-    # LINUX DEPENDENCIES
-    # =======================
+    # Linux
     - name: Install Dependencies (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -28,9 +26,7 @@ jobs:
         sudo apt install -y cmake build-essential pkg-config \
           libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip
 
-    # =======================
-    # MACOS DEPENDENCIES
-    # =======================
+    # macOS
     - name: Install Dependencies (macOS)
       if: matrix.os == 'macos-latest'
       run: |
@@ -38,27 +34,34 @@ jobs:
         brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
         echo "PKG_CONFIG_PATH=$(brew --prefix)/opt/sdl2/lib/pkgconfig:$(brew --prefix)/opt/sdl2_image/lib/pkgconfig:$(brew --prefix)/opt/sdl2_ttf/lib/pkgconfig:$(brew --prefix)/opt/sdl2_mixer/lib/pkgconfig" >> $GITHUB_ENV
 
-    # =======================
-    # WINDOWS DEPENDENCIES
-    # =======================
+    # Windows
     - name: Install Dependencies (Windows)
       if: matrix.os == 'windows-latest'
       run: |
         choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        choco install 7zip -y
+        choco install 7zip curl -y
 
-    # =======================
-    # CONFIGURE & BUILD
-    # =======================
+    # Windows Cache
+    - name: Cache SDL2 (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/cache@v4
+      with:
+        path: |
+          build/SDL2
+          build/SDL2_image
+          build/SDL2_ttf
+          build/SDL2_mixer
+        key: ${{ runner.os }}-sdl2-${{ hashFiles('cmake/SetupSDL2.cmake') }}
+        restore-keys: |
+          ${{ runner.os }}-sdl2-
+
+    # Build
     - name: Configure and Build
       run: |
         cmake -S . -B build
         cmake --build build --config Release
 
     # Copy DLLs (Windows)
-    # =======================
-    # COPY DLLs (WINDOWS)
-    # =======================
     - name: Copy SDL2 DLLs
       if: matrix.os == 'windows-latest'
       run: |
@@ -67,16 +70,12 @@ jobs:
         xcopy build\SDL2_ttf\lib\x64\*.dll build\
         xcopy build\SDL2_mixer\lib\x64\*.dll build\
 
-    # =======================
-    # PACKAGE
-    # =======================
+    # Package
     - name: Package Game
       run: |
         ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
 
-    # =======================
-    # UPLOAD ARTIFACT
-    # =======================
+    # Upload
     - name: Upload Build
       uses: actions/upload-artifact@v4
       with:

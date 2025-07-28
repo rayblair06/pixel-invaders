@@ -32,7 +32,7 @@ add_executable(PixelInvaders ${SOURCES})
 # -------------------------------
 # SDL2 (Unified Finder)
 # -------------------------------
-find_package(SDL2_All REQUIRED)
+include(cmake/FindSDL2_All.cmake)
 target_include_directories(PixelInvaders PRIVATE ${SDL2_ALL_INCLUDE_DIRS})
 target_link_libraries(PixelInvaders ${SDL2_ALL_LIBS})
 
