@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "audio.h"
 #include "bullets.h"
 #include "constants.h"

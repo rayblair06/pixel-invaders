@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "bullets.h"
 #include "level_manager.h"
 #include "player.h"
