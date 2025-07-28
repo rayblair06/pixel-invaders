@@ -30,14 +30,22 @@ set(SOURCES
 add_executable(PixelInvaders ${SOURCES})
 
 # -------------------------------
-# SDL2 (Unified Finder)
+# SDL2 Setup
 # -------------------------------
 include(cmake/FindSDL2_All.cmake)
 target_include_directories(PixelInvaders PRIVATE ${SDL2_ALL_INCLUDE_DIRS})
 target_link_libraries(PixelInvaders ${SDL2_ALL_LIBS})
 
 # -------------------------------
-# Git version info
+# Windows-specific compiler options
+# -------------------------------
+if (MSVC)
+    # Disable conversion warnings (int ↔ float)
+    target_compile_options(PixelInvaders PRIVATE /wd4244 /wd4305)
+endif()
+
+# -------------------------------
+# Version Info
 # -------------------------------
 execute_process(
     COMMAND git describe --tags --always
@@ -51,10 +59,5 @@ if(NOT GIT_TAG)
 endif()
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
-
-configure_file(
-    ${CMAKE_SOURCE_DIR}/version.h.in
-    ${CMAKE_BINARY_DIR}/version.h
-)
-
+configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/version.h)
 include_directories(${CMAKE_BINARY_DIR})
