@@ -19,20 +19,6 @@ jobs:
       uses: actions/checkout@v4
 
     # =======================
-    # LINUX CACHE
-    # =======================
-    - name: Cache APT packages
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/cache@v4
-      with:
-        path: |
-          /var/cache/apt/archives
-          /var/lib/apt/lists
-        key: ${{ runner.os }}-apt-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-apt-
-
-    # =======================
     # LINUX DEPENDENCIES
     # =======================
     - name: Install Dependencies (Linux)
@@ -41,21 +27,6 @@ jobs:
         sudo apt update
         sudo apt install -y cmake build-essential pkg-config \
           libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip
-        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
-
-    # =======================
-    # MACOS CACHE
-    # =======================
-    - name: Cache Homebrew
-      if: matrix.os == 'macos-latest'
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/Library/Caches/Homebrew
-          /opt/homebrew/Cellar
-        key: ${{ runner.os }}-brew-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-brew-
 
     # =======================
     # MACOS DEPENDENCIES
@@ -76,22 +47,6 @@ jobs:
         choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
         choco install 7zip -y
 
-        curl -LO https://github.com/libsdl-org/SDL/releases/download/release-2.30.4/SDL2-devel-2.30.4-VC.zip
-        tar -xf SDL2-devel-2.30.4-VC.zip
-        move SDL2-2.30.4 SDL2
-
-        curl -LO https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-VC.zip
-        tar -xf SDL2_image-devel-2.8.2-VC.zip
-        move SDL2_image-2.8.2 SDL2_image
-
-        curl -LO https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-VC.zip
-        tar -xf SDL2_ttf-devel-2.22.0-VC.zip
-        move SDL2_ttf-2.22.0 SDL2_ttf
-
-        curl -LO https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-VC.zip
-        tar -xf SDL2_mixer-devel-2.6.3-VC.zip
-        move SDL2_mixer-2.6.3 SDL2_mixer
-
     # =======================
     # CONFIGURE & BUILD
     # =======================
@@ -100,19 +55,20 @@ jobs:
         cmake -S . -B build
         cmake --build build --config Release
 
+    # Copy DLLs (Windows)
     # =======================
-    # COPY DLLs (Windows)
+    # COPY DLLs (WINDOWS)
     # =======================
     - name: Copy SDL2 DLLs
       if: matrix.os == 'windows-latest'
       run: |
-        xcopy SDL2\lib\x64\*.dll build\
-        xcopy SDL2_image\lib\x64\*.dll build\
-        xcopy SDL2_ttf\lib\x64\*.dll build\
-        xcopy SDL2_mixer\lib\x64\*.dll build\
+        xcopy build\SDL2\lib\x64\*.dll build\
+        xcopy build\SDL2_image\lib\x64\*.dll build\
+        xcopy build\SDL2_ttf\lib\x64\*.dll build\
+        xcopy build\SDL2_mixer\lib\x64\*.dll build\
 
     # =======================
-    # PACKAGE BINARIES
+    # PACKAGE
     # =======================
     - name: Package Game
       run: |
