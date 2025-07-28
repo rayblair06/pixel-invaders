@@ -37,6 +37,16 @@ target_include_directories(PixelInvaders PRIVATE ${SDL2_ALL_INCLUDE_DIRS})
 target_link_libraries(PixelInvaders ${SDL2_ALL_LIBS})
 
 # -------------------------------
+# Macos-specific compiler options
+# -------------------------------
+if(APPLE)
+    if(EXISTS "/opt/homebrew/lib/pkgconfig")
+        set(ENV{PKG_CONFIG_PATH} "/opt/homebrew/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}")
+    endif()
+endif()
+
+
+# -------------------------------
 # Windows-specific compiler options
 # -------------------------------
 if (MSVC)
