@@ -73,7 +73,11 @@ jobs:
     # Package
     - name: Package Game
       run: |
-        ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          7z a PixelInvaders-${{ matrix.os }}.zip .\build\Release\*
+        else
+          ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
+        fi
 
     # Upload
     - name: Upload Build
