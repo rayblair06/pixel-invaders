@@ -65,7 +65,7 @@ jobs:
       run: |
         brew update
         brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
-        echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig:$(brew --prefix sdl2)/lib/pkgconfig" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=$(brew --prefix)/opt/sdl2/lib/pkgconfig:$(brew --prefix)/opt/sdl2_image/lib/pkgconfig:$(brew --prefix)/opt/sdl2_ttf/lib/pkgconfig:$(brew --prefix)/opt/sdl2_mixer/lib/pkgconfig" >> $GITHUB_ENV
 
     # =======================
     # WINDOWS DEPENDENCIES
