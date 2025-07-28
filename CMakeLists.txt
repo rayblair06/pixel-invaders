@@ -8,36 +8,56 @@ set(CMAKE_C_STANDARD 11)
 # Platform-specific SDL2 handling
 # -------------------------------
 if(WIN32)
-    # Prebuilt SDL2 for Windows
-    set(SDL2_DIR "${CMAKE_SOURCE_DIR}/SDL2/cmake")
-    set(SDL2_IMAGE_DIR "${CMAKE_SOURCE_DIR}/SDL2_image/cmake")
-    set(SDL2_TTF_DIR "${CMAKE_SOURCE_DIR}/SDL2_ttf/cmake")
-    set(SDL2_MIXER_DIR "${CMAKE_SOURCE_DIR}/SDL2_mixer/cmake")
-    set(CMAKE_PREFIX_PATH "${SDL2_DIR};${SDL2_IMAGE_DIR};${SDL2_TTF_DIR};${SDL2_MIXER_DIR}")
+    # Use prebuilt SDL2 libraries from extracted archives
+    include_directories(
+        ${CMAKE_SOURCE_DIR}/SDL2/include
+        ${CMAKE_SOURCE_DIR}/SDL2_image/include
+        ${CMAKE_SOURCE_DIR}/SDL2_ttf/include
+        ${CMAKE_SOURCE_DIR}/SDL2_mixer/include
+    )
 
-    find_package(SDL2 REQUIRED)
-    find_package(SDL2_image REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
-    find_package(SDL2_mixer REQUIRED)
+    link_directories(
+        ${CMAKE_SOURCE_DIR}/SDL2/lib/x64
+        ${CMAKE_SOURCE_DIR}/SDL2_image/lib/x64
+        ${CMAKE_SOURCE_DIR}/SDL2_ttf/lib/x64
+        ${CMAKE_SOURCE_DIR}/SDL2_mixer/lib/x64
+    )
+
+    set(SDL2_LIBS SDL2 SDL2main SDL2_image SDL2_ttf SDL2_mixer)
+
 else()
-    # Use pkg-config on macOS and Linux
     find_package(PkgConfig REQUIRED)
 
-    # Collect cflags (includes) from pkg-config
-    execute_process(
-        COMMAND pkg-config --cflags sdl2 SDL2_image SDL2_ttf SDL2_mixer
-        OUTPUT_VARIABLE SDL2_PKG_CFLAGS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    separate_arguments(SDL2_PKG_CFLAGS)
+    # macOS: Ensure Homebrew pkg-config paths are included
+    if(APPLE)
+        execute_process(
+            COMMAND brew --prefix
+            OUTPUT_VARIABLE BREW_PREFIX
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        set(ENV{PKG_CONFIG_PATH}
+            "$ENV{PKG_CONFIG_PATH}:${BREW_PREFIX}/lib/pkgconfig:${BREW_PREFIX}/opt/sdl2/lib/pkgconfig"
+        )
+    endif()
 
-    # Collect libs (with -L and -l) from pkg-config
-    execute_process(
-        COMMAND pkg-config --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer
-        OUTPUT_VARIABLE SDL2_PKG_LIBS
-        OUTPUT_STRIP_TRAILING_WHITESPACE
+    pkg_check_modules(SDL2 REQUIRED sdl2)
+    pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
+    pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
+    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
+
+    include_directories(
+        ${SDL2_INCLUDE_DIRS}
+        ${SDL2_IMAGE_INCLUDE_DIRS}
+        ${SDL2_TTF_INCLUDE_DIRS}
+        ${SDL2_MIXER_INCLUDE_DIRS}
     )
-    separate_arguments(SDL2_PKG_LIBS)
+
+    set(SDL2_LIBS
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${SDL2_TTF_LIBRARIES}
+        ${SDL2_MIXER_LIBRARIES}
+    )
 endif()
 
 # -------------------------------
@@ -68,26 +88,9 @@ set(SOURCES
 add_executable(PixelInvaders ${SOURCES})
 
 # -------------------------------
-# Include and link
+# Linking
 # -------------------------------
-if(WIN32)
-    target_include_directories(PixelInvaders PRIVATE
-        ${SDL2_INCLUDE_DIRS}
-        ${SDL2_IMAGE_INCLUDE_DIRS}
-        ${SDL2_TTF_INCLUDE_DIRS}
-        ${SDL2_MIXER_INCLUDE_DIRS}
-    )
-    target_link_libraries(PixelInvaders
-        ${SDL2_LIBRARIES}
-        ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES}
-        ${SDL2_MIXER_LIBRARIES}
-    )
-else()
-    # Add pkg-config CFLAGS and LIBS
-    target_compile_options(PixelInvaders PRIVATE ${SDL2_PKG_CFLAGS})
-    target_link_options(PixelInvaders PRIVATE ${SDL2_PKG_LIBS})
-endif()
+target_link_libraries(PixelInvaders ${SDL2_LIBS})
 
 # -------------------------------
 # Git version info

@@ -41,6 +41,7 @@ jobs:
         sudo apt update
         sudo apt install -y cmake build-essential pkg-config \
           libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip
+        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
 
     # =======================
     # MACOS CACHE
@@ -64,6 +65,7 @@ jobs:
       run: |
         brew update
         brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
+        echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig:$(brew --prefix sdl2)/lib/pkgconfig" >> $GITHUB_ENV
 
     # =======================
     # WINDOWS DEPENDENCIES
