@@ -18,7 +18,7 @@ function(download_file url dest)
     endif()
 endfunction()
 
-# Helper macro to download and extract SDL2 package
+# Helper macro to download, extract, and fix SDL2 include structure
 macro(download_sdl2_package name version url)
     set(archive "${SDL2_DOWNLOAD_DIR}/${name}.zip")
     set(dest "${SDL2_DOWNLOAD_DIR}/${name}")
@@ -30,9 +30,16 @@ macro(download_sdl2_package name version url)
                         WORKING_DIRECTORY ${SDL2_DOWNLOAD_DIR})
         file(GLOB extracted_dir "${SDL2_DOWNLOAD_DIR}/${name}-*")
         file(RENAME "${extracted_dir}" "${dest}")
+
+        # --- Fix include structure for <SDL2/...> includes ---
+        file(MAKE_DIRECTORY "${dest}/include/SDL2")
+        file(GLOB SDL_HEADERS "${dest}/include/*.h")
+        foreach(header ${SDL_HEADERS})
+            file(COPY ${header} DESTINATION "${dest}/include/SDL2")
+        endforeach()
     endif()
 
-    list(APPEND SDL2_ALL_INCLUDE_DIRS "${dest}/include/SDL2")
+    list(APPEND SDL2_ALL_INCLUDE_DIRS "${dest}/include")
     list(APPEND SDL2_ALL_LIB_DIRS "${dest}/lib/x64")
 endmacro()
 
@@ -51,6 +58,3 @@ download_sdl2_package("SDL2_ttf" "2.22.0"
 # SDL2_mixer
 download_sdl2_package("SDL2_mixer" "2.6.3"
     "https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-VC.zip")
-
-set(SDL2_ALL_INCLUDE_DIRS ${SDL2_ALL_INCLUDE_DIRS} PARENT_SCOPE)
-set(SDL2_ALL_LIB_DIRS ${SDL2_ALL_LIB_DIRS} PARENT_SCOPE)
