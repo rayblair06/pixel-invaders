@@ -111,16 +111,23 @@ jobs:
         strip -u -r dist/PixelInvaders
 
     # -------------------------------
-    # Package Game
+    # Package Game (Windows)
     # -------------------------------
-    - name: Package Game
+    - name: Package Game (Windows)
+      if: matrix.os == 'windows-latest'
       run: |
         cd dist
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          7z a ../PixelInvaders-${{ matrix.os }}.zip *
-        else
-          zip -r ../PixelInvaders-${{ matrix.os }}.zip .
-        fi
+        7z a ../PixelInvaders-${{ matrix.os }}.zip *
+        cd ..
+
+    # -------------------------------
+    # Package Game (Linux/macOS)
+    # -------------------------------
+    - name: Package Game (Linux/macOS)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cd dist
+        zip -r ../PixelInvaders-${{ matrix.os }}.zip .
         cd ..
 
     # -------------------------------
