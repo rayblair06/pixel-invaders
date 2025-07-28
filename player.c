@@ -1,5 +1,5 @@
 #include <math.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include "audio.h"
 #include "constants.h"
 #include "bullets.h"

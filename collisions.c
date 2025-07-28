@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "audio.h"
 #include "boss.h"
 #include "collisions.h"

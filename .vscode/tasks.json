@@ -25,7 +25,7 @@
         "waves.c",
         "-o",
         "build/game",
-        "-I/opt/homebrew/include/SDL2",
+        "-I/opt/homebrew/include",
         "-L/opt/homebrew/lib",
         "-lSDL2",
         "-lSDL2_ttf",
