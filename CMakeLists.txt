@@ -81,9 +81,20 @@ install(TARGETS PixelInvaders
     RUNTIME DESTINATION .
 )
 
-# Install assets folder if it exists
+# Install assets folder
 if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
     install(DIRECTORY assets/
         DESTINATION assets
+    )
+endif()
+
+# Post-install SDL2 DLL copy for Windows
+if(WIN32)
+    install(FILES
+        ${SDL2_DIR}/lib/x64/SDL2.dll
+        ${SDL2_IMAGE_DIR}/lib/x64/SDL2_image.dll
+        ${SDL2_TTF_DIR}/lib/x64/SDL2_ttf.dll
+        ${SDL2_MIXER_DIR}/lib/x64/SDL2_mixer.dll
+        DESTINATION .
     )
 endif()
