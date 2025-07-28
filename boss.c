@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "audio.h"
 #include "boss.h"
 #include "constants.h"
