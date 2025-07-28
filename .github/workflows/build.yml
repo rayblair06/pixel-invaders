@@ -15,107 +15,110 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # -------------------------------
-    # Linux Dependencies
-    # -------------------------------
-    - name: Install Dependencies (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt update
-        sudo apt install -y cmake build-essential pkg-config \
-          libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip patchelf
+      # -------------------------------
+      # Linux Dependencies
+      # -------------------------------
+      - name: Install Dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install -y cmake build-essential pkg-config \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip patchelf
 
-    # -------------------------------
-    # macOS Dependencies
-    # -------------------------------
-    - name: Install Dependencies (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew update
-        brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
+      # -------------------------------
+      # macOS Dependencies
+      # -------------------------------
+      - name: Install Dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew update
+          brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
 
-        # Ensure pkg-config can find SDL2
-        echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
+          # Ensure pkg-config can find SDL2
+          echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
 
-    # -------------------------------
-    # Windows Dependencies
-    # -------------------------------
-    - name: Install Dependencies (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        choco install 7zip -y
+      # -------------------------------
+      # Windows Dependencies
+      # -------------------------------
+      - name: Install Dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+          choco install 7zip -y
 
-    # -------------------------------
-    # Configure & Build
-    # -------------------------------
-    - name: Configure and Build
-      run: |
-        export PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig:$PKG_CONFIG_PATH"
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-        cmake --build build --config Release
+      - name: Set PKG_CONFIG_PATH (macOS)
+        if: matrix.os == 'macos-latest'
+        run: echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
 
-    # -------------------------------
-    # Install to Dist Folder
-    # -------------------------------
-    - name: Install Game
-      run: |
-        cmake --install build --config Release --prefix dist
+      # -------------------------------
+      # Configure & Build
+      # -------------------------------
+      - name: Configure and Build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
 
-    # -------------------------------
-    # Bundle SDL Libraries (macOS)
-    # -------------------------------
-    - name: Bundle SDL dylibs (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        mkdir -p dist/libs
-        for lib in SDL2 SDL2_image SDL2_ttf SDL2_mixer; do
-          cp /opt/homebrew/lib/lib${lib}-*.dylib dist/libs/ || true
-        done
-        # Fix rpath to look for local libs
-        install_name_tool -add_rpath "@executable_path/libs" dist/PixelInvaders
-        for dylib in dist/libs/*.dylib; do
-          install_name_tool -id "@executable_path/libs/$(basename $dylib)" $dylib
-        done
+      # -------------------------------
+      # Install to Dist Folder
+      # -------------------------------
+      - name: Install Game
+        run: |
+          cmake --install build --config Release --prefix dist
 
-    # -------------------------------
-    # Bundle SDL Libraries (Linux)
-    # -------------------------------
-    - name: Bundle SDL so files (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        mkdir -p dist/libs
-        for lib in libSDL2-2.0.so libSDL2_image-2.0.so libSDL2_ttf-2.0.so libSDL2_mixer-2.0.so; do
-          cp $(ldconfig -p | grep $lib | head -n 1 | awk '{print $4}') dist/libs/
-        done
-        # Set rpath to look in ./libs
-        patchelf --set-rpath '$ORIGIN/libs' dist/PixelInvaders
+      # -------------------------------
+      # Bundle SDL Libraries (macOS)
+      # -------------------------------
+      - name: Bundle SDL dylibs (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          mkdir -p dist/libs
+          for lib in SDL2 SDL2_image SDL2_ttf SDL2_mixer; do
+            cp /opt/homebrew/lib/lib${lib}-*.dylib dist/libs/ || true
+          done
+          # Fix rpath to look for local libs
+          install_name_tool -add_rpath "@executable_path/libs" dist/PixelInvaders
+          for dylib in dist/libs/*.dylib; do
+            install_name_tool -id "@executable_path/libs/$(basename $dylib)" $dylib
+          done
 
-    # -------------------------------
-    # Package Game
-    # -------------------------------
-    - name: Package Game (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        cd dist
-        7z a ../PixelInvaders-${{ matrix.os }}.zip *
-        cd ..
+      # -------------------------------
+      # Bundle SDL Libraries (Linux)
+      # -------------------------------
+      - name: Bundle SDL so files (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mkdir -p dist/libs
+          for lib in libSDL2-2.0.so libSDL2_image-2.0.so libSDL2_ttf-2.0.so libSDL2_mixer-2.0.so; do
+            cp $(ldconfig -p | grep $lib | head -n 1 | awk '{print $4}') dist/libs/
+          done
+          # Set rpath to look in ./libs
+          patchelf --set-rpath '$ORIGIN/libs' dist/PixelInvaders
 
-    - name: Package Game (Linux/macOS)
-      if: matrix.os != 'windows-latest'
-      run: |
-        cd dist
-        zip -r ../PixelInvaders-${{ matrix.os }}.zip .
-        cd ..
+      # -------------------------------
+      # Package Game
+      # -------------------------------
+      - name: Package Game (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd dist
+          7z a ../PixelInvaders-${{ matrix.os }}.zip *
+          cd ..
 
-    # -------------------------------
-    # Upload Artifact
-    # -------------------------------
-    - name: Upload Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: PixelInvaders-${{ matrix.os }}
-        path: PixelInvaders-${{ matrix.os }}.zip
+      - name: Package Game (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd dist
+          zip -r ../PixelInvaders-${{ matrix.os }}.zip .
+          cd ..
+
+      # -------------------------------
+      # Upload Artifact
+      # -------------------------------
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixelInvaders-${{ matrix.os }}
+          path: PixelInvaders-${{ matrix.os }}.zip
