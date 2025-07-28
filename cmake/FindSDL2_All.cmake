@@ -2,7 +2,8 @@ set(SDL2_ALL_FOUND FALSE)
 set(SDL2_ALL_LIBS "")
 set(SDL2_ALL_INCLUDE_DIRS "")
 
-if (WIN32)
+if(WIN32)
+    # Windows: Use prebuilt libraries
     include(${CMAKE_SOURCE_DIR}/cmake/SetupSDL2.cmake)
 
     set(SDL2_ALL_LIBS
@@ -23,14 +24,13 @@ if (WIN32)
     set(SDL2_ALL_FOUND TRUE)
 
 elseif(APPLE)
-    # macOS: Use pkg-config for headers, absolute paths for libs
+    # macOS: Use Homebrew
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SDL2 REQUIRED sdl2)
     pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
     pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
     pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
 
-    # Header include directories
     set(SDL2_ALL_INCLUDE_DIRS
         ${SDL2_INCLUDE_DIRS}
         ${SDL2_IMAGE_INCLUDE_DIRS}
@@ -38,27 +38,10 @@ elseif(APPLE)
         ${SDL2_MIXER_INCLUDE_DIRS}
     )
 
-    # Resolve full library paths using Homebrew
-    execute_process(
-        COMMAND brew --prefix sdl2
-        OUTPUT_VARIABLE SDL2_PREFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    execute_process(
-        COMMAND brew --prefix sdl2_image
-        OUTPUT_VARIABLE SDL2_IMAGE_PREFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    execute_process(
-        COMMAND brew --prefix sdl2_ttf
-        OUTPUT_VARIABLE SDL2_TTF_PREFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    execute_process(
-        COMMAND brew --prefix sdl2_mixer
-        OUTPUT_VARIABLE SDL2_MIXER_PREFIX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+    execute_process(COMMAND brew --prefix sdl2 OUTPUT_VARIABLE SDL2_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND brew --prefix sdl2_image OUTPUT_VARIABLE SDL2_IMAGE_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND brew --prefix sdl2_ttf OUTPUT_VARIABLE SDL2_TTF_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND brew --prefix sdl2_mixer OUTPUT_VARIABLE SDL2_MIXER_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     set(SDL2_ALL_LIBS
         ${SDL2_PREFIX}/lib/libSDL2.dylib
@@ -66,11 +49,10 @@ elseif(APPLE)
         ${SDL2_TTF_PREFIX}/lib/libSDL2_ttf.dylib
         ${SDL2_MIXER_PREFIX}/lib/libSDL2_mixer.dylib
     )
-
     set(SDL2_ALL_FOUND TRUE)
 
 else() # Linux
-    # Linux: Use pkg-config (libs are in default linker paths)
+    # Linux: Use pkg-config
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(SDL2 REQUIRED sdl2)
     pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
@@ -83,12 +65,13 @@ else() # Linux
         ${SDL2_TTF_INCLUDE_DIRS}
         ${SDL2_MIXER_INCLUDE_DIRS}
     )
+
     set(SDL2_ALL_LIBS
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
         ${SDL2_TTF_LIBRARIES}
         ${SDL2_MIXER_LIBRARIES}
-        m # math library for sqrtf, etc.
+        m
     )
     set(SDL2_ALL_FOUND TRUE)
 endif()

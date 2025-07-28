@@ -38,9 +38,6 @@ macro(download_sdl2_package name version url)
             file(COPY ${header} DESTINATION "${dest}/include/SDL2")
         endforeach()
     endif()
-
-    list(APPEND SDL2_ALL_INCLUDE_DIRS "${dest}/include")
-    list(APPEND SDL2_ALL_LIB_DIRS "${dest}/lib/x64")
 endmacro()
 
 # SDL2 main
