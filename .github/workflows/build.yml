@@ -18,7 +18,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Linux
+    # =======================
+    # LINUX CACHE
+    # =======================
+    - name: Cache APT packages
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: ${{ runner.os }}-apt-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    # =======================
+    # LINUX DEPENDENCIES
+    # =======================
     - name: Install Dependencies (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -26,56 +42,83 @@ jobs:
         sudo apt install -y cmake build-essential pkg-config \
           libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev zip
 
-    # macOS
+    # =======================
+    # MACOS CACHE
+    # =======================
+    - name: Cache Homebrew
+      if: matrix.os == 'macos-latest'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+          /opt/homebrew/Cellar
+        key: ${{ runner.os }}-brew-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-brew-
+
+    # =======================
+    # MACOS DEPENDENCIES
+    # =======================
     - name: Install Dependencies (macOS)
       if: matrix.os == 'macos-latest'
       run: |
         brew update
         brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
-        echo "PKG_CONFIG_PATH=$(brew --prefix)/opt/sdl2/lib/pkgconfig:$(brew --prefix)/opt/sdl2_image/lib/pkgconfig:$(brew --prefix)/opt/sdl2_ttf/lib/pkgconfig:$(brew --prefix)/opt/sdl2_mixer/lib/pkgconfig" >> $GITHUB_ENV
 
-    # Windows
-    - name: Install Dependencies (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-        choco install 7zip curl -y
-
-    # Windows Cache
-    - name: Cache SDL2 (Windows)
+    # =======================
+    # WINDOWS CACHE (SDL2)
+    # =======================
+    - name: Cache SDL2 Windows Dependencies
       if: matrix.os == 'windows-latest'
       uses: actions/cache@v4
       with:
-        path: |
-          build/SDL2
-          build/SDL2_image
-          build/SDL2_ttf
-          build/SDL2_mixer
+        path: build/SDL2*
         key: ${{ runner.os }}-sdl2-${{ hashFiles('cmake/SetupSDL2.cmake') }}
         restore-keys: |
           ${{ runner.os }}-sdl2-
 
-    # Build
+    # =======================
+    # WINDOWS DEPENDENCIES
+    # =======================
+    - name: Install Dependencies (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+        choco install 7zip -y
+
+    # =======================
+    # CONFIGURE & BUILD
+    # =======================
     - name: Configure and Build
       run: |
-        cmake -S . -B build
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
         cmake --build build --config Release
 
-    # Copy DLLs (Windows)
+    # =======================
+    # COPY DLLs (Windows)
+    # =======================
     - name: Copy SDL2 DLLs
       if: matrix.os == 'windows-latest'
       run: |
-        xcopy build\SDL2\lib\x64\*.dll build\
-        xcopy build\SDL2_image\lib\x64\*.dll build\
-        xcopy build\SDL2_ttf\lib\x64\*.dll build\
-        xcopy build\SDL2_mixer\lib\x64\*.dll build\
+        xcopy build\SDL2\lib\x64\*.dll build\Release\
+        xcopy build\SDL2_image\lib\x64\*.dll build\Release\
+        xcopy build\SDL2_ttf\lib\x64\*.dll build\Release\
+        xcopy build\SDL2_mixer\lib\x64\*.dll build\Release\
 
-    # Package
+    # =======================
+    # PACKAGE BINARIES
+    # =======================
     - name: Package Game
       run: |
-        ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          7z a PixelInvaders-${{ matrix.os }}.zip .\build\Release\*
+        else
+          ./scripts/package_assets.sh build PixelInvaders-${{ matrix.os }}.zip
+        fi
 
-    # Upload
+    # =======================
+    # UPLOAD ARTIFACT
+    # =======================
     - name: Upload Build
       uses: actions/upload-artifact@v4
       with:
