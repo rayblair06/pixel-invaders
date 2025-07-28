@@ -9,6 +9,9 @@
 #include "ui.h"
 #include "waves.h"
 
+// replace sprintf with safer sprintf_s
+#define _CRT_SECURE_NO_WARNINGS
+
 /**
  * Helper function for generating text on screen
  */

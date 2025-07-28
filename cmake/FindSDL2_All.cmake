@@ -2,11 +2,18 @@ set(SDL2_ALL_FOUND FALSE)
 set(SDL2_ALL_LIBS "")
 set(SDL2_ALL_INCLUDE_DIRS "")
 
-if(WIN32)
-    # Windows: Download prebuilt SDL2 packages
+if (WIN32)
     include(${CMAKE_SOURCE_DIR}/cmake/SetupSDL2.cmake)
     link_directories(${SDL2_ALL_LIB_DIRS})
-    set(SDL2_ALL_LIBS SDL2 SDL2main SDL2_image SDL2_ttf SDL2_mixer)
+
+    set(SDL2_ALL_LIBS
+        ${SDL2_ALL_LIB_DIRS}/SDL2.lib
+        ${SDL2_ALL_LIB_DIRS}/SDL2main.lib
+        ${SDL2_ALL_LIB_DIRS}/SDL2_image.lib
+        ${SDL2_ALL_LIB_DIRS}/SDL2_ttf.lib
+        ${SDL2_ALL_LIB_DIRS}/SDL2_mixer.lib
+    )
+
     set(SDL2_ALL_FOUND TRUE)
 
 elseif(APPLE)
