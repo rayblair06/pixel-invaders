@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #define PANEL_SIZE 16
 #define SPRITE_SIZE 16

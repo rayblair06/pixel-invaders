@@ -1,7 +1,7 @@
 #ifndef BULLETS_H
 #define BULLETS_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "entity.h"
 
 #define MAX_BULLETS 100

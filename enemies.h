@@ -1,7 +1,7 @@
 #ifndef ENEMIES_H
 #define ENEMIES_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include "entity.h"
 #include "sprites.h"
 

@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <SDL2/SDL_mixer.h>
+#include <SDL_mixer.h>
 #include <stdbool.h>
 #include "entity.h"
 

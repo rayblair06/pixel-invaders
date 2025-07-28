@@ -1,7 +1,7 @@
 #ifndef PARTICLES_H
 #define PARTICLES_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdbool.h>
 
 #define MAX_PARTICLES 200

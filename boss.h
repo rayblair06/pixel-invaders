@@ -1,8 +1,8 @@
 #ifndef BOSS_H
 #define BOSS_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
 #include "entity.h"
 #include "sprites.h"
 
