@@ -40,6 +40,8 @@ target_link_libraries(PixelInvaders ${SDL2_ALL_LIBS})
 # Windows-specific compiler options
 # -------------------------------
 if (MSVC)
+    # Disable sprintf warnings
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Disable conversion warnings (int ↔ float)
     target_compile_options(PixelInvaders PRIVATE /wd4244 /wd4305)
 endif()
