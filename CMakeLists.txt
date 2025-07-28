@@ -90,11 +90,12 @@ endif()
 
 # Post-install SDL2 DLL copy for Windows
 if(WIN32)
-    install(FILES
-        ${SDL2_DIR}/lib/x64/SDL2.dll
-        ${SDL2_IMAGE_DIR}/lib/x64/SDL2_image.dll
-        ${SDL2_TTF_DIR}/lib/x64/SDL2_ttf.dll
-        ${SDL2_MIXER_DIR}/lib/x64/SDL2_mixer.dll
-        DESTINATION .
+    set(SDL2_BINARIES
+        "${CMAKE_BINARY_DIR}/SDL2/lib/x64/SDL2.dll"
+        "${CMAKE_BINARY_DIR}/SDL2_image/lib/x64/SDL2_image.dll"
+        "${CMAKE_BINARY_DIR}/SDL2_ttf/lib/x64/SDL2_ttf.dll"
+        "${CMAKE_BINARY_DIR}/SDL2_mixer/lib/x64/SDL2_mixer.dll"
     )
+
+    install(FILES ${SDL2_BINARIES} DESTINATION .)
 endif()
