@@ -6,7 +6,6 @@
 // Current level and xp
 extern int playerLevel;
 extern int experience;
-extern int experienceTotal;
 extern int experienceToNextLevel;
 extern float experienceVisual;
 

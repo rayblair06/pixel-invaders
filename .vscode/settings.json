@@ -18,6 +18,7 @@
     "level_manager.h": "c",
     "upgrades.h": "c",
     "collisions.h": "c",
-    "bullets.h": "c"
+    "bullets.h": "c",
+    "particles.h": "c"
   }
 }

@@ -21,6 +21,7 @@ set(SOURCES
     particles.c
     pickups.c
     player.c
+    stats.c
     sprites.c
     ui.c
     upgrades.c

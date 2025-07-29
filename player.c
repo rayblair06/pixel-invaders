@@ -7,6 +7,7 @@
 #include "game.h"
 #include "particles.h"
 #include "player.h"
+#include "stats.h"
 #include "sprites.h"
 
 Entity player;
@@ -200,6 +201,7 @@ void trigger_player_shoot()
 
     for (int i = 0; i < bulletsFired; i++)
     {
+        record_bullets_fired();
         spawn_bullet(
             player.x + player.w / 2 + offSets[i],
             player.y, spreadAngles[i]);

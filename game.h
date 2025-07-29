@@ -7,6 +7,7 @@ typedef enum
 {
     STATE_MAIN_MENU,
     STATE_PLAYING,
+    STATE_PREVIOUS_RUNS,
     STATE_GAME_OVER
 } GameState;
 

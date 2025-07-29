@@ -2,6 +2,7 @@
 #include "bullets.h"
 #include "level_manager.h"
 #include "player.h"
+#include "stats.h"
 #include "upgrades.h"
 
 /**
@@ -50,6 +51,8 @@ void init_upgrades(void)
 
 void apply_upgrade(UpgradeType upgrade)
 {
+    record_upgrade(upgrade);
+
     switch (upgrade)
     {
     case UPGRADE_PLAYER_SPEED_1:

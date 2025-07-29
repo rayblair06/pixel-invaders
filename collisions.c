@@ -5,9 +5,10 @@
 #include "constants.h"
 #include "bullets.h"
 #include "enemies.h"
+#include "game.h"
 #include "pickups.h"
 #include "player.h"
-#include "game.h"
+#include "stats.h"
 
 bool check_overlap(SDL_Rect a, SDL_Rect b)
 {
@@ -121,6 +122,7 @@ void check_collisions(void)
             reduce_health(enemies[i].damage * 2);
 
             enemies[i].active = false;
+            record_kill();
         }
     }
 
@@ -168,6 +170,7 @@ void check_collisions(void)
         if (enemies[i].entity.y > SCREEN_HEIGHT)
         {
             enemies[i].active = false;
+            record_kill();
 
             if (hasShield)
             {

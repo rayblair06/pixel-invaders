@@ -6,6 +6,7 @@
 #include "game.h"
 #include "pickups.h"
 #include "sprites.h"
+#include "stats.h"
 #include "waves.h"
 
 Enemy enemies[MAX_ENEMIES];
@@ -239,6 +240,7 @@ void damage_enemy(Enemy *enemy)
         enemy->isFadingOut = true;
         enemy->fadeStartTime = SDL_GetTicks();
         enemy->alpha = 255;
+        record_kill();
     }
 }
 

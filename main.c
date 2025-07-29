@@ -18,6 +18,7 @@
 #include "particles.h"
 #include "pickups.h"
 #include "player.h"
+#include "stats.h"
 #include "ui.h"
 #include "upgrades.h"
 #include "waves.h"
@@ -25,10 +26,12 @@
 
 GameState gameState = STATE_MAIN_MENU;
 
-const char *mainMenuOptions[] = {"Start Game", "Quit"};
+const char *mainMenuOptions[] = {"Start Game",
+                                 "Previous Runs",
+                                 "Quit"};
 
 int selectedMenuOption = 0;
-const int mainMenuOptionCount = 2;
+const int mainMenuOptionCount = sizeof(mainMenuOptions) / sizeof(mainMenuOptions[0]);
 
 void debug_log(const char *format, ...)
 {
@@ -143,10 +146,28 @@ int main(int argc, char *argv[])
 
                     break;
                 case 1:
+                    gameState = STATE_PREVIOUS_RUNS;
+
+                    break;
+                case 2:
                     running = false;
                     break;
                 }
             }
+        }
+        if (gameState == STATE_PREVIOUS_RUNS)
+        {
+            char statsLineTotalRuns[64];
+            sprintf(statsLineTotalRuns, "Total runs %d", metaData.totalRuns);
+            generate_text(renderer, font, statsLineTotalRuns, 10, 10, white);
+
+            char statsLineBestWave[64];
+            sprintf(statsLineBestWave, "Best Wave %d", metaData.bestWave);
+            generate_text(renderer, font, statsLineBestWave, 10, 40, white);
+
+            char statsLineTotalExperience[64];
+            sprintf(statsLineTotalExperience, "Total Experience %d", metaData.totalExperienceEarned);
+            generate_text(renderer, font, statsLineTotalExperience, 10, 70, white);
         }
 
         // Main Game Loop
@@ -165,6 +186,7 @@ int main(int argc, char *argv[])
                 init_enemies();
                 init_pickups();
                 init_waves();
+                init_stats();
 
                 initialiseGameProps = false;
             }
@@ -186,6 +208,7 @@ int main(int argc, char *argv[])
             tick_pickups();
             tick_waves();
             tick_particles(deltaTime);
+            tick_run_time(deltaTime);
 
             if (bossActive)
                 tick_boss(deltaTime);
@@ -278,6 +301,17 @@ int main(int argc, char *argv[])
 
                 SDL_FreeSurface(overSurface);
                 SDL_DestroyTexture(overTexture);
+
+                // Update stats
+                currentRun.finalWave = wave;
+                save_run();
+                log_current_run();
+
+                metaData.totalRuns++;
+                if (wave > metaData.bestWave)
+                    metaData.bestWave = wave;
+                metaData.totalExperienceEarned += currentRun.totalExperience;
+                save_meta();
 
                 // Enter to restart
                 if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))

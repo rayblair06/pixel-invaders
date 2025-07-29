@@ -1,10 +1,10 @@
 #include <math.h>
 #include "level_manager.h"
+#include "stats.h"
 #include "upgrades.h"
 
 int playerLevel = 1;
 int experience = 0;
-int experienceTotal = 0;         // Total amount of experience
 int experienceToNextLevel = 100; // Level 1 starts at 100
 
 static bool isLevelUpPending = false;
@@ -27,7 +27,7 @@ static int calculate_experience_required(int playerLevel)
 void add_experience(int amount)
 {
     experience += amount;
-    experienceTotal += amount;
+    record_experience(amount);
 
     if (experience >= experienceToNextLevel)
     {
