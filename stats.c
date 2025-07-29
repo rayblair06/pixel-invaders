@@ -4,6 +4,7 @@
 
 RunData currentRun;
 MetaData metaData;
+RunHistory runHistory;
 
 // Initialise stats at the start of a run
 void init_stats(void)
@@ -45,29 +46,9 @@ void record_upgrade(int upgradeIndex)
     }
 }
 
-void save_run(void)
-{
-    FILE *file = fopen("save/run_data.dat", "wb");
-
-    if (file)
-    {
-        fwrite(&currentRun, sizeof(RunData), 1, file);
-        fclose(file);
-    }
-}
-
-bool load_last_run(RunData *run)
-{
-    FILE *file = fopen("save/run_data.dat", "rb");
-
-    if (!file)
-        return false;
-
-    fread(run, sizeof(RunData), 1, file);
-    fclose(file);
-    return true;
-}
-
+/**
+ * Helper function for saving metaData
+ */
 void save_meta(void)
 {
     FILE *file = fopen("save/meta_data.dat", "wb");
@@ -79,6 +60,9 @@ void save_meta(void)
     }
 }
 
+/**
+ * Helper function for loading metaData
+ */
 bool load_meta(MetaData *meta)
 {
     FILE *file = fopen("save/meta_data.dat", "rb");
@@ -92,6 +76,9 @@ bool load_meta(MetaData *meta)
     return true;
 }
 
+/**
+ * Save last run to log for debugging
+ */
 void log_current_run(void)
 {
     FILE *log = fopen("last_run.log", "w");
@@ -115,4 +102,65 @@ void log_current_run(void)
     }
 
     fclose(log);
+}
+
+/**
+ * Helper function for loading run history from file
+ */
+bool load_run_history(void)
+{
+    FILE *file = fopen("save/run_history.dat", "rb");
+
+    if (!file)
+    {
+        runHistory.runCount = 0;
+        return false;
+    }
+
+    fread(&runHistory, sizeof(RunHistory), 1, file);
+    fclose(file);
+    return true;
+}
+
+/**
+ * Helper function for saving run history to file
+ */
+void save_run_history(void)
+{
+    FILE *file = fopen("save/run_history.dat", "wb");
+
+    if (file)
+    {
+        fwrite(&runHistory, sizeof(RunHistory), 1, file);
+        fclose(file);
+    }
+}
+
+/**
+ * Add our run history to our runHistory array
+ */
+void add_run_to_history(RunData *run)
+{
+    if (runHistory.runCount >= RUN_HISTORY_LIMIT)
+    {
+        for (int i = RUN_HISTORY_LIMIT - 1; i > 0; i--)
+        {
+            runHistory.runs[i] = runHistory.runs[i - 1];
+        }
+
+        runHistory.runs[0] = *run;
+    }
+    else
+    {
+        // Insert at the front
+        for (int i = runHistory.runCount; i > 0; i--)
+        {
+            runHistory.runs[i] = runHistory.runs[i - 1];
+        }
+
+        runHistory.runs[0] = *run;
+        runHistory.runCount++;
+    }
+
+    save_run_history();
 }

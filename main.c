@@ -50,6 +50,23 @@ bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
     return current[key] && !previous[key];
 }
 
+void render_run_history(SDL_Renderer *renderer, TTF_Font *font)
+{
+    SDL_Color white = {255, 255, 255, 255};
+
+    generate_text(renderer, font, "=== Last Runs===", 50, 100, white);
+
+    for (int i = 0; i < runHistory.runCount; i++)
+    {
+        char line[128];
+        RunData *run = &runHistory.runs[i];
+
+        sprintf(line, "Run %d: Wave %d, Kills %d, EXP %d", i + 1, run->finalWave, run->totalKills, run->totalExperience);
+
+        generate_text(renderer, font, line, 50, 100 + i * 40, white);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     bool choosingUpgrade = false;
@@ -155,8 +172,11 @@ int main(int argc, char *argv[])
                 }
             }
         }
+
         if (gameState == STATE_PREVIOUS_RUNS)
         {
+            render_background(renderer);
+
             char statsLineTotalRuns[64];
             sprintf(statsLineTotalRuns, "Total runs %d", metaData.totalRuns);
             generate_text(renderer, font, statsLineTotalRuns, 10, 10, white);
@@ -168,6 +188,8 @@ int main(int argc, char *argv[])
             char statsLineTotalExperience[64];
             sprintf(statsLineTotalExperience, "Total Experience %d", metaData.totalExperienceEarned);
             generate_text(renderer, font, statsLineTotalExperience, 10, 70, white);
+
+            render_run_history(renderer, font);
         }
 
         // Main Game Loop
@@ -304,7 +326,7 @@ int main(int argc, char *argv[])
 
                 // Update stats
                 currentRun.finalWave = wave;
-                save_run();
+                add_run_to_history(&currentRun);
                 log_current_run();
 
                 metaData.totalRuns++;
