@@ -5,9 +5,8 @@
 
 typedef enum
 {
-    STATE_MAIN_MENU,
+    STATE_NONE, // Game isn't running
     STATE_PLAYING,
-    STATE_PREVIOUS_RUNS,
     STATE_GAME_OVER
 } GameState;
 

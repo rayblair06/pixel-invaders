@@ -21,6 +21,7 @@
         "player.c",
         "stats.c",
         "sprites.c",
+        "scene_manager.c",
         "ui.c",
         "upgrades.c",
         "waves.c",

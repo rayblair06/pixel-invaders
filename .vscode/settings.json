@@ -19,6 +19,9 @@
     "upgrades.h": "c",
     "collisions.h": "c",
     "bullets.h": "c",
-    "particles.h": "c"
+    "particles.h": "c",
+    "stdio.h": "c",
+    "version.h": "c",
+    "scene_manager.h": "c"
   }
 }

@@ -40,6 +40,9 @@ extern bool upgradesApplied[UPGRADE_COUNT];
 extern UpgradeType options[3];
 extern int optionCount;
 
+extern bool choosingUpgrade;
+extern int selectedOption;
+
 void init_upgrades(void);
 void apply_upgrade(UpgradeType upgrade);
 void generate_upgrade_choices(void);

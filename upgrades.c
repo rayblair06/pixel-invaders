@@ -41,6 +41,9 @@ UpgradeType options[3];
  */
 int optionCount = 0;
 
+bool choosingUpgrade = false;
+int selectedOption = 0;
+
 void init_upgrades(void)
 {
     for (int i = 0; i < UPGRADE_COUNT; i++)
