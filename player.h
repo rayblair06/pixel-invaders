@@ -6,6 +6,13 @@
 #include "entity.h"
 
 extern Entity player;
+
+extern float playerVelX;
+extern float playerAccel;
+extern float playerDrag;
+extern float playerMaxSpeed;
+
+// TODO: Replace with max speed
 extern float playerSpeed;
 extern bool isPlayerVisible;
 
@@ -32,7 +39,7 @@ extern bool hasPickupMagnet;
 extern Uint32 lastRegenTime;
 
 void init_player();
-void tick_player(const Uint8 *keystate);
+void tick_player(const Uint8 *keystate, float deltaTime);
 void render_player(SDL_Renderer *renderer, int shakeX, int shakeY);
 
 void trigger_player_shoot();

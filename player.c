@@ -13,9 +13,11 @@
 #include "sprites.h"
 
 Entity player;
-const float PLAYER_ACCEL = 0.4f;
-const float PLAYER_MAX_SPEED = 4.0f;
-const float PLAYER_DRAG = 0.90f; // 1.0 = no drag, lower = more resistance
+float playerVelX = 0.0f;
+float playerAccel = 600.0f;    // pixels per second squared
+float playerDrag = 800.0f;     // drag force when not accelerating
+float playerMaxSpeed = 300.0f; // clamp max veolcity
+
 float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
@@ -68,42 +70,76 @@ void init_player(void)
 /**
  * Handle all of our 'tick' functionality of active player within the main game loop
  */
-void tick_player(const Uint8 *keystate)
+void tick_player(const Uint8 *keystate, float deltaTime)
 {
+    float direction = 0;
+
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
     {
-        player.vx -= PLAYER_ACCEL;
+        direction -= 1;
     }
 
     if (keystate[SDL_SCANCODE_RIGHT])
     {
-        player.vx += PLAYER_ACCEL;
+        direction += 1;
     }
 
-    // Apply drag
-    player.vx *= PLAYER_DRAG;
+    if (direction != 0)
+    {
+        // Accelerate in the desired direction
+        playerVelX += direction * playerAccel * deltaTime;
 
-    // Clamp to max speed
-    if (player.vx > PLAYER_MAX_SPEED)
-        player.vx = PLAYER_MAX_SPEED;
-    if (player.vx < -PLAYER_MAX_SPEED)
-        player.vx = -PLAYER_MAX_SPEED;
+        // If changing direction, reduce velocity sharply
+        if ((direction < 0 && playerVelX > 0) || (direction > 0 && playerVelX < 0))
+        {
+            playerVelX += 0.85f; // dampen quickly when changing direction
+        }
+    }
+    else
+    {
+        // Apply drag when no input
+        if (playerVelX > 0)
+        {
+            playerVelX -= playerDrag * deltaTime;
+            if (playerVelX < 0)
+            {
+                playerVelX = 0;
+            }
+        }
+        else if (playerVelX < 0)
+        {
+            playerVelX += playerDrag * deltaTime;
 
-    // Move the player
-    player.x += player.vx;
+            if (playerVelX > 0)
+            {
+                playerVelX = 0;
+            }
+        }
+    }
 
-    // Keep player within screen bounds
+    // Clamp max speed
+    if (playerVelX > playerMaxSpeed)
+    {
+        playerVelX = playerMaxSpeed;
+    }
+    else if (playerVelX < -playerMaxSpeed)
+    {
+        playerVelX = -playerMaxSpeed;
+    }
+
+    // Apply to position
+    player.x += playerVelX * deltaTime;
+
+    // Keep player within bounds
     if (player.x < 0)
     {
         player.x = 0;
-        player.vx = 0;
     }
 
     if (player.x > SCREEN_WIDTH - player.w)
     {
         player.x = SCREEN_WIDTH - player.w;
-        player.vx = 0;
     }
 
     update_entity_rect(&player);

@@ -183,7 +183,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     render_pickups(renderer, shakeOffsetX, shakeOffsetY);
     render_particles(renderer);
 
-    tick_player(keystate);
+    tick_player(keystate, deltaTime);
     tick_bullets();
     tick_enemy_bullets();
     tick_enemies();
