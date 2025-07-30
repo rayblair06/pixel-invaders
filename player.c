@@ -13,6 +13,9 @@
 #include "sprites.h"
 
 Entity player;
+const float PLAYER_ACCEL = 0.4f;
+const float PLAYER_MAX_SPEED = 4.0f;
+const float PLAYER_FRICTION = 0.2;
 float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
@@ -70,19 +73,52 @@ void tick_player(const Uint8 *keystate)
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
     {
-        move(&player, LEFT, playerSpeed);
+        player.vx -= PLAYER_ACCEL;
     }
 
     if (keystate[SDL_SCANCODE_RIGHT])
     {
-        move(&player, RIGHT, playerSpeed);
+        player.vx += PLAYER_ACCEL;
     }
+
+    // Apply friction if no input
+    if (!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
+    {
+        if (player.vx > 0)
+        {
+            player.vx -= PLAYER_FRICTION;
+            if (player.vx < 0)
+                player.vx = 0;
+        }
+        else if (player.vx < 0)
+        {
+            player.vx += PLAYER_FRICTION;
+            if (player.vx > 0)
+                player.vx = 0;
+        }
+    }
+
+    // Clamp to max speed
+    if (player.vx > PLAYER_MAX_SPEED)
+        player.vx = PLAYER_MAX_SPEED;
+    if (player.vx < -PLAYER_MAX_SPEED)
+        player.vx = -PLAYER_MAX_SPEED;
+
+    // Move the player
+    player.x += player.vx;
 
     // Keep player within screen bounds
     if (player.x < 0)
+    {
         player.x = 0;
+        player.vx = 0;
+    }
+
     if (player.x > SCREEN_WIDTH - player.w)
+    {
         player.x = SCREEN_WIDTH - player.w;
+        player.vx = 0;
+    }
 
     update_entity_rect(&player);
 

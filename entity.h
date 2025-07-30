@@ -11,6 +11,9 @@ typedef struct
     int w, h;   // Size
     float angle;
 
+    float vx; // horizonal velocity
+    float vy; // vertical velocity
+
     SDL_Rect rect;
 
     // animation state
