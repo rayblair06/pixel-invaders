@@ -39,6 +39,8 @@ const char *
 int selectedMenuOption = 0;
 const int mainMenuOptionCount = sizeof(mainMenuOptions) / sizeof(mainMenuOptions[0]);
 
+bool showRunSummary = false;
+
 bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
 {
     return current[key] && !previous[key];
@@ -263,6 +265,26 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
             choosingUpgrade = false;
             isEntitiesFrozen = false;
             consume_level_up_pending();
+        }
+    }
+
+    // Run summary
+    if (key_pressed(SDL_SCANCODE_ESCAPE, keystate, prevKeystate))
+    {
+        // Pause game and show summary
+        isEntitiesFrozen = true;
+        showRunSummary = true;
+    }
+
+    if (showRunSummary)
+    {
+        render_run_summary(renderer, font, &currentRun);
+
+        // Unpause game
+        if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
+        {
+            showRunSummary = false;
+            isEntitiesFrozen = false;
         }
     }
 

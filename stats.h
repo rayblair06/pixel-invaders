@@ -11,9 +11,10 @@ typedef struct
     int totalExperience;
     int totalKills;
     int bossKills;
-    int bulletsFired;
     int timePlayed; // in seconds
+    int bulletsFired;
     int upgradesChosen[UPGRADE_COUNT];
+    char upgradeSummary[256]; // e.g., "Bullet Speed x2, Multi-Shot x2"
 } RunData;
 
 // Tracks persisent meta-progression data
@@ -53,5 +54,7 @@ void log_current_run(void);
 bool load_run_history(void);
 void save_run_history(void);
 void add_run_to_history(RunData *run);
+
+void render_run_summary(SDL_Renderer *renderer, TTF_Font *font, RunData *run);
 
 #endif

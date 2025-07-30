@@ -1,4 +1,6 @@
 #include <math.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "level_manager.h"
 #include "stats.h"
 #include "upgrades.h"

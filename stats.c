@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "stats.h"
+#include "ui.h"
 
 RunData currentRun;
 MetaData metaData;
@@ -43,6 +46,11 @@ void record_upgrade(int upgradeIndex)
     if (upgradeIndex >= 0 && upgradeIndex < UPGRADE_COUNT)
     {
         currentRun.upgradesChosen[upgradeIndex]++;
+
+        // Attend upgrade name to summary
+        char buffer[64];
+        sprintf(buffer, "%s x%d", upgrades[upgradeIndex].name, currentRun.upgradesChosen[upgradeIndex]);
+        strcat(currentRun.upgradeSummary, buffer);
     }
 }
 
@@ -163,4 +171,47 @@ void add_run_to_history(RunData *run)
     }
 
     save_run_history();
+}
+
+void render_run_summary(SDL_Renderer *renderer, TTF_Font *font, RunData *run)
+{
+    SDL_Color white = {255, 255, 255, 255};
+
+    char line[128];
+
+    int y = 100;
+    generate_text(renderer, font, "=== Run Summary ===", 50, y, white);
+
+    y += 40;
+    sprintf(line, "Wave Reached: %d", run->finalWave);
+    generate_text(renderer, font, line, 50, y, white);
+
+    y += 40;
+    sprintf(line, "Total kills: %d", run->totalKills);
+    generate_text(renderer, font, line, 50, y, white);
+
+    y += 40;
+    sprintf(line, "Total boss kills: %d", run->bossKills);
+    generate_text(renderer, font, line, 50, y, white);
+
+    y += 40;
+    sprintf(line, "Total experience: %d", run->totalExperience);
+    generate_text(renderer, font, line, 50, y, white);
+
+    y += 40;
+    sprintf(line, "Total played: %d secs", run->timePlayed);
+    generate_text(renderer, font, line, 50, y, white);
+
+    y += 40;
+    generate_text(renderer, font, "Upgrades:", 50, y, white);
+
+    y += 30;
+    if (sizeof(run->upgradeSummary) / sizeof(run->upgradeSummary)[0])
+    {
+        generate_text(renderer, font, "None", 50, y, white);
+    }
+    else
+    {
+        generate_text(renderer, font, run->upgradeSummary, 50, y, white);
+    }
 }

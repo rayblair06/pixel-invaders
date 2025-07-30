@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "bullets.h"
 #include "level_manager.h"
 #include "player.h"

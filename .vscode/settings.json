@@ -22,6 +22,7 @@
     "particles.h": "c",
     "stdio.h": "c",
     "version.h": "c",
-    "scene_manager.h": "c"
+    "scene_manager.h": "c",
+    "string.h": "c"
   }
 }
