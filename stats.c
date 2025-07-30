@@ -49,7 +49,7 @@ void record_upgrade(int upgradeIndex)
 
         // Attend upgrade name to summary
         char buffer[64];
-        sprintf(buffer, "%s x%d", upgrades[upgradeIndex].name, currentRun.upgradesChosen[upgradeIndex]);
+        sprintf(buffer, "%s x%d, ", upgrades[upgradeIndex].name, currentRun.upgradesChosen[upgradeIndex]);
         strcat(currentRun.upgradeSummary, buffer);
     }
 }

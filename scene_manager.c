@@ -29,6 +29,9 @@
 GameState gameState = STATE_NONE;
 Scene scene = SCENE_MAIN_MENU;
 
+Uint32 runStartTime;
+Uint32 runEndTime;
+
 extern void stop_game();
 
 const char *
@@ -165,6 +168,8 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         init_waves();
         init_stats();
 
+        runStartTime = SDL_GetTicks();
+
         initialiseGameProps = false;
     }
 
@@ -185,7 +190,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     tick_pickups();
     tick_waves();
     tick_particles(deltaTime);
-    tick_run_time(deltaTime);
+    tick_run_time((SDL_GetTicks() - runStartTime) / 1000);
 
     if (bossActive)
         tick_boss(deltaTime);
@@ -300,6 +305,8 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         SDL_DestroyTexture(overTexture);
 
         // Update stats
+        runEndTime = SDL_GetTicks();
+        currentRun.timePlayed = (runEndTime - runStartTime) / 1000;
         currentRun.finalWave = wave;
         add_run_to_history(&currentRun);
         log_current_run();

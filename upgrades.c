@@ -56,8 +56,6 @@ void init_upgrades(void)
 
 void apply_upgrade(UpgradeType upgrade)
 {
-    record_upgrade(upgrade);
-
     switch (upgrade)
     {
     case UPGRADE_PLAYER_SPEED_1:
@@ -101,6 +99,7 @@ void apply_upgrade(UpgradeType upgrade)
         break;
     }
 
+    record_upgrade(upgrade);
     upgradesApplied[upgrade] = true;
 }
 

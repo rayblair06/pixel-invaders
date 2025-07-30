@@ -8,7 +8,7 @@
 #include "sprites.h"
 #include "waves.h"
 
-float deltaTime;
+float deltaTime = 0;
 
 bool initialiseGameProps = false;
 bool isGameOver = false;
