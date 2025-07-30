@@ -15,7 +15,7 @@
 Entity player;
 const float PLAYER_ACCEL = 0.4f;
 const float PLAYER_MAX_SPEED = 4.0f;
-const float PLAYER_FRICTION = 0.2;
+const float PLAYER_DRAG = 0.90f; // 1.0 = no drag, lower = more resistance
 float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
@@ -81,22 +81,8 @@ void tick_player(const Uint8 *keystate)
         player.vx += PLAYER_ACCEL;
     }
 
-    // Apply friction if no input
-    if (!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
-    {
-        if (player.vx > 0)
-        {
-            player.vx -= PLAYER_FRICTION;
-            if (player.vx < 0)
-                player.vx = 0;
-        }
-        else if (player.vx < 0)
-        {
-            player.vx += PLAYER_FRICTION;
-            if (player.vx > 0)
-                player.vx = 0;
-        }
-    }
+    // Apply drag
+    player.vx *= PLAYER_DRAG;
 
     // Clamp to max speed
     if (player.vx > PLAYER_MAX_SPEED)
