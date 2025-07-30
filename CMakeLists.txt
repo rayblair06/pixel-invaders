@@ -26,6 +26,7 @@ set(SOURCES
     sprites.c
     ui.c
     upgrades.c
+    utils.c
     waves.c
 )
 

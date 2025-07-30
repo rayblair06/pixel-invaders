@@ -24,6 +24,7 @@
         "scene_manager.c",
         "ui.c",
         "upgrades.c",
+        "utils.c",
         "waves.c",
         "-o",
         "build/game",

@@ -25,6 +25,13 @@
 #include "waves.h"
 #include "version.h"
 
+bool running = true;
+
+void stop_game(void)
+{
+    running = false;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -59,8 +66,6 @@ int main(int argc, char *argv[])
 
     // Play menu music
     play_music(MUS_MENU, true);
-
-    bool running = true;
 
     // Main game loop
     SDL_Event event;

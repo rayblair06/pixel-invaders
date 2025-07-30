@@ -22,11 +22,14 @@
 #include "stats.h"
 #include "ui.h"
 #include "upgrades.h"
+#include "utils.h"
 #include "waves.h"
 #include "version.h"
 
 GameState gameState = STATE_NONE;
 Scene scene = SCENE_MAIN_MENU;
+
+extern void stop_game();
 
 const char *
     mainMenuOptions[] = {"Start Game",
@@ -35,18 +38,6 @@ const char *
 
 int selectedMenuOption = 0;
 const int mainMenuOptionCount = sizeof(mainMenuOptions) / sizeof(mainMenuOptions[0]);
-
-void debug_log(const char *format, ...)
-{
-    va_list args;
-    va_start(args, format);
-
-    printf("[DEBUG] ");
-    vprintf(format, args);
-    printf("\n");
-
-    va_end(args);
-}
 
 bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
 {
@@ -121,7 +112,7 @@ void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keysta
 
             break;
         case 2:
-            // running = false;
+            stop_game();
             break;
         }
     }
@@ -146,6 +137,11 @@ void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *ke
     generate_text(renderer, font, statsLineTotalExperience, 10, 70, white);
 
     render_run_history(renderer, font);
+
+    if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
+    {
+        scene = SCENE_MAIN_MENU;
+    }
 }
 
 void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
