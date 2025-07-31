@@ -12,8 +12,6 @@ extern float playerAccel;
 extern float playerDrag;
 extern float playerMaxSpeed;
 
-// TODO: Replace with max speed
-extern float playerSpeed;
 extern bool isPlayerVisible;
 
 extern int level;

@@ -14,11 +14,10 @@
 
 Entity player;
 float playerVelX = 0.0f;
-float playerAccel = 600.0f;    // pixels per second squared
-float playerDrag = 800.0f;     // drag force when not accelerating
-float playerMaxSpeed = 300.0f; // clamp max veolcity
+float playerAccel = 300.0f;    // pixels per second squared
+float playerDrag = 400.0f;     // drag force when not accelerating
+float playerMaxSpeed = 150.0f; // clamp max veolcity
 
-float playerSpeed = 4.0f;
 bool isPlayerVisible = true;
 
 int health = 100;
@@ -54,7 +53,7 @@ void init_player(void)
     health = 100;
     healthMax = 100;
 
-    playerSpeed = 4.0f;
+    playerMaxSpeed = 150.0f;
 
     isPlayerVisible = true;
     isPlayerExploding = false;
@@ -129,7 +128,10 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     }
 
     // Apply to position
-    player.x += playerVelX * deltaTime;
+    if (!isEntitiesFrozen)
+    {
+        player.x += playerVelX * deltaTime;
+    }
 
     // Keep player within bounds
     if (player.x < 0)

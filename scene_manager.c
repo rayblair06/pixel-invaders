@@ -332,7 +332,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     debug_log("Options count: %d", optionCount);
 
-    debug_log("Player move speed: %.f2", playerSpeed);
+    debug_log("Player move speed: %.f2", playerMaxSpeed);
     debug_log("Player bullet speed: %f.f2", bulletSpeed);
     debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
     debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");

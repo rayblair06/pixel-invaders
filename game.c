@@ -130,6 +130,12 @@ void reduce_health(int amount)
 
     if (health <= 0)
     {
+        // Can't go below zero
+        if (health < 0)
+        {
+            health = 0;
+        }
+
         trigger_player_explosion();
 
         isGameOver = true;

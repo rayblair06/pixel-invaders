@@ -11,9 +11,17 @@
  * Upgrade List
  */
 UpgradeInfo upgrades[UPGRADE_COUNT] = {
-    {UPGRADE_PLAYER_SPEED_1, "Player Speed I", 1, -1},
-    {UPGRADE_PLAYER_SPEED_2, "Player Speed II", 1, UPGRADE_PLAYER_SPEED_1},
-    {UPGRADE_PLAYER_SPEED_3, "Player Speed III", 1, UPGRADE_PLAYER_SPEED_2},
+    {UPGRADE_THRUSTERS_1, "Ship Trusters I (Acceleration)", 1, -1},
+    {UPGRADE_THRUSTERS_2, "Ship Trusters II (Acceleration)", 1, UPGRADE_THRUSTERS_1},
+    {UPGRADE_THRUSTERS_3, "Ship Trusters III (Acceleration)", 1, UPGRADE_THRUSTERS_2},
+
+    {UPGRADE_AFTERBURNERS_1, "Afterburners I (Drag)", 1, -1},
+    {UPGRADE_AFTERBURNERS_2, "Afterburners II (Drag)", 1, UPGRADE_AFTERBURNERS_1},
+    {UPGRADE_AFTERBURNERS_3, "Afterburners III (Drag)", 1, UPGRADE_AFTERBURNERS_2},
+
+    {UPGRADE_DRIVE_CORE_1, "Drive Core I (Speed)", 1, -1},
+    {UPGRADE_DRIVE_CORE_2, "Drive Core II (Speed)", 1, UPGRADE_DRIVE_CORE_1},
+    {UPGRADE_DRIVE_CORE_3, "Drive Core III (Speed)", 1, UPGRADE_DRIVE_CORE_2},
 
     {UPGRADE_BULLET_SPEED_1, "Bullet Speed I", 1, -1},
     {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", 1, UPGRADE_BULLET_SPEED_1},
@@ -58,10 +66,20 @@ void apply_upgrade(UpgradeType upgrade)
 {
     switch (upgrade)
     {
-    case UPGRADE_PLAYER_SPEED_1:
-    case UPGRADE_PLAYER_SPEED_2:
-    case UPGRADE_PLAYER_SPEED_3:
-        playerSpeed += 1.0f;
+    case UPGRADE_THRUSTERS_1:
+    case UPGRADE_THRUSTERS_2:
+    case UPGRADE_THRUSTERS_3:
+        playerAccel += 50.0f;
+        break;
+    case UPGRADE_AFTERBURNERS_1:
+    case UPGRADE_AFTERBURNERS_2:
+    case UPGRADE_AFTERBURNERS_3:
+        playerDrag += 50.0f;
+        break;
+    case UPGRADE_DRIVE_CORE_1:
+    case UPGRADE_DRIVE_CORE_2:
+    case UPGRADE_DRIVE_CORE_3:
+        playerMaxSpeed += 50.0f;
         break;
     case UPGRADE_BULLET_SPEED_1:
     case UPGRADE_BULLET_SPEED_2:
