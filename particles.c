@@ -12,6 +12,37 @@ void init_particles(void)
     }
 }
 
+void spawn_boost_particle(float x, float y)
+{
+    for (int i = 0; i < MAX_PARTICLES; i++)
+    {
+        if (!particles[i].active)
+        {
+            particles[i].active = true;
+            particles[i].x = x;
+            particles[i].y = y;
+
+            // Small downward and side jitter
+            float angle = ((rand() % 60) - 30) * (M_PI / 180.0f); // -30 to + 30 degrees
+            float speed = 30 + rand() % 30;
+
+            particles[i].vx = cosf(angle) * speed * 0.2f;
+            particles[i].vy = 50 + (rand() % 30); // downward
+
+            particles[i].maxLife = particles[i].life = 0.3f + (rand() % 100) / 500.0f;
+            ;
+
+            particles[i].color = (SDL_Color){
+                100 + rand() % 50,
+                200 + rand() % 30,
+                255,
+                255}; // blue-ish
+
+            break;
+        }
+    }
+}
+
 void spawn_explosion_particles(float x, float y, int count)
 {
     for (int i = 0; i < count; i++)
