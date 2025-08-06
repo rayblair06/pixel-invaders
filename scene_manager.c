@@ -175,12 +175,12 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     render_background(renderer);
 
-    render_player(renderer, (int)shakeOffsetX + cameraOffsetX, (int)shakeOffsetY + cameraOffsetY);
-    render_bullets(renderer, (int)shakeOffsetX + cameraOffsetX, (int)shakeOffsetY + cameraOffsetY);
-    render_enemy_bullets(renderer, (int)shakeOffsetX + cameraOffsetX, (int)shakeOffsetY + cameraOffsetY);
-    render_enemies(renderer, (int)shakeOffsetX + cameraOffsetX, (int)shakeOffsetY + cameraOffsetY);
+    render_player(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_bullets(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_enemy_bullets(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_enemies(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
     update_enemy_animation_state();
-    render_pickups(renderer, (int)shakeOffsetX + cameraOffsetX, (int)shakeOffsetY + cameraOffsetY);
+    render_pickups(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
     render_particles(renderer);
 
     tick_player(keystate, deltaTime);

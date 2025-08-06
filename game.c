@@ -14,7 +14,7 @@ bool initialiseGameProps = false;
 bool isGameOver = false;
 bool isEntitiesFrozen = false;
 
-// Screen shake variables
+// Screen shake (rapid shake) variables
 bool shaking = false;
 int shakeOffsetX = 0;
 int shakeOffsetY = 0;
@@ -22,7 +22,7 @@ Uint32 shakeTimer = 0;
 Uint32 shakeDuration = 300; // ms
 int shakeStrength = 4;
 
-// Camera Offset
+// Camera Offset (smooth drift)
 float cameraOffsetX = 0;
 float cameraOffsetY = 0;
 
@@ -35,6 +35,7 @@ void init_game(void)
 {
     isGameOver = isEntitiesFrozen = false;
     shakeOffsetX = shakeOffsetY = 0;
+    cameraOffsetX = cameraOffsetY = 0;
     shakeTimer = 0;
 }
 
