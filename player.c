@@ -183,6 +183,18 @@ void tick_player(const Uint8 *keystate, float deltaTime)
 
     update_entity_rect(&player);
 
+    // Camera Drift
+    float cameraDriftFactor = 0.2f; // how much drift is applied
+    float cameraSmoothness = 5.0f;  // higher = smoother (slower to catch up)
+
+    // Target offset based on player velocity
+    float targetX = -player.vx * cameraDriftFactor;
+    float targetY = -player.vy * cameraDriftFactor;
+
+    // Smoothly approach target offset
+    cameraOffsetX += (targetX - cameraOffsetX) * deltaTime * cameraSmoothness;
+    cameraOffsetY += (targetY - cameraOffsetY) * deltaTime * cameraSmoothness;
+
     // Shoot bullet if SPACE is pressed
     static bool spaceHeld = false;
 

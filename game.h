@@ -23,6 +23,10 @@ extern Uint32 shakeTimer;
 extern Uint32 shakeDuration;
 extern int shakeStrength;
 
+// Camera Offset
+float cameraOffsetX;
+float cameraOffsetY;
+
 extern bool flashRed;
 extern Uint32 flashStartTime;
 extern Uint32 flashDuration;

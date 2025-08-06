@@ -22,6 +22,10 @@ Uint32 shakeTimer = 0;
 Uint32 shakeDuration = 300; // ms
 int shakeStrength = 4;
 
+// Camera Offset
+float cameraOffsetX = 0;
+float cameraOffsetY = 0;
+
 // Red Flash
 bool flashRed = false;
 Uint32 flashStartTime = 0;
