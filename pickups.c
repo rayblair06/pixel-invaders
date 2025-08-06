@@ -35,6 +35,8 @@ void spawn_pickup(float x, float y)
                 SPRITE_DRAW_SIZE,
                 SPRITE_DRAW_SIZE);
 
+            pickups[i].despawningDuration = 5000; // despawn in 5 seconds
+
             pickups[i].animFrame = 0;
             pickups[i].animFrameCount = 5;
             pickups[i].animStartTime = SDL_GetTicks();
@@ -62,10 +64,29 @@ void tick_pickups(void)
         Uint32 elapsed = SDL_GetTicks() - pickups[i].animStartTime;
         pickups[i].animFrame = (elapsed / pickups[i].animFrameDuration) % pickups[i].animFrameCount;
 
-        // Stop falling at player Y
+        // Stop falling at player Y and start despawning
         if (pickups[i].y >= player.y)
         {
             pickups[i].y = player.y;
+
+            if (!pickups[i].despawning)
+            {
+                pickups[i].despawning = true;
+                pickups[i].despawningTime = SDL_GetTicks();
+            }
+        }
+
+        // Despawning
+        if (pickups[i].despawning)
+        {
+            // Ran out of time, despawn.
+            if (SDL_GetTicks() - pickups[i].despawningTime > pickups[i].despawningDuration)
+            {
+                pickups[i].active = false;
+
+                // Don't do anything after this
+                continue;
+            }
         }
 
         // Player Magnet
@@ -104,6 +125,29 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
         if (!pickups[i].active)
             continue;
 
+        Pickup *pickup = &pickups[i];
+
+        // Default full opacity
+        Uint8 alpha = 255;
+
+        if (pickup->despawning)
+        {
+            Uint32 timeSinceDespawning = SDL_GetTicks() - pickup->despawningTime;
+            Uint32 lastSecondOfDespawning = pickup->despawningDuration - 1000;
+
+            if (timeSinceDespawning >= lastSecondOfDespawning && timeSinceDespawning <= pickup->despawningDuration)
+            {
+                // Fade from 255 to 0 between 4000ms and 5000ms
+                float fadeProgress = (timeSinceDespawning - lastSecondOfDespawning) / 1000.0f;
+                alpha = (Uint8)(255 * (1.0f - fadeProgress));
+            }
+            else if (timeSinceDespawning > pickup->despawningDuration)
+            {
+                // Already handled by tick_picks - safe to pick
+                continue;
+            }
+        }
+
         SDL_Rect src = get_sprite(frameId[pickups[i].animFrame]);
         SDL_Texture *texture = get_sprite_texture(frameId[pickups[i].animFrame]);
 
@@ -111,6 +155,8 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
+        SDL_SetTextureAlphaMod(texture, alpha);
         SDL_RenderCopy(renderer, texture, &src, &dst);
+        SDL_SetTextureAlphaMod(texture, 255); // Reset for other uses
     }
 }

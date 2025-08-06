@@ -7,6 +7,10 @@
 typedef struct
 {
     bool active;
+    bool despawning;
+    Uint32 despawningTime;
+    int despawningDuration;
+
     float x, y; // Position
     int w, h;   // Size
     float angle;

@@ -17,6 +17,8 @@ Entity create_entity(float x, float y, int w, int h)
     entity.rect.w = w;
     entity.rect.h = h;
     entity.active = true;
+    entity.despawning = false;
+    entity.despawningTime = 0;
 
     return entity;
 }
