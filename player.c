@@ -103,12 +103,12 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     }
 
     // Display Boost particles
-    if (boostSpeedMultiplier > 1.0f)
-    {
-        float px = player.rect.x + player.rect.w / 2;
-        float py = player.rect.y + player.rect.h;
-        spawn_boost_particle(px, py);
-    }
+    // if (boostSpeedMultiplier > 1.0f)
+    // {
+    float px = player.rect.x + player.rect.w / 2;
+    float py = player.rect.y + player.rect.h;
+    spawn_boost_particle(px, py);
+    // }
 
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
