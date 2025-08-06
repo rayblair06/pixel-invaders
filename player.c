@@ -18,6 +18,13 @@ float playerAccel = 300.0f;    // pixels per second squared
 float playerDrag = 400.0f;     // drag force when not accelerating
 float playerMaxSpeed = 150.0f; // clamp max veolcity
 
+float movementHoldTime = 0.0f;
+float boostSpeedMultiplier = 1.0f;
+
+const float maxBoost = 1.2f;  // Max speed multiplier
+const float boostRate = 0.8f; // How fast the boost builds per second
+const float decayRate = 1.2f; // How fast the boost decays when not held
+
 bool isPlayerVisible = true;
 
 int health = 100;
@@ -72,6 +79,28 @@ void init_player(void)
 void tick_player(const Uint8 *keystate, float deltaTime)
 {
     float direction = 0;
+    bool moving = keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_RIGHT];
+
+    if (moving)
+    {
+        movementHoldTime += deltaTime;
+        boostSpeedMultiplier += boostRate * deltaTime;
+
+        if (boostSpeedMultiplier > maxBoost)
+        {
+            boostSpeedMultiplier = maxBoost;
+        }
+    }
+    else
+    {
+        movementHoldTime = 0.0f;
+        boostSpeedMultiplier -= decayRate * deltaTime;
+
+        if (boostSpeedMultiplier < 1.0f)
+        {
+            boostSpeedMultiplier = 1.0f;
+        }
+    }
 
     // Move player based on key state
     if (keystate[SDL_SCANCODE_LEFT])
@@ -130,7 +159,7 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     // Apply to position
     if (!isEntitiesFrozen)
     {
-        player.x += playerVelX * deltaTime;
+        player.x += (playerVelX * deltaTime) * boostSpeedMultiplier;
     }
 
     // Keep player within bounds
