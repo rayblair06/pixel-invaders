@@ -3,6 +3,8 @@
 
 /**
  * Creates an entity
+ *
+ * TODO: w and h should be retrived from sprite with draw size
  */
 Entity create_entity(float x, float y, int w, int h)
 {

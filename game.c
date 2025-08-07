@@ -39,16 +39,52 @@ void init_game(void)
     shakeTimer = 0;
 }
 
+// Background scroll speeds (parallax effect)
+static float starOffsetY = 0;
+static float skyOffsetY = 0;
+
+/**
+ * Background Constants
+ */
+static const int TILE_WIDTH = 180;
+static const int TILE_HEIGHT = 320;
+
+#define TILES_X ((SCREEN_WIDTH / TILE_WIDTH) + 2)
+#define TILES_Y ((SCREEN_HEIGHT / TILE_HEIGHT) + 2)
+
+void render_parallax_layer(SDL_Renderer *renderer, SDL_Texture *texture, float offsetX, float offsetY)
+{
+    const int ox = ((int)offsetX) % TILE_WIDTH;
+    const int oy = ((int)offsetY) % TILE_HEIGHT;
+
+    for (int y = 0; y < TILES_Y; y++)
+    {
+        for (int x = 0; x < TILES_X; x++)
+        {
+            int drawX = x * TILE_WIDTH - ox;
+            int drawY = y * TILE_HEIGHT - oy;
+
+            SDL_Rect dst = {drawX, drawY, TILE_WIDTH, TILE_HEIGHT};
+            SDL_RenderCopy(renderer, texture, NULL, &dst);
+        }
+    }
+}
+
 /**
  * Renders our game background
  */
 void render_background(SDL_Renderer *renderer)
 {
-    // Load Sprites
-    int bgTileW = 64;
-    int bgTileH = 64;
+    SDL_Texture *bgSkyTexture = get_sprite_texture(BG_TILE1);
+    SDL_Texture *bgStarsTexture = get_sprite_texture(BG_TILE2);
 
-    SDL_Texture *texture = get_sprite_texture(BG_TILE);
+    // Scroll speeds
+    float skySpeed = 10.0f;  // for background, moves slow
+    float starSpeed = 50.0f; // near background, moves faster
+
+    // Update offests
+    skyOffsetY += skySpeed * deltaTime;
+    starOffsetY += starSpeed * deltaTime;
 
     // Render screen
     if (flashRed)
@@ -58,15 +94,8 @@ void render_background(SDL_Renderer *renderer)
     }
     else
     {
-        // Draw Background
-        for (int y = 0; y < SCREEN_HEIGHT; y += bgTileH)
-        {
-            for (int x = 0; x < SCREEN_WIDTH; x += bgTileW)
-            {
-                SDL_Rect dest = {x + shakeOffsetX, y + shakeOffsetY, bgTileW, bgTileH};
-                SDL_RenderCopy(renderer, texture, NULL, &dest);
-            }
-        }
+        render_parallax_layer(renderer, bgSkyTexture, 0, skyOffsetY);
+        render_parallax_layer(renderer, bgStarsTexture, 0, starOffsetY);
     }
 }
 

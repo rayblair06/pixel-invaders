@@ -37,16 +37,14 @@ void spawn_bullet(float x, float y, float angle)
         if (!bullets[i].active)
         {
             // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
-            const int entityCenter = SPRITE_DRAW_SIZE / 2;
-
             bullets[i].active = true;
             bullets[i].isMoving = true;
             bullets[i].pierceCount = hasPiercing ? 3 : 1;
             bullets[i].entity = create_entity(
-                x - entityCenter,
+                x - (int)8 * 2,
                 y,
-                SPRITE_DRAW_SIZE,
-                SPRITE_DRAW_SIZE);
+                16 * 2,
+                16 * 2);
             bullets[i].entity.angle = angle;
 
             bullets[i].isExploding = false;
@@ -103,7 +101,7 @@ void tick_bullets(void)
 void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     SDL_Rect src;
-    SDL_Texture *texture = get_sprite_texture(SPR_BULLET1);
+    SDL_Texture *texture = get_sprite_texture(SPR_PROJECTILE_1);
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
@@ -116,13 +114,13 @@ void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         if (bullets[i].isExploding)
         {
-            SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
+            SpriteID explosionSprites[] = {SPR_EXPLOSION1_A, SPR_EXPLOSION1_B, SPR_EXPLOSION1_C, SPR_EXPLOSION1_D, SPR_EXPLOSION1_E};
 
             src = get_sprite(explosionSprites[bullets[i].explosionFrame]);
         }
         else
         {
-            src = get_sprite(SPR_BULLET1);
+            src = get_sprite(SPR_PROJECTILE_1);
         }
 
         SDL_RenderCopy(renderer, texture, &src, &dst);
@@ -154,15 +152,12 @@ void spawn_enemy_bullet(float x, float y, int damage)
     {
         if (!enemyBullets[i].active)
         {
-            // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
-            const int entityCenter = SPRITE_DRAW_SIZE / 2;
-
             enemyBullets[i].active = true;
             enemyBullets[i].entity = create_entity(
-                x - entityCenter,
+                x - (int)8 * 2,
                 y,
-                SPRITE_DRAW_SIZE,
-                SPRITE_DRAW_SIZE);
+                16 * 2,
+                16 * 2);
             enemyBullets[i].damage = damage;
 
             break;
@@ -189,8 +184,8 @@ void tick_enemy_bullets(void)
 
 void render_enemy_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    SDL_Rect src = get_sprite(SPR_BULLET2);
-    SDL_Texture *texture = get_sprite_texture(SPR_BULLET2);
+    SDL_Rect src = get_sprite(SPR_PROJECTILE_2);
+    SDL_Texture *texture = get_sprite_texture(SPR_PROJECTILE_2);
 
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {

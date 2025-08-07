@@ -27,13 +27,11 @@ void spawn_pickup(float x, float y)
         if (!pickups[i].active)
         {
             // Define the entityCenter so when we render, we render include the entity width to ensure entities are rendered center to the created object
-            const int entityCenter = SPRITE_DRAW_SIZE / 2;
-
             pickups[i] = create_entity(
-                x - entityCenter,
+                x - (int)8 * 1.5,
                 y,
-                SPRITE_DRAW_SIZE,
-                SPRITE_DRAW_SIZE);
+                (int)16 * 1.5,
+                (int)16 * 1.5);
 
             pickups[i].despawningDuration = 5000; // despawn in 5 seconds
 
@@ -114,11 +112,11 @@ void tick_pickups(void)
 void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     const char frameId[] = {
-        SPR_PICKUP_A,
-        SPR_PICKUP_B,
-        SPR_PICKUP_C,
-        SPR_PICKUP_D,
-        SPR_PICKUP_E};
+        SPR_POWERUP_1,
+        SPR_POWERUP_1,
+        SPR_POWERUP_1,
+        SPR_POWERUP_1,
+        SPR_POWERUP_1};
 
     for (int i = 0; i < MAX_PICKUPS; i++)
     {

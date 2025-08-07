@@ -3,18 +3,64 @@
 #include <stdio.h>
 #include "sprites.h"
 
+const char *spritePaths[SPR_COUNT] = {
+    [SPR_ASTERRIOD1] = "new-assets/sprites/Asteroids/asteroid1.png",
+    [SPR_ASTERRIOD2] = "new-assets/sprites/Asteroids/asteroid2.png",
+
+    [BG_TILE1] = "new-assets/sprites/Backgrounds/background.png",
+    [BG_TILE2] = "new-assets/sprites/Backgrounds/background starts.png",
+
+    [BG_PLANET1] = "new-assets/sprites/Planets/planet1.png",
+    [BG_PLANET2] = "new-assets/sprites/Planets/planet2.png",
+    [BG_PLANET3] = "new-assets/sprites/Planets/planet3.png",
+    [BG_PLANET4] = "new-assets/sprites/Planets/planet4.png",
+
+    [SPR_EXPLOSION1_A] = "new-assets/sprites/Explosion/explosion1.png",
+    [SPR_EXPLOSION1_B] = "new-assets/sprites/Explosion/explosion2.png",
+    [SPR_EXPLOSION1_C] = "new-assets/sprites/Explosion/explosion3.png",
+    [SPR_EXPLOSION1_D] = "new-assets/sprites/Explosion/explosion4.png",
+    [SPR_EXPLOSION1_E] = "new-assets/sprites/Explosion/explosion5.png",
+
+    [SPR_POWERUP_1] = "new-assets/sprites/Powerups/powerup1.png",
+    [SPR_POWERUP_2] = "new-assets/sprites/Powerups/powerup2.png",
+    [SPR_POWERUP_3] = "new-assets/sprites/Powerups/powerup3.png",
+    [SPR_POWERUP_4] = "new-assets/sprites/Powerups/powerup4.png",
+    [SPR_POWERUP_5] = "new-assets/sprites/Powerups/powerup5.png",
+
+    [SPR_PROJECTILE_1] = "new-assets/sprites/Projectiles/projectile1.png",
+    [SPR_PROJECTILE_2] = "new-assets/sprites/Projectiles/projectile2.png",
+    [SPR_PROJECTILE_3] = "new-assets/sprites/Projectiles/projectile3.png",
+    [SPR_PROJECTILE_4] = "new-assets/sprites/Projectiles/projectile4.png",
+    [SPR_PROJECTILE_5] = "new-assets/sprites/Projectiles/projectile5.png",
+    [SPR_PROJECTILE_6] = "new-assets/sprites/Projectiles/projectile6.png",
+
+    [SPR_SPACESHIP1_A] = "new-assets/sprites/Spaceships/Spaceship 1/spaceship1-1.png",
+    [SPR_SPACESHIP1_B] = "new-assets/sprites/Spaceships/Spaceship 1/spaceship1-2.png",
+    [SPR_SPACESHIP2_A] = "new-assets/sprites/Spaceships/Spaceship 2/spaceship2-1.png",
+    [SPR_SPACESHIP2_B] = "new-assets/sprites/Spaceships/Spaceship 2/spaceship2-2.png",
+    [SPR_SPACESHIP3_A] = "new-assets/sprites/Spaceships/Spaceship 3/spaceship3-1.png",
+    [SPR_SPACESHIP3_B] = "new-assets/sprites/Spaceships/Spaceship 3/spaceship3-2.png",
+    [SPR_SPACESHIP4_A] = "new-assets/sprites/Spaceships/Spaceship 4/spaceship4.png",
+    [SPR_SPACESHIP5_A] = "new-assets/sprites/Spaceships/Spaceship 5/spaceship5-1.png",
+    [SPR_SPACESHIP5_B] = "new-assets/sprites/Spaceships/Spaceship 5/spaceship5-2.png",
+    [SPR_SPACESHIP6_A] = "new-assets/sprites/Spaceships/Spaceship 6/spaceship6-1.png",
+    [SPR_SPACESHIP6_B] = "new-assets/sprites/Spaceships/Spaceship 6/spaceship6-2.png",
+    [SPR_SPACESHIP7_A] = "new-assets/sprites/Spaceships/Spaceship 7/spaceship7.png",
+    [SPR_SPACESHIP8_A] = "new-assets/sprites/Spaceships/Spaceship 8/spaceship8-1.png",
+    [SPR_SPACESHIP8_B] = "new-assets/sprites/Spaceships/Spaceship 8/spaceship8-2.png",
+    [SPR_SPACESHIP9_A] = "new-assets/sprites/Spaceships/Spaceship 9/spaceship9-1.png",
+    [SPR_SPACESHIP9_B] = "new-assets/sprites/Spaceships/Spaceship 9/spaceship9-2.png",
+};
+
 typedef struct
 {
     SDL_Texture *texture;
-    int cols;
-    int rows;
-    int tileSize;
-    int offset;
-    int count;
-} Spritesheet;
+    int width;
+    int height;
+} Sprite;
 
-static Spritesheet sheets[MAX_SPRITESHEETS];
-static int sheetCount = 0;
+static Sprite sprites[SPR_COUNT];
+static int loadedSpriteCount = 0;
 
 void init_sprites(SDL_Renderer *renderer)
 {
@@ -24,162 +70,70 @@ void init_sprites(SDL_Renderer *renderer)
         printf("Failed to initialize SDL_image: %s\n", IMG_GetError());
     }
 
-    sheetCount = 0;
+    loadedSpriteCount = 0;
 
-    SDL_Surface *backgroundTile = IMG_Load("assets/sprites/background.png");
-
-    if (!backgroundTile)
+    // Dynamically load sprites in
+    for (int i = 0; i < SPR_COUNT; i++)
     {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
+        SDL_Surface *sprite = IMG_Load(spritePaths[i]);
+
+        if (!sprite)
+        {
+            printf("Failed to load sprite: %s\n", IMG_GetError());
+        }
+
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, sprite);
+
+        if (!texture)
+        {
+            printf("Failed to create texture: %s\n", SDL_GetError());
+            SDL_FreeSurface(sprite);
+            continue;
+        }
+
+        sprites[loadedSpriteCount].texture = texture;
+        sprites[loadedSpriteCount].width = sprite->w;
+        sprites[loadedSpriteCount].height = sprite->h;
+
+        SDL_FreeSurface(sprite);
+        loadedSpriteCount++;
     }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundTile);
-    sheets[sheetCount].cols = backgroundTile->w / TILE_SIZE;
-    sheets[sheetCount].rows = backgroundTile->h / TILE_SIZE;
-    sheets[sheetCount].tileSize = TILE_SIZE;
-    sheets[sheetCount].offset = 0;
-    sheets[sheetCount].count = 1;
-
-    SDL_FreeSurface(backgroundTile);
-    sheetCount++;
-
-    SDL_Surface *backgroundBuildingTile = IMG_Load("assets/sprites/SpaceInvaders_BackgroundBuildings.png");
-
-    if (!backgroundBuildingTile)
-    {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
-    }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundBuildingTile);
-    sheets[sheetCount].cols = backgroundBuildingTile->w / TILE_SIZE;
-    sheets[sheetCount].rows = backgroundBuildingTile->h / TILE_SIZE;
-    sheets[sheetCount].tileSize = TILE_SIZE;
-    sheets[sheetCount].offset = 1;
-    sheets[sheetCount].count = 1;
-
-    SDL_FreeSurface(backgroundBuildingTile);
-    sheetCount++;
-
-    SDL_Surface *backgroundFloorTile = IMG_Load("assets/sprites/SpaceInvaders_BackgroundFloor.png");
-
-    if (!backgroundFloorTile)
-    {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
-    }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, backgroundFloorTile);
-    sheets[sheetCount].cols = backgroundFloorTile->w / TILE_SIZE;
-    sheets[sheetCount].rows = backgroundFloorTile->h / TILE_SIZE;
-    sheets[sheetCount].tileSize = TILE_SIZE;
-    sheets[sheetCount].offset = 2;
-    sheets[sheetCount].count = 1;
-
-    SDL_FreeSurface(backgroundFloorTile);
-    sheetCount++;
-
-    SDL_Surface *menuPanel = IMG_Load("assets/sprites/SpaceInvaders_Borders.png");
-
-    if (!menuPanel)
-    {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
-    }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, menuPanel);
-    sheets[sheetCount].cols = menuPanel->w / PANEL_SIZE;
-    sheets[sheetCount].rows = menuPanel->h / PANEL_SIZE;
-    sheets[sheetCount].tileSize = PANEL_SIZE;
-    sheets[sheetCount].offset = 3;
-    sheets[sheetCount].count = 9;
-
-    SDL_FreeSurface(menuPanel);
-    sheetCount++;
-
-    SDL_Surface *sheet0 = IMG_Load("assets/sprites/spritesheet.png");
-
-    if (!sheet0)
-    {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
-    }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, sheet0);
-    sheets[sheetCount].cols = sheet0->w / SPRITE_SIZE;
-    sheets[sheetCount].rows = sheet0->h / SPRITE_SIZE;
-    sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = 12;
-    sheets[sheetCount].count = 7 * 5;
-
-    SDL_FreeSurface(sheet0);
-    sheetCount++;
-
-    SDL_Surface *sheet1 = IMG_Load("assets/sprites/SpaceInvaders_Pickups.png");
-
-    if (!sheet1)
-    {
-        printf("Failed to load spritesheet.png: %s\n", IMG_GetError());
-    }
-
-    sheets[sheetCount].texture = SDL_CreateTextureFromSurface(renderer, sheet1);
-    sheets[sheetCount].cols = sheet1->w / SPRITE_SIZE;
-    sheets[sheetCount].rows = sheet1->h / SPRITE_SIZE;
-    sheets[sheetCount].tileSize = SPRITE_SIZE;
-    sheets[sheetCount].offset = 12 + 7 * 5;
-    sheets[sheetCount].count = 6 * 4;
-
-    SDL_FreeSurface(sheet1);
-    sheetCount++;
 }
 
 void cleanup_sprites(void)
 {
-    for (int i = 0; i < sheetCount; i++)
+    for (int i = 0; i < loadedSpriteCount; i++)
     {
-        if (sheets[i].texture)
+        if (sprites[i].texture)
         {
-            SDL_DestroyTexture(sheets[i].texture);
+            SDL_DestroyTexture(sprites[i].texture);
         }
     }
 
-    sheetCount = 0;
+    loadedSpriteCount = 0;
 
     IMG_Quit();
 }
 
 SDL_Rect get_sprite(SpriteID id)
 {
-    for (int i = 0; i < sheetCount; i++)
-    {
-        if (id >= sheets[i].offset && id < sheets[i].offset + sheets[i].count)
-        {
-            int localID = id - sheets[i].offset;
-            int col = localID % sheets[i].cols;
-            int row = localID / sheets[i].cols;
+    Sprite *sprite = &sprites[id];
 
-            SDL_Rect rect = {
-                col * sheets[i].tileSize,
-                row * sheets[i].tileSize,
-                sheets[i].tileSize,
-                sheets[i].tileSize};
+    // x and y are zero is they are single images, not spritesheet
+    SDL_Rect rect = {
+        0,
+        0,
+        sprite->width,
+        sprite->height};
 
-            return rect;
-        }
-    }
-
-    // Fallback for empty rect
-    SDL_Rect fallback = {0, 0, SPRITE_SIZE, SPRITE_SIZE};
-    return fallback;
+    return rect;
 }
 
 SDL_Texture *get_sprite_texture(SpriteID id)
 {
-    for (int i = 0; i < sheetCount; i++)
-    {
-        if (id >= sheets[i].offset && id < sheets[i].offset + sheets[i].count)
-        {
-            return sheets[i].texture;
-        }
-    }
+    Sprite *sprite = &sprites[id];
 
-    return NULL;
+    return sprite->texture;
 }
 
 /**
@@ -193,7 +147,7 @@ void draw_circle(SDL_Renderer *renderer, int cx, int cy, int radius)
 
     for (int i = 0; i < segments; i++)
     {
-        float angle1 = 1 * angleStep;
+        float angle1 = i * angleStep;
         float angle2 = (i + 1) * angleStep;
 
         int x1 = cx + radius * cosf(angle1);

@@ -51,41 +51,41 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
     render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 0, white);
 }
 
-void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
-{
-    const char tiles[] = {
-        MENU_TL,
-        MENU_T,
-        MENU_TR,
-        MENU_L,
-        MENU_C,
-        MENU_R,
-        MENU_BL,
-        MENU_B,
-        MENU_BR};
-    const int tileSize = TILE_SIZE;
+// void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
+// {
+//     const char tiles[] = {
+//         MENU_TL,
+//         MENU_T,
+//         MENU_TR,
+//         MENU_L,
+//         MENU_C,
+//         MENU_R,
+//         MENU_BL,
+//         MENU_B,
+//         MENU_BR};
+//     const int tileSize = TILE_SIZE;
 
-    for (int row = 0; row < 3; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            int index = row * 3 + col;
+//     for (int row = 0; row < 3; row++)
+//     {
+//         for (int col = 0; col < 3; col++)
+//         {
+//             int index = row * 3 + col;
 
-            SDL_Rect src = get_sprite(tiles[index]);
-            SDL_Texture *texture = get_sprite_texture(tiles[index]);
+//             SDL_Rect src = get_sprite(tiles[index]);
+//             SDL_Texture *texture = get_sprite_texture(tiles[index]);
 
-            int dstW = (col == 1) ? w - 2 * tileSize : tileSize;
-            int dstH = (row == 1) ? h - 2 * tileSize : tileSize;
+//             int dstW = (col == 1) ? w - 2 * tileSize : tileSize;
+//             int dstH = (row == 1) ? h - 2 * tileSize : tileSize;
 
-            int dstX = x + (col == 0 ? 0 : (col == 1 ? tileSize : w - tileSize));
-            int dstY = y + (row == 0 ? 0 : (row == 1 ? tileSize : h - tileSize));
+//             int dstX = x + (col == 0 ? 0 : (col == 1 ? tileSize : w - tileSize));
+//             int dstY = y + (row == 0 ? 0 : (row == 1 ? tileSize : h - tileSize));
 
-            SDL_Rect dst = {dstX, dstY, dstW, dstH};
+//             SDL_Rect dst = {dstX, dstY, dstW, dstH};
 
-            SDL_RenderCopy(renderer, texture, &src, &dst);
-        }
-    }
-}
+//             SDL_RenderCopy(renderer, texture, &src, &dst);
+//         }
+//     }
+// }
 
 void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
 {
@@ -100,7 +100,7 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     int panelX = SCREEN_WIDTH / 2 - panelWidth / 2;
     int panelY = SCREEN_HEIGHT / 2 - panelHeight / 2;
 
-    render_panel(renderer, panelX, panelY, panelWidth, panelHeight);
+    // render_panel(renderer, panelX, panelY, panelWidth, panelHeight);
 
     // Optional: Generate Menu Title
     if (title != NULL)

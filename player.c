@@ -71,7 +71,7 @@ void init_player(void)
     hasShield = false;
     hasPickupMagnet = false;
 
-    player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
+    player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, 32 * 2, 32 * 2);
 }
 
 /**
@@ -247,20 +247,20 @@ void tick_player(const Uint8 *keystate, float deltaTime)
 void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
     SDL_Rect src;
-    SDL_Texture *texture = get_sprite_texture(SPR_PLAYER);
+    SDL_Texture *texture = get_sprite_texture(SPR_SPACESHIP1_A);
 
     if (!isPlayerVisible)
         return;
 
     if (isPlayerExploding)
     {
-        SpriteID explosionSprites[] = {SPR_EXPLOSION_A, SPR_EXPLOSION_B};
+        SpriteID explosionSprites[] = {SPR_EXPLOSION1_A, SPR_EXPLOSION1_B, SPR_EXPLOSION1_C, SPR_EXPLOSION1_D, SPR_EXPLOSION1_E};
 
         src = get_sprite(explosionSprites[explosionFrame]);
     }
     else
     {
-        src = get_sprite(SPR_PLAYER);
+        src = get_sprite(SPR_SPACESHIP1_A);
     }
 
     // Render shield around player

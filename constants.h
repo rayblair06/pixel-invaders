@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 /**
- * Global Contants
+ * Global Constants
  */
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;

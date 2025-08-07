@@ -25,6 +25,7 @@
     "scene_manager.h": "c",
     "string.h": "c",
     "waves.h": "c",
-    "math.h": "c"
+    "math.h": "c",
+    "unordered_map": "c"
   }
 }

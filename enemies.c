@@ -25,11 +25,11 @@ typedef struct
 } EnemySpriteFrames;
 
 const EnemySpriteFrames enemySprites[] = {
-    [ENEMY_BASIC] = {SPR_INVADER1_A, SPR_INVADER1_B},
-    [ENEMY_FAST] = {SPR_INVADER2_A, SPR_INVADER2_B},
-    [ENEMY_TANK] = {SPR_INVADER3_A, SPR_INVADER3_B},
-    [ENEMY_SHOOTER] = {SPR_INVADER4_A, SPR_INVADER4_B},
-    [ENEMY_BRUTE] = {SPR_INVADER5_A, SPR_INVADER5_B},
+    [ENEMY_BASIC] = {SPR_SPACESHIP4_A, SPR_SPACESHIP4_A},
+    [ENEMY_FAST] = {SPR_SPACESHIP5_A, SPR_SPACESHIP5_B},
+    [ENEMY_TANK] = {SPR_SPACESHIP6_A, SPR_SPACESHIP6_B},
+    [ENEMY_SHOOTER] = {SPR_SPACESHIP7_A, SPR_SPACESHIP7_A},
+    [ENEMY_BRUTE] = {SPR_SPACESHIP8_A, SPR_SPACESHIP8_B},
 };
 
 /**
@@ -183,7 +183,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
 
     enemy.active = true;
     enemy.type = type;
-    enemy.entity = create_entity(x, y, SPRITE_DRAW_SIZE, SPRITE_DRAW_SIZE);
+    enemy.entity = create_entity(x, y, 32 * 2, 32 * 2);
 
     switch (type)
     {

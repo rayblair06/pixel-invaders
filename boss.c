@@ -20,7 +20,7 @@ void init_boss(void)
 
 void spawn_boss(float x, float y, int wave)
 {
-    currentBoss.entity = create_entity(x, y, SPRITE_DRAW_SIZE * 4, SPRITE_DRAW_SIZE * 4);
+    currentBoss.entity = create_entity(x, y, 128 * 2, 72 * 2);
     currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
 
     currentBoss.phaseTwo = false;
@@ -264,8 +264,8 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     if (!bossActive)
         return;
 
-    SDL_Rect src = get_sprite(SPR_INVADER5_A); // temp boss sprite
-    SDL_Texture *texture = get_sprite_texture(SPR_INVADER5_A);
+    SDL_Rect src = get_sprite(SPR_SPACESHIP9_A); // temp boss sprite
+    SDL_Texture *texture = get_sprite_texture(SPR_SPACESHIP9_A);
 
     SDL_Rect dst = currentBoss.entity.rect;
     dst.x += shakeX;
