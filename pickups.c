@@ -127,27 +127,6 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         Pickup *pickup = &pickups[i];
 
-        // Default full opacity
-        Uint8 alpha = 255;
-
-        if (pickup->despawning)
-        {
-            Uint32 timeSinceDespawning = SDL_GetTicks() - pickup->despawningTime;
-            Uint32 lastSecondOfDespawning = pickup->despawningDuration - 1000;
-
-            if (timeSinceDespawning >= lastSecondOfDespawning && timeSinceDespawning <= pickup->despawningDuration)
-            {
-                // Fade from 255 to 0 between 4000ms and 5000ms
-                float fadeProgress = (timeSinceDespawning - lastSecondOfDespawning) / 1000.0f;
-                alpha = (Uint8)(255 * (1.0f - fadeProgress));
-            }
-            else if (timeSinceDespawning > pickup->despawningDuration)
-            {
-                // Already handled by tick_picks - safe to pick
-                continue;
-            }
-        }
-
         SDL_Rect src = get_sprite(frameId[pickups[i].animFrame]);
         SDL_Texture *texture = get_sprite_texture(frameId[pickups[i].animFrame]);
 
@@ -155,8 +134,37 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
+        // Default full opacity
+        Uint8 alpha = 255;
+
+        if (pickup->despawning)
+        {
+            Uint32 elapsed = SDL_GetTicks() - pickup->despawningTime;
+
+            // Flash: Between 3s and 4s
+            if (elapsed >= 3000 && elapsed < 4000)
+            {
+                alpha = ((elapsed / 100) % 2 == 0) ? 255 : 0;
+            }
+
+            // Fade: between 4s and 5s
+            else if (elapsed >= 4000 && elapsed <= 5000)
+            {
+                float fade = (elapsed - 4000) / 1000.0f;
+                alpha = (Uint8)(255 * (1.0f - fade));
+            }
+            else if (elapsed > 5000)
+            {
+                // Already handled by tick_picks - safe to pick
+                continue;
+            }
+        }
+
         SDL_SetTextureAlphaMod(texture, alpha);
         SDL_RenderCopy(renderer, texture, &src, &dst);
-        SDL_SetTextureAlphaMod(texture, 255); // Reset for other uses
+
+        // Reset Texture State
+        SDL_SetTextureAlphaMod(texture, 255);
+        SDL_SetTextureColorMod(texture, 255, 255, 255);
     }
 }
