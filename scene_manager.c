@@ -26,6 +26,102 @@
 #include "waves.h"
 #include "version.h"
 
+/**
+ * Planets
+ */
+#define MAX_PLANETS 16
+
+typedef struct
+{
+    bool active;
+    SpriteID sprite;
+    float x, y;
+    float speedY;
+    float driftX;
+    float scale;
+    Uint8 alpha;
+} Planet;
+
+static Planet planets[MAX_PLANETS];
+static Uint32 lastPlanetSpawnTime = 0;
+static const Uint32 planetSpawnInterval = 4000; // 4 seconds
+
+void spawn_planet(void)
+{
+    for (int i = 0; i < MAX_PLANETS; i++)
+    {
+        if (!planets[i].active)
+        {
+            planets[i].active = true;
+
+            // Pick random sprite
+            planets[i].sprite = BG_PLANET1 + (rand() % 4);
+
+            planets[i].speedY = 10 + rand() % 30;             // scroll speed
+            planets[i].driftX = ((rand() % 21) - 10) / 10.0f; // -1.0 to +1.0
+            planets[i].scale = 0.7f + (rand() % 6) / 10.0f;   // 0.7 to 1.3
+            planets[i].alpha = (Uint8)150 + (rand() % 31);    // 150 to 180
+
+            // Random position and movement
+            planets[i].x = rand() % (SCREEN_WIDTH - (int)(128 * planets[i].scale));
+            planets[i].y = -(128 * planets[i].scale) - (rand() % 100);
+
+            break;
+        }
+    }
+}
+
+void tick_planets(float deltaTime)
+{
+    for (int i = 0; i < MAX_PLANETS; i++)
+    {
+        if (!planets[i].active)
+        {
+            continue;
+        }
+
+        planets[i].x += planets[i].driftX * deltaTime;
+        planets[i].y += planets[i].speedY * deltaTime;
+
+        if (planets[i].y > SCREEN_HEIGHT)
+        {
+            planets[i].active = false;
+        }
+    }
+
+    Uint32 now = SDL_GetTicks();
+
+    if (now - lastPlanetSpawnTime > planetSpawnInterval)
+    {
+        spawn_planet();
+        lastPlanetSpawnTime = now;
+    }
+}
+
+void render_planets(SDL_Renderer *renderer)
+{
+    for (int i = 0; i < MAX_PLANETS; i++)
+    {
+        if (!planets[i].active)
+        {
+            continue;
+        }
+
+        SDL_Rect src = get_sprite(planets[i].sprite);
+        SDL_Texture *texture = get_sprite_texture(planets[i].sprite);
+
+        SDL_Rect dst;
+        dst.w = src.w * planets[i].scale;
+        dst.h = src.h * planets[i].scale;
+        dst.x = planets[i].x;
+        dst.y = planets[i].y;
+
+        SDL_SetTextureAlphaMod(texture, planets[i].alpha); // Slightly faded
+        SDL_RenderCopy(renderer, texture, &src, &dst);
+        SDL_SetTextureAlphaMod(texture, 255); // reset
+    }
+}
+
 GameState gameState = STATE_NONE;
 Scene scene = SCENE_MAIN_MENU;
 
@@ -174,6 +270,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     }
 
     render_background(renderer);
+    render_planets(renderer);
 
     render_player(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
     render_bullets(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
@@ -187,6 +284,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     tick_bullets();
     tick_enemy_bullets();
     tick_enemies();
+    tick_planets(deltaTime);
     tick_pickups();
     tick_waves();
     tick_particles(deltaTime);
