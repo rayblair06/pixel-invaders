@@ -2,16 +2,16 @@
 #include "audio.h"
 
 const char *soundPaths[SND_COUNT] = {
-    [SND_SHOOT] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTBy_Bullet By Centred Fast_02.wav",
-    [SND_LASER] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/SCIMisc_Reload Alien Tech_02.wav",
-    [SND_CHARGE1] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BEEP_Targeting Loop_06.wav",
-    [SND_CHARGE2] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/LASRGun_Electron Impeller Charged Fire_02.wav",
-    [SND_ENEMY_DEATH] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/ANMLBat_Creature Vocalisation_01.wav",
-    [SND_EXPLOSION] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/EXPLDsgn_Explosion Impact_14.wav",
-    [SND_PICKUP] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/UIBeep_Lock On_05.wav",
-    [SND_HIT] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTRico_Ricochet Metallic_04.wav",
-    [SND_SHIELD_BREAK] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/GUNMech_Scope Deactivate_11.wav",
-    [SND_BOSS_ROAR] = "new-assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/CREAMnstr_Beast Vocalisation_09.wav",
+    [SND_SHOOT] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTBy_Bullet By Centred Fast_02.wav",
+    [SND_LASER] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/SCIMisc_Reload Alien Tech_02.wav",
+    [SND_CHARGE1] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BEEP_Targeting Loop_06.wav",
+    [SND_CHARGE2] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/LASRGun_Electron Impeller Charged Fire_02.wav",
+    [SND_ENEMY_DEATH] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/ANMLBat_Creature Vocalisation_01.wav",
+    [SND_EXPLOSION] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/EXPLDsgn_Explosion Impact_14.wav",
+    [SND_PICKUP] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/UIBeep_Lock On_05.wav",
+    [SND_HIT] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTRico_Ricochet Metallic_04.wav",
+    [SND_SHIELD_BREAK] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/GUNMech_Scope Deactivate_11.wav",
+    [SND_BOSS_ROAR] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/CREAMnstr_Beast Vocalisation_09.wav",
 };
 
 static int loadedSounds = 0;
@@ -19,10 +19,10 @@ static int loadedSounds = 0;
 static Mix_Chunk *sounds[SND_COUNT];
 
 const char *musicPaths[MUS_COUNT] = {
-    [MUS_MENU] = "new-assets/audio/music/menu.wav",
-    [MUS_GAME] = "new-assets/audio/music/battle.wav",
-    [MUS_GAMEOVER] = "new-assets/audio/music/menu.wav", // TODO:
-    [MUS_BOSS] = "new-assets/audio/music/battle.wav",
+    [MUS_MENU] = "assets/audio/music/menu.wav",
+    [MUS_GAME] = "assets/audio/music/battle.wav",
+    [MUS_GAMEOVER] = "assets/audio/music/menu.wav", // TODO:
+    [MUS_BOSS] = "assets/audio/music/battle.wav",
 };
 
 static int loadedMusic = 0;
