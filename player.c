@@ -71,7 +71,7 @@ void init_player(void)
     hasShield = false;
     hasPickupMagnet = false;
 
-    player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 60, 32 * 2, 32 * 2);
+    player = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 80, 32 * 2, 32 * 2);
 }
 
 /**
