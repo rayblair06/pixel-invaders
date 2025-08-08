@@ -145,7 +145,7 @@ void check_collisions(void)
     // --- Boss Beam vs Player ---
     if (currentBoss.laserFiring)
     {
-        currentBoss.laserDamageTimer -= deltaTime;
+        currentBoss.laserDamageTimer -= get_delta_time();
 
         SDL_Rect laserHitbox = {
             (int)currentBoss.laserX - 4,

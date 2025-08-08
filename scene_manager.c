@@ -70,8 +70,10 @@ void spawn_planet(void)
     }
 }
 
-void tick_planets(float deltaTime)
+void tick_planets()
 {
+    float deltaTime = get_delta_time();
+
     for (int i = 0; i < MAX_PLANETS; i++)
     {
         if (!planets[i].active)
@@ -88,7 +90,7 @@ void tick_planets(float deltaTime)
         }
     }
 
-    Uint32 now = SDL_GetTicks();
+    Uint32 now = get_game_ticks();
 
     if ((rand() / (float)RAND_MAX) < planetSpawnChance * deltaTime * 60.0f)
     {
@@ -245,6 +247,8 @@ void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *ke
 
 void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
 {
+    update_game_time();
+
     SDL_Color white = {225, 255, 255, 255};
 
     // Initialise these on first launch of game
@@ -262,7 +266,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         init_waves();
         init_stats();
 
-        runStartTime = SDL_GetTicks();
+        runStartTime = get_game_ticks();
 
         initialiseGameProps = false;
     }
@@ -278,18 +282,21 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     render_pickups(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
     render_particles(renderer);
 
-    tick_player(keystate, deltaTime);
-    tick_bullets();
-    tick_enemy_bullets();
-    tick_enemies();
-    tick_planets(deltaTime);
-    tick_pickups();
-    tick_waves();
-    tick_particles(deltaTime);
-    tick_run_time((SDL_GetTicks() - runStartTime) / 1000);
+    if (!is_game_paused())
+    {
+        tick_player(keystate);
+        tick_bullets();
+        tick_enemy_bullets();
+        tick_enemies();
+        tick_planets();
+        tick_pickups();
+        tick_waves();
+        tick_particles();
+        tick_run_time((get_game_ticks() - runStartTime) / 1000);
 
-    if (bossActive)
-        tick_boss(deltaTime);
+        if (bossActive)
+            tick_boss();
+    }
 
     render_boss(renderer, shakeOffsetX, shakeOffsetY);
     render_boss_health(renderer, font);
@@ -301,7 +308,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     render_stats_panel(renderer, font, 10, 10, 30);
 
-    update_experience_visual(deltaTime);
+    update_experience_visual();
     render_health_bar(renderer, font, SCREEN_WIDTH - 220, SCREEN_HEIGHT - 20, 200, 10);
     render_xp_bar(renderer, font, 10, SCREEN_HEIGHT - 20, 200, 10);
 
@@ -312,7 +319,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         // render_vignette(renderer);
     }
 
-    if (bossActive && SDL_GetTicks() - bossSpawnTime < 2000)
+    if (bossActive && get_game_ticks() - bossSpawnTime < 2000)
     {
         generate_text(renderer, font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 175, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
     }
@@ -323,7 +330,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         generate_upgrade_choices();
 
         choosingUpgrade = true;
-        isEntitiesFrozen = true;
+        pause_game();
     }
 
     // Upgrade Menu
@@ -364,7 +371,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
             apply_upgrade(options[selectedOption]);
 
             choosingUpgrade = false;
-            isEntitiesFrozen = false;
+            resume_game();
             consume_level_up_pending();
         }
     }
@@ -373,7 +380,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     if (key_pressed(SDL_SCANCODE_ESCAPE, keystate, prevKeystate))
     {
         // Pause game and show summary
-        isEntitiesFrozen = true;
+        pause_game();
         showRunSummary = true;
     }
 
@@ -385,13 +392,15 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
         {
             showRunSummary = false;
-            isEntitiesFrozen = false;
+            resume_game();
         }
     }
 
     // Game Over Screen
     if (isGameOver)
     {
+        pause_game();
+
         SDL_Surface *overSurface = TTF_RenderText_Blended(font, "GAME OVER", white);
         SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
         SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};
@@ -401,7 +410,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         SDL_DestroyTexture(overTexture);
 
         // Update stats
-        runEndTime = SDL_GetTicks();
+        runEndTime = get_game_ticks();
         currentRun.timePlayed = (runEndTime - runStartTime) / 1000;
         currentRun.finalWave = wave;
         add_run_to_history(&currentRun);
@@ -421,7 +430,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     }
 
     // Debugging!
-    debug_log("Time: %d", SDL_GetTicks);
+    debug_log("Time: %d", get_game_ticks());
     debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
     debug_log("Enemy count: %d", sizeof(enemies));
     debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");

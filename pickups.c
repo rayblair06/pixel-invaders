@@ -1,5 +1,6 @@
 #include <math.h>
 #include "constants.h"
+#include "game.h"
 #include "pickups.h"
 #include "player.h"
 #include "sprites.h"
@@ -37,7 +38,7 @@ void spawn_pickup(float x, float y)
 
             pickups[i].animFrame = 0;
             pickups[i].animFrameCount = 5;
-            pickups[i].animStartTime = SDL_GetTicks();
+            pickups[i].animStartTime = get_game_ticks();
             pickups[i].animFrameDuration = 100;
 
             break;
@@ -59,7 +60,7 @@ void tick_pickups(void)
         move(&pickups[i], DOWN, 2);
 
         // Animation
-        Uint32 elapsed = SDL_GetTicks() - pickups[i].animStartTime;
+        Uint32 elapsed = get_game_ticks() - pickups[i].animStartTime;
         pickups[i].animFrame = (elapsed / pickups[i].animFrameDuration) % pickups[i].animFrameCount;
 
         // Stop falling at player Y and start despawning
@@ -70,7 +71,7 @@ void tick_pickups(void)
             if (!pickups[i].despawning)
             {
                 pickups[i].despawning = true;
-                pickups[i].despawningTime = SDL_GetTicks();
+                pickups[i].despawningTime = get_game_ticks();
             }
         }
 
@@ -78,7 +79,7 @@ void tick_pickups(void)
         if (pickups[i].despawning)
         {
             // Ran out of time, despawn.
-            if (SDL_GetTicks() - pickups[i].despawningTime > pickups[i].despawningDuration)
+            if (get_game_ticks() - pickups[i].despawningTime > pickups[i].despawningDuration)
             {
                 pickups[i].active = false;
 
@@ -137,7 +138,7 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         if (pickup->despawning)
         {
-            Uint32 elapsed = SDL_GetTicks() - pickup->despawningTime;
+            Uint32 elapsed = get_game_ticks() - pickup->despawningTime;
 
             // Flash: Between 3s and 4s
             if (elapsed >= 3000 && elapsed < 4000)

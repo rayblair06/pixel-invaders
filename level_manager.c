@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "level_manager.h"
+#include "game.h"
 #include "stats.h"
 #include "upgrades.h"
 
@@ -53,9 +54,9 @@ void consume_level_up_pending(void)
     isLevelUpPending = false;
 }
 
-void update_experience_visual(float deltaTime)
+void update_experience_visual(void)
 {
     float targetExperience = (float)experience;
     float speed = 10.0f; // higher = faster smoothing
-    experienceVisual += (targetExperience - experienceVisual) * deltaTime * speed;
+    experienceVisual += (targetExperience - experienceVisual) * get_delta_time() * speed;
 }

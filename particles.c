@@ -1,6 +1,7 @@
-#include "particles.h"
 #include <stdlib.h>
 #include <math.h>
+#include "game.h"
+#include "particles.h"
 
 static Particle particles[MAX_PARTICLES];
 
@@ -69,8 +70,10 @@ void spawn_explosion_particles(float x, float y, int count)
     }
 }
 
-void tick_particles(float deltaTime)
+void tick_particles(void)
 {
+    float deltaTime = get_delta_time();
+
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
         if (!particles[i].active)

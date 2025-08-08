@@ -29,6 +29,6 @@ bool is_level_up_pending(void);
  */
 void consume_level_up_pending(void);
 
-void update_experience_visual(float deltaTime);
+void update_experience_visual(void);
 
 #endif

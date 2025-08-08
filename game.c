@@ -8,11 +8,15 @@
 #include "sprites.h"
 #include "waves.h"
 
-float deltaTime = 0;
-
 bool initialiseGameProps = false;
 bool isGameOver = false;
-bool isEntitiesFrozen = false;
+
+static Uint32 lastFrameTicks = 0;
+static float deltaTime = 0.0f;
+
+static bool isPaused = false;
+static Uint32 pauseStart = 0;
+static Uint32 totalPauseTime = 0;
 
 // Screen shake (rapid shake) variables
 bool shaking = false;
@@ -33,10 +37,83 @@ Uint32 flashDuration = 200; // ms
 
 void init_game(void)
 {
-    isGameOver = isEntitiesFrozen = false;
+    isGameOver = false;
     shakeOffsetX = shakeOffsetY = 0;
     cameraOffsetX = cameraOffsetY = 0;
     shakeTimer = 0;
+}
+
+/**
+ * Returns the current name time in ms (paused time excluded)
+ */
+Uint32 get_game_ticks(void)
+{
+    Uint32 now = SDL_GetTicks();
+    return isPaused ? pauseStart - totalPauseTime : now - totalPauseTime;
+}
+
+/**
+ * Returns the delta time in seconds (float), capped if needed
+ */
+float get_delta_time(void)
+{
+    return isPaused ? 0.0f : deltaTime;
+}
+
+/**
+ * Update tick timing - call this once per frame
+ */
+void update_game_time(void)
+{
+    if (isPaused)
+    {
+        deltaTime = 0.0f;
+        return;
+    }
+
+    Uint32 now = SDL_GetTicks();
+    Uint32 adjustedNow = now - totalPauseTime;
+
+    if (lastFrameTicks == 0)
+    {
+        lastFrameTicks = adjustedNow;
+        deltaTime = 0.0f;
+    }
+
+    Uint32 frameTicks = adjustedNow - lastFrameTicks;
+    deltaTime = frameTicks / 1000.0f;
+    lastFrameTicks = adjustedNow;
+
+    // Clamp to prevent huge spikes
+    if (deltaTime > 0.05f)
+        deltaTime = 0.05f;
+}
+
+void pause_game(void)
+{
+    if (!isPaused)
+    {
+        pauseStart = SDL_GetTicks();
+        isPaused = true;
+    }
+}
+
+void resume_game(void)
+{
+    if (isPaused)
+    {
+        Uint32 now = SDL_GetTicks();
+        totalPauseTime += now - pauseStart;
+        isPaused = false;
+    }
+}
+
+/**
+ * Returns whether game is currently paused
+ */
+bool is_game_paused(void)
+{
+    return isPaused;
 }
 
 // Background scroll speeds (parallax effect)

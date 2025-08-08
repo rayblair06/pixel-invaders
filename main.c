@@ -74,16 +74,9 @@ int main(int argc, char *argv[])
     SDL_PumpEvents();
     Uint8 prevKeystateBuffer[SDL_NUM_SCANCODES] = {0};
 
-    // Start of deltaTime
-    Uint32 lastTick = SDL_GetTicks();
-
     // Main loop
     while (running)
     {
-        Uint32 now = SDL_GetTicks();
-        deltaTime = (now - lastTick) / 1000.0f;
-        lastTick = now;
-
         // Handle events and keystates
         while (SDL_PollEvent(&event))
         {

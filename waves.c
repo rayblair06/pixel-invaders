@@ -63,7 +63,7 @@ void init_waves(void)
 {
     wave = 0;
     waveActive = false;
-    lastWaveTime = SDL_GetTicks();
+    lastWaveTime = get_game_ticks();
 
     baseEnemyHealth = BASE_ENEMY_HEALTH;
     baseEnemySpeed = BASE_ENEMY_SPEED;
@@ -186,7 +186,7 @@ void tick_waves(void)
     // Enemies dead and no wave active, let's spawn some new enemies!
     if (alive == 0 && !waveActive)
     {
-        Uint32 now = SDL_GetTicks();
+        Uint32 now = get_game_ticks();
 
         if (now - lastWaveTime > waveDelay)
         {

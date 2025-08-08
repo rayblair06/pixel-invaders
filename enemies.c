@@ -70,7 +70,7 @@ void tick_enemies(void)
 
         Uint32 fadeDuration = 500; // ms
 
-        Uint32 now = SDL_GetTicks();
+        Uint32 now = get_game_ticks();
 
         // Fade out on death
         if (enemies[i].isFadingOut)
@@ -123,7 +123,7 @@ void tick_enemies(void)
  */
 void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    Uint32 now = SDL_GetTicks();
+    Uint32 now = get_game_ticks();
 
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
@@ -165,7 +165,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
  */
 void update_enemy_animation_state(void)
 {
-    Uint32 now = SDL_GetTicks();
+    Uint32 now = get_game_ticks();
 
     if (now - lastFrameSwitch > frameInterval)
     {
@@ -232,7 +232,7 @@ void damage_enemy(Enemy *enemy)
 
     if (enemy->health > 0)
     {
-        enemy->damageFlashTimer = SDL_GetTicks();
+        enemy->damageFlashTimer = get_game_ticks();
 
         play_sound(SND_HIT);
     }
@@ -240,7 +240,7 @@ void damage_enemy(Enemy *enemy)
     {
         // They dead, fade out and deactivate
         enemy->isFadingOut = true;
-        enemy->fadeStartTime = SDL_GetTicks();
+        enemy->fadeStartTime = get_game_ticks();
         enemy->alpha = 255;
         record_kill();
     }

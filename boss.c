@@ -43,7 +43,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.laserDirection = 1;
 
     currentBoss.spawning = true;
-    bossSpawnTime = SDL_GetTicks();
+    bossSpawnTime = get_game_ticks();
     currentBoss.spawningSpeed = 0.5f;
 
     currentBoss.isMoving = false; // Doesn't 'move' until spawned
@@ -61,10 +61,12 @@ static void boss_fire_laser(void)
     spawn_explosion_particles(currentBoss.entity.x + currentBoss.entity.rect.w / 2, currentBoss.entity.y + currentBoss.entity.rect.h, 30);
 }
 
-void tick_boss(float deltaTime)
+void tick_boss()
 {
     if (!bossActive)
         return;
+
+    float deltaTime = get_delta_time();
 
     // Move boss into view
     if (currentBoss.spawning)
@@ -84,7 +86,7 @@ void tick_boss(float deltaTime)
     }
 
     // Bobbing
-    float bobbing = 5.0f * sinf(SDL_GetTicks() / 500.0f);
+    float bobbing = 5.0f * sinf(get_game_ticks() / 500.0f);
     currentBoss.entity.rect.y = currentBoss.entity.y + bobbing;
 
     if (currentBoss.isMoving)
@@ -276,7 +278,7 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
         // Pulse effect
-        float pulse = (sinf(SDL_GetTicks() / 200.0f) + 1.0f) / 2.0f;
+        float pulse = (sinf(get_game_ticks() / 200.0f) + 1.0f) / 2.0f;
         Uint8 alpha = (Uint8)(50 + 150 * pulse);
 
         if (currentBoss.phaseTwo)

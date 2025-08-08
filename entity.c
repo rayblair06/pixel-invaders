@@ -31,7 +31,7 @@ Entity create_entity(float x, float y, int w, int h)
 void move(Entity *entity, Movement move, float speed)
 {
     // Nothing can move if the game has ended pr entites are frozen
-    if (isGameOver || isEntitiesFrozen)
+    if (isGameOver || is_game_paused())
         return;
 
     switch (move)

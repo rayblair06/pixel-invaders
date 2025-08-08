@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "constants.h"
 #include "bullets.h"
+#include "game.h"
 #include "particles.h"
 #include "player.h"
 #include "sprites.h"
@@ -82,7 +83,7 @@ void tick_bullets(void)
         // Animate Bullet Explosion
         if (bullets[i].isExploding)
         {
-            Uint32 elapsed = SDL_GetTicks() - bullets[i].explosionStartTime;
+            Uint32 elapsed = get_game_ticks() - bullets[i].explosionStartTime;
             bullets[i].explosionFrame = elapsed / bullets[i].explosionFrameDuration;
 
             if (bullets[i].explosionFrame >= bullets[i].explosionFrameCount)
@@ -131,7 +132,7 @@ void trigger_bullet_explosion(Bullet *bullet)
 {
     bullet->isMoving = false;
     bullet->isExploding = true;
-    bullet->explosionStartTime = SDL_GetTicks();
+    bullet->explosionStartTime = get_game_ticks();
     bullet->explosionFrame = 0;
 
     spawn_explosion_particles(bullet->entity.x, bullet->entity.y, 20);

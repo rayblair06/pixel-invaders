@@ -77,9 +77,11 @@ void init_player(void)
 /**
  * Handle all of our 'tick' functionality of active player within the main game loop
  */
-void tick_player(const Uint8 *keystate, float deltaTime)
+void tick_player(const Uint8 *keystate)
 {
     float direction = 0;
+    float deltaTime = get_delta_time();
+
     bool moving = keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_RIGHT];
 
     if (moving)
@@ -166,10 +168,7 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     }
 
     // Apply to position
-    if (!isEntitiesFrozen)
-    {
-        player.x += (playerVelX * deltaTime) * boostSpeedMultiplier;
-    }
+    player.x += (playerVelX * deltaTime * boostSpeedMultiplier);
 
     // Keep player within bounds
     if (player.x < 0)
@@ -217,7 +216,7 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     // Toggle explosion animations
     if (isPlayerExploding)
     {
-        Uint32 elapsed = SDL_GetTicks() - explosionStartTime;
+        Uint32 elapsed = get_game_ticks() - explosionStartTime;
         explosionFrame = elapsed / explosionFrameDurtion;
 
         if (explosionFrame >= explosionFrameCount)
@@ -231,7 +230,7 @@ void tick_player(const Uint8 *keystate, float deltaTime)
     // Regenerate health
     if (hasHealthRegen && health < healthMax)
     {
-        Uint32 now = SDL_GetTicks();
+        Uint32 now = get_game_ticks();
 
         if (now - lastRegenHealthTime > regenHealthCooldown)
         {
@@ -266,7 +265,7 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
     // Render shield around player
     if (hasShield)
     {
-        float time = SDL_GetTicks() / 1000.0f;
+        float time = get_game_ticks() / 1000.0f;
 
         float pulse = sinf(time * 4.0f) * 2.0f;
 
@@ -323,7 +322,7 @@ void trigger_player_shoot()
 void trigger_player_explosion()
 {
     isPlayerExploding = true;
-    explosionStartTime = SDL_GetTicks();
+    explosionStartTime = get_game_ticks();
     explosionFrame = 0;
 
     spawn_explosion_particles(player.x, player.y, 20);
