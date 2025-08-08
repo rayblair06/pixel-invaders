@@ -43,8 +43,7 @@ typedef struct
 } Planet;
 
 static Planet planets[MAX_PLANETS];
-static Uint32 lastPlanetSpawnTime = 0;
-static const Uint32 planetSpawnInterval = 4000; // 4 seconds
+static const float planetSpawnChance = 0.0015f; // ~1.5 in 1000 frames (~10s average)
 
 void spawn_planet(void)
 {
@@ -91,10 +90,9 @@ void tick_planets(float deltaTime)
 
     Uint32 now = SDL_GetTicks();
 
-    if (now - lastPlanetSpawnTime > planetSpawnInterval)
+    if ((rand() / (float)RAND_MAX) < planetSpawnChance * deltaTime * 60.0f)
     {
         spawn_planet();
-        lastPlanetSpawnTime = now;
     }
 }
 
