@@ -429,7 +429,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     // Debugging!
     debug_log("Time: %d", get_game_ticks());
-    debug_log("Player X: %.2f, Y: %.2f", player.x, player.y);
+    debug_log("Player X: %.2f, Y: %.2f", player.e.pos.x, player.e.pos.y);
     debug_log("Enemy count: %d", sizeof(enemies));
     debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");
 

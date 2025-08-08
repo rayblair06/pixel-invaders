@@ -9,7 +9,7 @@
 typedef struct
 {
     Entity entity;
-    bool active;
+
     int pierceCount; // number of hits before disappearing
     bool isMoving;
 
@@ -30,7 +30,7 @@ extern float bulletDamage;
 typedef struct
 {
     Entity entity;
-    bool active;
+
     int damage;
 } EnemyBullet;
 

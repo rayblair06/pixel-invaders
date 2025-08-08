@@ -24,6 +24,7 @@ typedef void (*EnemyBehaviour)(struct Enemy *);
 typedef struct
 {
     Entity entity;
+
     EnemyType type;
     EnemyBehaviour tick;
     bool active;

@@ -1,11 +1,12 @@
 #include <math.h>
 #include "constants.h"
+#include "entity.h"
 #include "game.h"
 #include "pickups.h"
 #include "player.h"
 #include "sprites.h"
 
-Entity pickups[MAX_PICKUPS];
+Pickup pickups[MAX_PICKUPS];
 
 /**
  * Initialise pickups as deactivated
@@ -14,7 +15,7 @@ void init_pickups(void)
 {
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
-        pickups[i].active = false;
+        pickups[i].entity.isActive = false;
     }
 }
 
@@ -25,21 +26,24 @@ void spawn_pickup(float x, float y)
 {
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
-        if (!pickups[i].active)
+        if (!pickups[i].entity.isActive)
         {
             // Define the entityCenter so when we render, we render include the entity width to ensure entities are rendered center to the created object
-            pickups[i] = create_entity(
+            pickups[i].entity = create_entity(
                 x - (int)8 * 1.5,
                 y,
                 (int)16 * 1.5,
                 (int)16 * 1.5);
 
-            pickups[i].despawningDuration = 5000; // despawn in 5 seconds
+            pickups[i].entity.despawningDuration = 5000; // despawn in 5 seconds
 
-            pickups[i].animFrame = 0;
-            pickups[i].animFrameCount = 5;
-            pickups[i].animStartTime = get_game_ticks();
-            pickups[i].animFrameDuration = 100;
+            SpriteID animFrames[] = {SPR_POWERUP_1};
+
+            pickups[i].entity.anim.frames = animFrames;
+            pickups[i].entity.anim.frameCount = 1;
+            pickups[i].entity.anim.frameTime = 0.1f;
+            pickups[i].entity.anim.frameTimer = 0;
+            pickups[i].entity.anim.currentFrame = 0;
 
             break;
         }
@@ -54,34 +58,33 @@ void tick_pickups(void)
     // Pickups Handle
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
-        if (!pickups[i].active)
+        if (!pickups[i].entity.isActive)
             continue;
 
-        move(&pickups[i], DOWN, 2);
+        move(&pickups[i].entity, DOWN, 2);
 
         // Animation
-        Uint32 elapsed = get_game_ticks() - pickups[i].animStartTime;
-        pickups[i].animFrame = (elapsed / pickups[i].animFrameDuration) % pickups[i].animFrameCount;
+        entity_animate(&pickups[i].entity);
 
         // Stop falling at player Y and start despawning
-        if (pickups[i].y >= player.y)
+        if (pickups[i].entity.pos.y >= player.e.pos.y)
         {
-            pickups[i].y = player.y;
+            pickups[i].entity.pos.y = player.e.pos.y;
 
-            if (!pickups[i].despawning)
+            if (!pickups[i].entity.isDespawning)
             {
-                pickups[i].despawning = true;
-                pickups[i].despawningTime = get_game_ticks();
+                pickups[i].entity.isDespawning = true;
+                pickups[i].entity.despawningTime = get_game_ticks();
             }
         }
 
         // Despawning
-        if (pickups[i].despawning)
+        if (pickups[i].entity.isDespawning)
         {
             // Ran out of time, despawn.
-            if (get_game_ticks() - pickups[i].despawningTime > pickups[i].despawningDuration)
+            if (get_game_ticks() - pickups[i].entity.despawningTime > pickups[i].entity.despawningDuration)
             {
-                pickups[i].active = false;
+                pickups[i].entity.isActive = false;
 
                 // Don't do anything after this
                 continue;
@@ -91,8 +94,8 @@ void tick_pickups(void)
         // Player Magnet
         if (hasPickupMagnet)
         {
-            float dx = player.x + player.w / 2 - pickups[i].x;
-            float dy = player.y + player.h / 2 - pickups[i].y;
+            float dx = player.e.pos.x + player.e.size.x / 2 - pickups[i].entity.pos.x;
+            float dy = player.e.pos.y + player.e.size.y / 2 - pickups[i].entity.pos.y;
             float distance = sqrtf(dx * dx + dy * dy);
 
             float magnetRange = 150.f;    // How far the feffect pulls from
@@ -100,8 +103,8 @@ void tick_pickups(void)
 
             if (distance < magnetRange)
             {
-                pickups[i].x += (dx / distance) * managetStrength;
-                pickups[i].y += (dy / distance) * managetStrength;
+                pickups[i].entity.pos.x += (dx / distance) * managetStrength;
+                pickups[i].entity.pos.y += (dy / distance) * managetStrength;
             }
         }
     }
@@ -112,33 +115,27 @@ void tick_pickups(void)
  */
 void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    const char frameId[] = {
-        SPR_POWERUP_1,
-        SPR_POWERUP_1,
-        SPR_POWERUP_1,
-        SPR_POWERUP_1,
-        SPR_POWERUP_1};
-
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
-        if (!pickups[i].active)
+        if (!pickups[i].entity.isActive)
             continue;
 
         Pickup *pickup = &pickups[i];
 
-        SDL_Rect src = get_sprite(frameId[pickups[i].animFrame]);
-        SDL_Texture *texture = get_sprite_texture(frameId[pickups[i].animFrame]);
+        SpriteID frame = pickup->entity.anim.frames[pickup->entity.anim.currentFrame];
+        SDL_Rect src = get_sprite(frame);
+        SDL_Texture *texture = get_sprite_texture(frame);
 
-        SDL_Rect dst = pickups[i].rect;
+        SDL_Rect dst = entity_rect(&pickup->entity);
         dst.x += shakeX;
         dst.y += shakeY;
 
         // Default full opacity
         Uint8 alpha = 255;
 
-        if (pickup->despawning)
+        if (pickup->entity.isDespawning)
         {
-            Uint32 elapsed = get_game_ticks() - pickup->despawningTime;
+            Uint32 elapsed = get_game_ticks() - pickup->entity.despawningTime;
 
             // Flash: Between 3s and 4s
             if (elapsed >= 3000 && elapsed < 4000)

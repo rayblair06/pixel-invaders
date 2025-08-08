@@ -3,28 +3,33 @@
 
 #include <SDL2/SDL.h>
 #include <stdbool.h>
+#include "sprites.h"
+
+// 2D vector helper
+typedef struct
+{
+    float x, y;
+} Vec2;
 
 typedef struct
 {
-    bool active;
-    bool despawning;
-    Uint32 despawningTime;
-    int despawningDuration;
+    // Lifecycle/state
+    bool isActive;
+    bool isDespawning;
+    Uint32 despawningTime;    // seconds since start of despawn
+    float despawningDuration; // seconds to finish despawn
 
-    float x, y; // Position
-    int w, h;   // Size
-    float angle;
+    // transform/kinematics
+    Vec2 pos;    // top-left
+    Vec2 size;   // width/height
+    Vec2 vel;    // velocity (px/s)
+    Vec2 acc;    // aceleration (px/s^2)
+    float angle; // degrees
 
-    float vx; // horizonal velocity
-    float vy; // vertical velocity
+    int z; // render order (lowest bottom)
 
-    SDL_Rect rect;
-
-    // animation state
-    int animFrame;
-    int animFrameCount;
-    Uint32 animStartTime;
-    int animFrameDuration;
+    // animation
+    SpriteAnimation anim;
 } Entity;
 
 typedef enum
@@ -36,7 +41,12 @@ typedef enum
 } Movement;
 
 Entity create_entity(float x, float y, int w, int h);
+
+SDL_Rect entity_rect(const Entity *entity);
+void entity_set_pos(Entity *entity, float x, float y);
+void entity_set_size(Entity *entity, float w, float h);
+void entity_animate(Entity *entity);
+
 void move(Entity *entity, Movement move, float speed);
-void update_entity_rect(Entity *entity);
 
 #endif

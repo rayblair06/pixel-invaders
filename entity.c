@@ -10,19 +10,58 @@ Entity create_entity(float x, float y, int w, int h)
 {
     Entity entity;
 
-    entity.x = x;
-    entity.y = y;
-    entity.w = w;
-    entity.h = h;
-    entity.rect.x = (int)x;
-    entity.rect.y = (int)y;
-    entity.rect.w = w;
-    entity.rect.h = h;
-    entity.active = true;
-    entity.despawning = false;
-    entity.despawningTime = 0;
+    entity_set_pos(&entity, x, y);
+    entity_set_size(&entity, x, y);
 
     return entity;
+}
+
+/**
+ * Helper function: Generate SDL_Rect from Entity
+ */
+SDL_Rect entity_rect(const Entity *entity)
+{
+    SDL_Rect rect = {(int)entity->pos.x, (int)entity->pos.y, (int)entity->size.x, (int)entity->size.y};
+    return rect;
+}
+
+/**
+ * Helper function: Set position of Entity
+ */
+void entity_set_pos(Entity *entity, float x, float y)
+{
+    entity->pos.x = x;
+    entity->pos.y = y;
+}
+
+/**
+ * Helper function: Set size of Entity.
+ */
+void entity_set_size(Entity *entity, float w, float h)
+{
+    entity->size.x = w;
+    entity->size.y = h;
+}
+
+/**
+ * Helper function: Animate Entity
+ */
+void entity_animate(Entity *entity)
+{
+    float deltaTime = get_delta_time();
+
+    if (entity->anim.frameCount <= 1)
+    {
+        return;
+    }
+
+    entity->anim.frameTimer += deltaTime;
+
+    while (entity->anim.frameTimer >= entity->anim.frameTime)
+    {
+        entity->anim.frameTimer -= entity->anim.frameTime;
+        entity->anim.currentFrame = (entity->anim.currentFrame + 1) % entity->anim.frameCount;
+    }
 }
 
 /**
@@ -37,27 +76,16 @@ void move(Entity *entity, Movement move, float speed)
     switch (move)
     {
     case UP:
-        entity->y -= speed;
+        entity->pos.y -= speed;
         break;
     case DOWN:
-        entity->y += speed;
+        entity->pos.y += speed;
         break;
     case LEFT:
-        entity->x -= speed;
+        entity->pos.x -= speed;
         break;
     case RIGHT:
-        entity->x += speed;
+        entity->pos.x += speed;
         break;
     }
-
-    update_entity_rect(entity);
-}
-
-/**
- * Updates the SDL rect box with the new entity position
- */
-void update_entity_rect(Entity *entity)
-{
-    entity->rect.x = (int)entity->x;
-    entity->rect.y = (int)entity->y;
 }

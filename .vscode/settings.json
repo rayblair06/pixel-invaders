@@ -6,7 +6,7 @@
     "stdbool.h": "c",
     "sdl.h": "c",
     "sdl_mixer.h": "c",
-    "player.h": "c",
+    "player.e.size.y": "c",
     "entity.h": "c",
     "sdl_ttf.h": "c",
     "sprites.h": "c",
@@ -26,6 +26,8 @@
     "string.h": "c",
     "waves.h": "c",
     "math.h": "c",
-    "unordered_map": "c"
+    "unordered_map": "c",
+    "stats.h": "c",
+    "__node_handle": "c"
   }
 }

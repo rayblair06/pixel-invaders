@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "constants.h"
 #include "bullets.h"
+#include "entity.h"
 #include "game.h"
 #include "particles.h"
 #include "player.h"
@@ -24,7 +25,7 @@ void init_bullets(void)
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        bullets[i].active = false;
+        bullets[i].entity.isActive = false;
     }
 }
 
@@ -35,10 +36,10 @@ void spawn_bullet(float x, float y, float angle)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
         {
             // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
-            bullets[i].active = true;
+            bullets[i].entity.isActive = true;
             bullets[i].isMoving = true;
             bullets[i].pierceCount = hasPiercing ? 3 : 1;
             bullets[i].entity = create_entity(
@@ -66,7 +67,7 @@ void tick_bullets(void)
 {
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
             continue;
 
         if (bullets[i].isMoving)
@@ -75,8 +76,7 @@ void tick_bullets(void)
 
             if (bullets[i].entity.angle != 0)
             {
-                bullets[i].entity.x += cosf(bullets[i].entity.angle) * bulletSpeed;
-                update_entity_rect(&bullets[i].entity);
+                bullets[i].entity.pos.x += cosf(bullets[i].entity.angle) * bulletSpeed;
             }
         }
 
@@ -90,7 +90,7 @@ void tick_bullets(void)
             {
                 bullets[i].explosionFrame = bullets[i].explosionFrame - 1;
                 bullets[i].isExploding = false;
-                bullets[i].active = false;
+                bullets[i].entity.isActive = false;
             }
         }
     }
@@ -106,10 +106,10 @@ void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
             continue;
 
-        SDL_Rect dst = bullets[i].entity.rect;
+        SDL_Rect dst = entity_rect(&bullets[i].entity);
         dst.x += shakeX;
         dst.y += shakeY;
 
@@ -135,7 +135,7 @@ void trigger_bullet_explosion(Bullet *bullet)
     bullet->explosionStartTime = get_game_ticks();
     bullet->explosionFrame = 0;
 
-    spawn_explosion_particles(bullet->entity.x, bullet->entity.y, 20);
+    spawn_explosion_particles(bullet->entity.pos.x, bullet->entity.pos.y, 20);
     play_sound(SND_EXPLOSION);
 }
 
@@ -143,7 +143,7 @@ void init_enemy_bullets(void)
 {
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
-        enemyBullets[i].active = false;
+        enemyBullets[i].entity.isActive = false;
     }
 }
 
@@ -151,9 +151,9 @@ void spawn_enemy_bullet(float x, float y, int damage)
 {
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
-        if (!enemyBullets[i].active)
+        if (!enemyBullets[i].entity.isActive)
         {
-            enemyBullets[i].active = true;
+            enemyBullets[i].entity.isActive = true;
             enemyBullets[i].entity = create_entity(
                 x - (int)8 * 2,
                 y,
@@ -170,15 +170,15 @@ void tick_enemy_bullets(void)
 {
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
-        if (!enemyBullets[i].active)
+        if (!enemyBullets[i].entity.isActive)
             continue;
 
         move(&enemyBullets[i].entity, DOWN, enemyBulletSpeed);
 
         // Disactivate when off screen
-        if (enemyBullets[i].entity.y + enemyBullets[i].entity.h < 0)
+        if (enemyBullets[i].entity.pos.y + enemyBullets[i].entity.size.y < 0)
         {
-            enemyBullets[i].active = false;
+            enemyBullets[i].entity.isActive = false;
         }
     }
 }
@@ -190,10 +190,10 @@ void render_enemy_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
-        if (!enemyBullets[i].active)
+        if (!enemyBullets[i].entity.isActive)
             continue;
 
-        SDL_Rect dst = enemyBullets[i].entity.rect;
+        SDL_Rect dst = entity_rect(&enemyBullets[i].entity);
         dst.x += shakeX;
         dst.y += shakeY;
 

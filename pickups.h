@@ -7,9 +7,12 @@
 
 #define MAX_PICKUPS 100
 
-typedef Entity Pickup;
+typedef struct
+{
+    Entity entity;
+} Pickup;
 
-extern Entity pickups[MAX_PICKUPS];
+extern Pickup pickups[MAX_PICKUPS];
 
 void init_pickups(void);
 void spawn_pickup(float x, float y);

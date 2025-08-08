@@ -27,7 +27,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.active = true;
 
     currentBoss.attackTimer = 3.0f;
-    currentBoss.targetX = currentBoss.entity.x;
+    currentBoss.targetX = currentBoss.entity.pos.x;
 
     currentBoss.chargingLaser = false;
     currentBoss.laserFiring = false;
@@ -58,7 +58,7 @@ static void boss_fire_laser(void)
 {
     // TODO: Replace with real attack
     play_sound(SND_LASER);
-    spawn_explosion_particles(currentBoss.entity.x + currentBoss.entity.rect.w / 2, currentBoss.entity.y + currentBoss.entity.rect.h, 30);
+    spawn_explosion_particles(currentBoss.entity.pos.x + currentBoss.entity.size.x / 2, currentBoss.entity.pos.y + currentBoss.entity.size.y, 30);
 }
 
 void tick_boss()
@@ -71,7 +71,7 @@ void tick_boss()
     // Move boss into view
     if (currentBoss.spawning)
     {
-        if (currentBoss.entity.y < 70)
+        if (currentBoss.entity.pos.y < 70)
         {
             move(&currentBoss.entity, DOWN, currentBoss.spawningSpeed);
         }
@@ -87,7 +87,7 @@ void tick_boss()
 
     // Bobbing
     float bobbing = 5.0f * sinf(get_game_ticks() / 500.0f);
-    currentBoss.entity.rect.y = currentBoss.entity.y + bobbing;
+    currentBoss.entity.pos.y = currentBoss.entity.pos.y + bobbing;
 
     if (currentBoss.isMoving)
     {
@@ -109,7 +109,7 @@ void tick_boss()
             randomOffset = 0.0f; // Avoid jitter
 
         // Determine target position (player's x + some random offset)
-        float playerCenter = player.rect.x + player.rect.w / 2;
+        float playerCenter = player.e.pos.x + player.e.size.x / 2;
         currentBoss.targetX = playerCenter + randomOffset;
 
         // Move towards targetX
@@ -118,18 +118,18 @@ void tick_boss()
         if (smoothing > 1.0f)
             smoothing = 1.0f;
 
-        currentBoss.entity.rect.x += (currentBoss.targetX - currentBoss.entity.rect.x - currentBoss.entity.rect.w / 2) * smoothing;
+        currentBoss.entity.pos.x += (currentBoss.targetX - currentBoss.entity.pos.x - currentBoss.entity.size.x / 2) * smoothing;
     }
 
     // Keep within screen bounds
-    if (currentBoss.entity.rect.x < 0)
+    if (currentBoss.entity.pos.x < 0)
     {
-        currentBoss.entity.rect.x = 0;
+        currentBoss.entity.pos.x = 0;
     }
 
-    if (currentBoss.entity.rect.x > SCREEN_WIDTH - currentBoss.entity.rect.w)
+    if (currentBoss.entity.pos.x > SCREEN_WIDTH - currentBoss.entity.size.x)
     {
-        currentBoss.entity.rect.x = SCREEN_WIDTH - currentBoss.entity.rect.w;
+        currentBoss.entity.pos.x = SCREEN_WIDTH - currentBoss.entity.size.x;
     }
 
     // // Randomly change direction once per frame
@@ -154,12 +154,12 @@ void tick_boss()
     //     }
 
     //     // Check boundaries
-    //     if (currentBoss.entity.x >= SCREEN_WIDTH - currentBoss.entity.rect.w)
+    //     if (currentBoss.entity.pos.x >= SCREEN_WIDTH - currentBoss.entity.size.x)
     //     {
     //         currentBoss.moveDirection = false; // Go left
     //     }
 
-    //     if (currentBoss.entity.x <= 0)
+    //     if (currentBoss.entity.pos.x <= 0)
     //     {
     //         currentBoss.moveDirection = true; // Go right
     //     }
@@ -190,7 +190,7 @@ void tick_boss()
     {
         currentBoss.laserChargeTime -= deltaTime;
 
-        currentBoss.laserX = currentBoss.entity.rect.x + (currentBoss.entity.rect.w / 2); // Follow center of boss
+        currentBoss.laserX = currentBoss.entity.pos.x + (currentBoss.entity.size.x / 2); // Follow center of boss
 
         if (currentBoss.laserChargeTime <= 0)
         {
@@ -256,7 +256,7 @@ void tick_boss()
     {
         bossActive = false;
         play_sound(SND_EXPLOSION);
-        spawn_explosion_particles(currentBoss.entity.x + currentBoss.entity.rect.w / 2, currentBoss.entity.y + currentBoss.entity.rect.h, 50);
+        spawn_explosion_particles(currentBoss.entity.pos.x + currentBoss.entity.size.x / 2, currentBoss.entity.pos.y + currentBoss.entity.size.y, 50);
         play_music(MUS_GAME, true); // return music to mornal
     }
 }
@@ -269,7 +269,7 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     SDL_Rect src = get_sprite(SPR_SPACESHIP9_A); // temp boss sprite
     SDL_Texture *texture = get_sprite_texture(SPR_SPACESHIP9_A);
 
-    SDL_Rect dst = currentBoss.entity.rect;
+    SDL_Rect dst = entity_rect(&currentBoss.entity);
     dst.x += shakeX;
     dst.y += shakeY;
 
@@ -294,7 +294,7 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
                     SDL_SetRenderDrawColor(renderer, 255, 50, 50, glowAlpha);
                     SDL_RenderDrawLine(renderer,
                                        x + i,
-                                       currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                                       currentBoss.entity.pos.y + currentBoss.entity.size.y,
                                        x + i,
                                        SCREEN_HEIGHT);
                 }
@@ -309,7 +309,7 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
                 SDL_SetRenderDrawColor(renderer, 255, 50, 50, glowAlpha);
                 SDL_RenderDrawLine(renderer,
                                    (int)currentBoss.laserX + i,
-                                   currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+                                   currentBoss.entity.pos.y + currentBoss.entity.size.y,
                                    (int)currentBoss.laserX + i,
                                    SCREEN_HEIGHT);
             }
@@ -324,9 +324,9 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 220);
         SDL_Rect laser = {
             (int)currentBoss.laserX - 4,
-            currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+            currentBoss.entity.pos.y + currentBoss.entity.size.y,
             8,
-            SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
+            SCREEN_HEIGHT - (currentBoss.entity.pos.y + currentBoss.entity.size.y)};
 
         SDL_RenderFillRect(renderer, &laser);
 

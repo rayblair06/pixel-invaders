@@ -5,7 +5,15 @@
 #include <stdbool.h>
 #include "entity.h"
 
-extern Entity player;
+typedef struct
+{
+    Entity e;
+
+    int health;
+    int healthMax;
+} Player;
+
+extern Player player;
 
 extern float playerVelX;
 extern float playerAccel;

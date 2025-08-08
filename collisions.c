@@ -4,6 +4,7 @@
 #include "collisions.h"
 #include "constants.h"
 #include "bullets.h"
+#include "entity.h"
 #include "enemies.h"
 #include "game.h"
 #include "pickups.h"
@@ -20,18 +21,18 @@ void check_collisions(void)
     // --- Bullet vs Enemy ---
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
             continue;
 
         for (int j = 0; j < MAX_ENEMIES; j++)
         {
-            if (!enemies[j].active)
+            if (!enemies[j].entity.isActive)
                 continue;
 
             if (enemies[j].isFadingOut)
                 continue;
 
-            if (check_overlap(bullets[i].entity.rect, enemies[j].entity.rect))
+            if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&enemies[j].entity)))
             {
                 damage_enemy(&enemies[j]);
 
@@ -43,11 +44,11 @@ void check_collisions(void)
                     if (hasExplosive)
                     {
                         trigger_bullet_explosion(&bullets[i]);
-                        trigger_damage_radius(bullets[i].entity.x, bullets[i].entity.y, 50);
+                        trigger_damage_radius(bullets[i].entity.pos.x, bullets[i].entity.pos.y, 50);
                     }
                     else
                     {
-                        bullets[i].active = false;
+                        bullets[i].entity.isActive = false;
                     }
                 }
 
@@ -59,32 +60,32 @@ void check_collisions(void)
     // --- Bullet vs Player ---
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
-        if (!enemyBullets[i].active)
+        if (!enemyBullets[i].entity.isActive)
             continue;
 
-        if (check_overlap(enemyBullets[i].entity.rect, player.rect))
+        if (check_overlap(entity_rect(&enemyBullets[i].entity), entity_rect(&player.e)))
         {
             reduce_health(enemyBullets[i].damage);
 
-            enemyBullets[i].active = false;
+            enemyBullets[i].entity.isActive = false;
         }
     }
 
     // --- Bullet vs Boss ---
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
             continue;
 
-        if (!currentBoss.active)
+        if (!currentBoss.entity.isActive)
             continue;
 
-        if (check_overlap(bullets[i].entity.rect, currentBoss.entity.rect))
+        if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&currentBoss.entity)))
         {
             // If our boss is still spawning, just remove bullet
             if (currentBoss.spawning)
             {
-                bullets[i].active = false;
+                bullets[i].entity.isActive = false;
                 continue;
             }
 
@@ -98,11 +99,11 @@ void check_collisions(void)
                 if (hasExplosive)
                 {
                     trigger_bullet_explosion(&bullets[i]);
-                    trigger_damage_radius(bullets[i].entity.x, bullets[i].entity.y, 50);
+                    trigger_damage_radius(bullets[i].entity.pos.x, bullets[i].entity.pos.y, 50);
                 }
                 else
                 {
-                    bullets[i].active = false;
+                    bullets[i].entity.isActive = false;
                 }
             }
 
@@ -113,15 +114,15 @@ void check_collisions(void)
     // --- Enemy vs Player ---
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
             continue;
 
-        if (check_overlap(enemies[i].entity.rect, player.rect))
+        if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.e)))
         {
             // Double damage but enemy instantly disappears
             reduce_health(enemies[i].damage * 2);
 
-            enemies[i].active = false;
+            enemies[i].entity.isActive = false;
             record_kill();
         }
     }
@@ -129,12 +130,12 @@ void check_collisions(void)
     // --- Pickup vs Player ---
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
-        if (!pickups[i].active)
+        if (!pickups[i].entity.isActive)
             continue;
 
-        if (check_overlap(pickups[i].rect, player.rect))
+        if (check_overlap(entity_rect(&pickups[i].entity), entity_rect(&player.e)))
         {
-            pickups[i].active = false;
+            pickups[i].entity.isActive = false;
 
             play_sound(SND_PICKUP);
 
@@ -149,11 +150,11 @@ void check_collisions(void)
 
         SDL_Rect laserHitbox = {
             (int)currentBoss.laserX - 4,
-            currentBoss.entity.rect.y + currentBoss.entity.rect.h,
+            currentBoss.entity.pos.y + currentBoss.entity.size.y,
             8,
-            SCREEN_HEIGHT - (currentBoss.entity.rect.y + currentBoss.entity.rect.h)};
+            SCREEN_HEIGHT - (currentBoss.entity.pos.y + currentBoss.entity.size.y)};
 
-        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(player.rect, laserHitbox))
+        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.e), laserHitbox))
         {
             // TODO: Move to boss variable
             reduce_health(25);
@@ -164,12 +165,12 @@ void check_collisions(void)
     // --- Enemy vs bottom screen ---
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
             continue;
 
-        if (enemies[i].entity.y > SCREEN_HEIGHT)
+        if (enemies[i].entity.pos.y > SCREEN_HEIGHT)
         {
-            enemies[i].active = false;
+            enemies[i].entity.isActive = false;
             record_kill();
 
             if (hasShield)
@@ -187,13 +188,13 @@ void check_collisions(void)
     // --- Bullets vs top screen ---
     for (int i = 0; i < MAX_BULLETS; i++)
     {
-        if (!bullets[i].active)
+        if (!bullets[i].entity.isActive)
             continue;
 
         // Disactivate when off screen
-        if (bullets[i].entity.y + bullets[i].entity.h < 0)
+        if (bullets[i].entity.pos.y + bullets[i].entity.size.y < 0)
         {
-            bullets[i].active = false;
+            bullets[i].entity.isActive = false;
         }
     }
 }

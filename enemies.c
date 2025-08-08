@@ -85,8 +85,8 @@ void tick_enemies(void)
                 play_sound(SND_ENEMY_DEATH);
 
                 spawn_pickup(
-                    enemies[i].entity.rect.x + (enemies[i].entity.rect.w / 2),
-                    enemies[i].entity.rect.y);
+                    enemies[i].entity.pos.x + (enemies[i].entity.size.x / 2),
+                    enemies[i].entity.pos.y);
             }
             else
             {
@@ -99,7 +99,7 @@ void tick_enemies(void)
 
         move(&enemies[i].entity, DOWN, enemies[i].speed);
 
-        if (enemies[i].entity.y > 0)
+        if (enemies[i].entity.pos.y > 0)
         {
             enemies[i].canShoot = true;
         }
@@ -110,8 +110,8 @@ void tick_enemies(void)
             if (rand() % 500 == 0)
             {
                 spawn_enemy_bullet(
-                    enemies[i].entity.x + enemies[i].entity.w / 2,
-                    enemies[i].entity.y + enemies[i].entity.h,
+                    enemies[i].entity.pos.x + enemies[i].entity.size.x / 2,
+                    enemies[i].entity.pos.y + enemies[i].entity.size.y,
                     enemies[i].damage);
             }
         }
@@ -137,7 +137,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         SDL_Rect src = get_sprite(frame);
         SDL_Texture *texture = get_sprite_texture(frame);
 
-        SDL_Rect dst = enemies[i].entity.rect;
+        SDL_Rect dst = entity_rect(&enemies[i].entity);
         dst.x += shakeX;
         dst.y += shakeY;
 
@@ -256,8 +256,8 @@ void trigger_damage_radius(float x, float y, float radius)
             continue;
         }
 
-        float dx = enemies[i].entity.x - x;
-        float dy = enemies[i].entity.y - y;
+        float dx = enemies[i].entity.pos.x - x;
+        float dy = enemies[i].entity.pos.y - y;
         float distance = sqrtf(dx * dx + dy * dy);
 
         if (distance < radius)
