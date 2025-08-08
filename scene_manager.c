@@ -247,8 +247,6 @@ void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *ke
 
 void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
 {
-    update_game_time();
-
     SDL_Color white = {225, 255, 255, 255};
 
     // Initialise these on first launch of game

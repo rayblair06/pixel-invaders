@@ -78,6 +78,7 @@ void update_game_time(void)
     {
         lastFrameTicks = adjustedNow;
         deltaTime = 0.0f;
+        return;
     }
 
     Uint32 frameTicks = adjustedNow - lastFrameTicks;
@@ -87,6 +88,22 @@ void update_game_time(void)
     // Clamp to prevent huge spikes
     if (deltaTime > 0.05f)
         deltaTime = 0.05f;
+}
+
+/**
+ * Reset tick timing - call this on new games
+ */
+void reset_game_time(void)
+{
+    Uint32 now = SDL_GetTicks();
+
+    pauseStart = 0;
+    isPaused = false;
+
+    totalPauseTime = now;
+
+    lastFrameTicks = 0;
+    deltaTime = 0.0f;
 }
 
 void pause_game(void)
@@ -160,8 +177,8 @@ void render_background(SDL_Renderer *renderer)
     float starSpeed = 50.0f; // near background, moves faster
 
     // Update offests
-    skyOffsetY += skySpeed * deltaTime;
-    starOffsetY += starSpeed * deltaTime;
+    skyOffsetY += skySpeed * get_delta_time();
+    starOffsetY += starSpeed * get_delta_time();
 
     // Render screen
     if (flashRed)

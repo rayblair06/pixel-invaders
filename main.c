@@ -77,6 +77,8 @@ int main(int argc, char *argv[])
     // Main loop
     while (running)
     {
+        update_game_time();
+
         // Handle events and keystates
         while (SDL_PollEvent(&event))
         {

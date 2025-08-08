@@ -41,6 +41,9 @@ float get_delta_time(void);
 // Update tick timing - call this once per frame
 void update_game_time(void);
 
+// Reset tick timing - call this on new games
+void reset_game_time(void);
+
 // Pause/resume functions
 void pause_game(void);
 void resume_game(void);
