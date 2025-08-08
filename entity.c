@@ -11,18 +11,11 @@ Entity create_entity(float x, float y, int w, int h)
     Entity entity;
 
     entity_set_pos(&entity, x, y);
-    entity_set_size(&entity, x, y);
+    entity_set_size(&entity, w, h);
+
+    entity.isActive = true;
 
     return entity;
-}
-
-/**
- * Helper function: Generate SDL_Rect from Entity
- */
-SDL_Rect entity_rect(const Entity *entity)
-{
-    SDL_Rect rect = {(int)entity->pos.x, (int)entity->pos.y, (int)entity->size.x, (int)entity->size.y};
-    return rect;
 }
 
 /**

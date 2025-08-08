@@ -176,7 +176,7 @@ void tick_waves(void)
 
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (enemies[i].active)
+        if (enemies[i].entity.isActive)
             alive++;
 
         if (bossActive)

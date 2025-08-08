@@ -6,7 +6,7 @@
     "stdbool.h": "c",
     "sdl.h": "c",
     "sdl_mixer.h": "c",
-    "player.e.size.y": "c",
+    "player.entity.size.y": "c",
     "entity.h": "c",
     "sdl_ttf.h": "c",
     "sprites.h": "c",

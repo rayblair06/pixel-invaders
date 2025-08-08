@@ -63,7 +63,7 @@ void check_collisions(void)
         if (!enemyBullets[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&enemyBullets[i].entity), entity_rect(&player.e)))
+        if (check_overlap(entity_rect(&enemyBullets[i].entity), entity_rect(&player.entity)))
         {
             reduce_health(enemyBullets[i].damage);
 
@@ -117,7 +117,7 @@ void check_collisions(void)
         if (!enemies[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.e)))
+        if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.entity)))
         {
             // Double damage but enemy instantly disappears
             reduce_health(enemies[i].damage * 2);
@@ -133,7 +133,7 @@ void check_collisions(void)
         if (!pickups[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&pickups[i].entity), entity_rect(&player.e)))
+        if (check_overlap(entity_rect(&pickups[i].entity), entity_rect(&player.entity)))
         {
             pickups[i].entity.isActive = false;
 
@@ -154,7 +154,7 @@ void check_collisions(void)
             8,
             SCREEN_HEIGHT - (currentBoss.entity.pos.y + currentBoss.entity.size.y)};
 
-        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.e), laserHitbox))
+        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.entity), laserHitbox))
         {
             // TODO: Move to boss variable
             reduce_health(25);

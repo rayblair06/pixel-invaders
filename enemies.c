@@ -39,7 +39,7 @@ void init_enemies(void)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        enemies[i].active = false;
+        enemies[i].entity.isActive = false;
     }
 }
 
@@ -50,7 +50,7 @@ void spawn_enemy(float x, float y, EnemyType type)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
         {
             enemies[i] = create_enemy(x, y, type);
             break;
@@ -65,7 +65,7 @@ void tick_enemies(void)
 {
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
             continue;
 
         Uint32 fadeDuration = 500; // ms
@@ -79,7 +79,7 @@ void tick_enemies(void)
             float t = elapsed / (float)fadeDuration;
             if (t >= 1.0f)
             {
-                enemies[i].active = false;
+                enemies[i].entity.isActive = false;
                 enemies[i].isFadingOut = false;
 
                 play_sound(SND_ENEMY_DEATH);
@@ -127,7 +127,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
             continue;
 
         Uint32 flashDuration = 100; // ms
@@ -181,9 +181,11 @@ Enemy create_enemy(float x, float y, EnemyType type)
 {
     Enemy enemy = {0}; // Zero all fields
 
-    enemy.active = true;
-    enemy.type = type;
     enemy.entity = create_entity(x, y, 32 * 2, 32 * 2);
+
+    enemy.entity.isActive = true;
+
+    enemy.type = type;
 
     switch (type)
     {
@@ -251,7 +253,7 @@ void trigger_damage_radius(float x, float y, float radius)
     // Damage all enemies within the radius
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (!enemies[i].active)
+        if (!enemies[i].entity.isActive)
         {
             continue;
         }

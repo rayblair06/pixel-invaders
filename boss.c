@@ -109,7 +109,7 @@ void tick_boss()
             randomOffset = 0.0f; // Avoid jitter
 
         // Determine target position (player's x + some random offset)
-        float playerCenter = player.e.pos.x + player.e.size.x / 2;
+        float playerCenter = player.entity.pos.x + player.entity.size.x / 2;
         currentBoss.targetX = playerCenter + randomOffset;
 
         // Move towards targetX

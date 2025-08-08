@@ -39,11 +39,7 @@ void spawn_pickup(float x, float y)
 
             SpriteID animFrames[] = {SPR_POWERUP_1};
 
-            pickups[i].entity.anim.frames = animFrames;
-            pickups[i].entity.anim.frameCount = 1;
-            pickups[i].entity.anim.frameTime = 0.1f;
-            pickups[i].entity.anim.frameTimer = 0;
-            pickups[i].entity.anim.currentFrame = 0;
+            pickups[i].entity.anim = powerup1Anim;
 
             break;
         }
@@ -67,9 +63,9 @@ void tick_pickups(void)
         entity_animate(&pickups[i].entity);
 
         // Stop falling at player Y and start despawning
-        if (pickups[i].entity.pos.y >= player.e.pos.y)
+        if (pickups[i].entity.pos.y >= player.entity.pos.y)
         {
-            pickups[i].entity.pos.y = player.e.pos.y;
+            pickups[i].entity.pos.y = player.entity.pos.y;
 
             if (!pickups[i].entity.isDespawning)
             {
@@ -94,8 +90,8 @@ void tick_pickups(void)
         // Player Magnet
         if (hasPickupMagnet)
         {
-            float dx = player.e.pos.x + player.e.size.x / 2 - pickups[i].entity.pos.x;
-            float dy = player.e.pos.y + player.e.size.y / 2 - pickups[i].entity.pos.y;
+            float dx = player.entity.pos.x + player.entity.size.x / 2 - pickups[i].entity.pos.x;
+            float dy = player.entity.pos.y + player.entity.size.y / 2 - pickups[i].entity.pos.y;
             float distance = sqrtf(dx * dx + dy * dy);
 
             float magnetRange = 150.f;    // How far the feffect pulls from

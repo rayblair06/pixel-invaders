@@ -39,14 +39,15 @@ void spawn_bullet(float x, float y, float angle)
         if (!bullets[i].entity.isActive)
         {
             // Define the entityCenter so when we render, we render include the bullet width to ensure bullets are rendered center to the created object
-            bullets[i].entity.isActive = true;
-            bullets[i].isMoving = true;
-            bullets[i].pierceCount = hasPiercing ? 3 : 1;
             bullets[i].entity = create_entity(
                 x - (int)8 * 2,
                 y,
                 16 * 2,
                 16 * 2);
+
+            bullets[i].entity.isActive = true;
+            bullets[i].isMoving = true;
+            bullets[i].pierceCount = hasPiercing ? 3 : 1;
             bullets[i].entity.angle = angle;
 
             bullets[i].isExploding = false;
@@ -153,12 +154,13 @@ void spawn_enemy_bullet(float x, float y, int damage)
     {
         if (!enemyBullets[i].entity.isActive)
         {
-            enemyBullets[i].entity.isActive = true;
             enemyBullets[i].entity = create_entity(
                 x - (int)8 * 2,
                 y,
                 16 * 2,
                 16 * 2);
+
+            enemyBullets[i].entity.isActive = true;
             enemyBullets[i].damage = damage;
 
             break;

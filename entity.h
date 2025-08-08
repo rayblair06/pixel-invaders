@@ -42,7 +42,15 @@ typedef enum
 
 Entity create_entity(float x, float y, int w, int h);
 
-SDL_Rect entity_rect(const Entity *entity);
+/**
+ * Helper function: Generate SDL_Rect from Entity
+ */
+static inline SDL_Rect entity_rect(const Entity *entity)
+{
+    SDL_Rect rect = {(int)entity->pos.x, (int)entity->pos.y, (int)entity->size.x, (int)entity->size.y};
+    return rect;
+}
+
 void entity_set_pos(Entity *entity, float x, float y);
 void entity_set_size(Entity *entity, float w, float h);
 void entity_animate(Entity *entity);

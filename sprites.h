@@ -92,6 +92,17 @@ static const SpriteAnimation explosion1Anim = {
     .frameTimer = 0.0f,
 };
 
+static const SpriteID powerup1Frames[] = {
+    SPR_POWERUP_1};
+
+static const SpriteAnimation powerup1Anim = {
+    .frames = (SpriteID *)powerup1Frames,
+    .frameCount = sizeof(powerup1Frames) / sizeof(powerup1Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+};
+
 static const SpriteID spaceship1Frames[] = {
     SPR_SPACESHIP1_A,
     SPR_SPACESHIP1_B};

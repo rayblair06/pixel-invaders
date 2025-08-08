@@ -7,7 +7,7 @@
 
 typedef struct
 {
-    Entity e;
+    Entity entity;
 
     int health;
     int healthMax;

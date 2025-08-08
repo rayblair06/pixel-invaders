@@ -72,9 +72,8 @@ void init_player(void)
     hasShield = false;
     hasPickupMagnet = false;
 
-    Player player;
-    player.e = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 80, 32 * 2, 32 * 2);
-    player.e.anim = spaceship1Anim;
+    player.entity = create_entity(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT - 80, 32 * 2, 32 * 2);
+    player.entity.anim = spaceship1Anim;
 }
 
 /**
@@ -111,8 +110,8 @@ void tick_player(const Uint8 *keystate)
     // Display Boost particles
     // if (boostSpeedMultiplier > 1.0f)
     // {
-    float px = player.e.pos.x + player.e.size.x / 2;
-    float py = player.e.pos.y + player.e.size.y;
+    float px = player.entity.pos.x + player.entity.size.x / 2;
+    float py = player.entity.pos.y + player.entity.size.y;
     spawn_boost_particle(px, py);
     // }
 
@@ -171,17 +170,17 @@ void tick_player(const Uint8 *keystate)
     }
 
     // Apply to position
-    player.e.pos.x += (playerVelX * deltaTime * boostSpeedMultiplier);
+    player.entity.pos.x += (playerVelX * deltaTime * boostSpeedMultiplier);
 
     // Keep player within bounds
-    if (player.e.pos.x < 0)
+    if (player.entity.pos.x < 0)
     {
-        player.e.pos.x = 0;
+        player.entity.pos.x = 0;
     }
 
-    if (player.e.pos.x > SCREEN_WIDTH - player.e.size.x)
+    if (player.entity.pos.x > SCREEN_WIDTH - player.entity.size.x)
     {
-        player.e.pos.x = SCREEN_WIDTH - player.e.size.x;
+        player.entity.pos.x = SCREEN_WIDTH - player.entity.size.x;
     }
 
     // Camera Drift
@@ -227,6 +226,10 @@ void tick_player(const Uint8 *keystate)
             isPlayerVisible = false;
         }
     }
+    else
+    {
+        entity_animate(&player.entity);
+    }
 
     // Regenerate health
     if (hasHealthRegen && health < healthMax)
@@ -260,7 +263,9 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
     }
     else
     {
-        src = get_sprite(SPR_SPACESHIP1_A);
+        SpriteID frame = player.entity.anim.frames[player.entity.anim.currentFrame];
+        src = get_sprite(frame);
+        texture = get_sprite_texture(frame);
     }
 
     // Render shield around player
@@ -280,10 +285,10 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         SDL_SetRenderDrawColor(renderer, 0, green, 255, 255);
 
-        draw_circle(renderer, player.e.pos.x + player.e.size.x / 2, player.e.pos.y + player.e.size.y / 2, radius);
+        draw_circle(renderer, player.entity.pos.x + player.entity.size.x / 2, player.entity.pos.y + player.entity.size.y / 2, radius);
     }
 
-    SDL_Rect dst = entity_rect(&player.e);
+    SDL_Rect dst = entity_rect(&player.entity);
     dst.x += shakeX;
     dst.y += shakeY;
 
@@ -315,8 +320,8 @@ void trigger_player_shoot()
     {
         record_bullets_fired();
         spawn_bullet(
-            player.e.pos.x + player.e.size.x / 2 + offSets[i],
-            player.e.pos.y, spreadAngles[i]);
+            player.entity.pos.x + player.entity.size.x / 2 + offSets[i],
+            player.entity.pos.y, spreadAngles[i]);
     }
 }
 
@@ -326,6 +331,6 @@ void trigger_player_explosion()
     explosionStartTime = get_game_ticks();
     explosionFrame = 0;
 
-    spawn_explosion_particles(player.e.pos.x, player.e.pos.y, 20);
+    spawn_explosion_particles(player.entity.pos.x, player.entity.pos.y, 20);
     play_sound(SND_EXPLOSION);
 }
