@@ -18,7 +18,7 @@ void init_stats(void)
 
 void tick_run_time(float deltaTime)
 {
-    currentRun.timePlayed += (int)deltaTime;
+    currentRun.timePlayed += deltaTime;
 }
 
 void record_kill(void)

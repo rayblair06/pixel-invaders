@@ -1,5 +1,6 @@
 #include "entity.h"
 #include "game.h"
+#include "utils.h"
 
 /**
  * Creates an entity
@@ -8,12 +9,21 @@
  */
 Entity create_entity(float x, float y, int w, int h)
 {
-    Entity entity;
+    Entity entity = {
+        .isActive = true,
+
+        .isDespawning = false,
+        .despawningTimer = 0.0f,
+        .despawningDuration = 5.0f,
+
+        .isExploding = false,
+        .explodingTimer = 0,
+
+        .alpha = 255,
+    };
 
     entity_set_pos(&entity, x, y);
     entity_set_size(&entity, w, h);
-
-    entity.isActive = true;
 
     return entity;
 }
@@ -39,12 +49,15 @@ void entity_set_size(Entity *entity, float w, float h)
 /**
  * Helper function: Animate Entity
  */
-void entity_animate(Entity *entity)
+void entity_animate(Entity *entity, float deltaTime)
 {
-    float deltaTime = get_delta_time();
+    if (!entity)
+        return;
 
-    if (entity->anim.frameCount <= 1)
+    if (entity->anim.frameCount <= 1 || entity->anim.frameTime >= 0.0f)
     {
+        entity->anim.currentFrame = 0;
+        entity->anim.frameTimer = 0.0f;
         return;
     }
 
@@ -55,6 +68,53 @@ void entity_animate(Entity *entity)
         entity->anim.frameTimer -= entity->anim.frameTime;
         entity->anim.currentFrame = (entity->anim.currentFrame + 1) % entity->anim.frameCount;
     }
+}
+
+/**
+ * Timed Events
+ */
+void tick_timer(Entity *entity, float deltaTime)
+{
+    // Despawning timer
+    if (entity->isDespawning)
+    {
+        debug_log("Despawning timer: %.3f", entity->despawningTimer);
+        debug_log("Despawning duration: %.3f", entity->despawningDuration);
+
+        entity->despawningTimer += deltaTime;
+
+        if (entity->despawningTimer >= entity->despawningDuration)
+        {
+            entity->despawningTimer = entity->despawningDuration;
+            entity->hasDespawned = true;
+        }
+    }
+
+    // Exploding Timer
+    if (entity->isExploding)
+    {
+        entity->explodingTimer += deltaTime;
+
+        if (entity->explodingTimer >= entity->explodingDuration)
+        {
+            entity->explodingTimer = entity->explodingDuration;
+            entity->hasExploded = true;
+        }
+    }
+}
+
+/**
+ * Helper function: Update timers
+ */
+void entity_tick(Entity *entity)
+{
+    if (!entity)
+        return;
+
+    const float deltaTime = get_delta_time();
+
+    entity_animate(entity, deltaTime);
+    tick_timer(entity, deltaTime);
 }
 
 /**

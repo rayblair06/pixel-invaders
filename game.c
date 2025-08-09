@@ -82,10 +82,12 @@ void update_game_time(void)
     }
 
     Uint32 frameTicks = adjustedNow - lastFrameTicks;
-    deltaTime = frameTicks / 1000.0f;
+    deltaTime = (float)frameTicks / 1000.0f; // convert to seconds
     lastFrameTicks = adjustedNow;
 
-    // Clamp to prevent huge spikes
+    // Clamp to prevent huge spikes and negative
+    if (deltaTime < 0.0f)
+        deltaTime = 0.0f;
     if (deltaTime > 0.05f)
         deltaTime = 0.05f;
 }

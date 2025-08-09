@@ -84,6 +84,8 @@ void tick_player(const Uint8 *keystate)
     float direction = 0;
     float deltaTime = get_delta_time();
 
+    entity_tick(&player.entity);
+
     bool moving = keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_RIGHT];
 
     if (moving)
@@ -225,10 +227,6 @@ void tick_player(const Uint8 *keystate)
             isPlayerExploding = false;
             isPlayerVisible = false;
         }
-    }
-    else
-    {
-        entity_animate(&player.entity);
     }
 
     // Regenerate health

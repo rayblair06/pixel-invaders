@@ -252,6 +252,8 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     // Initialise these on first launch of game
     if (initialiseGameProps)
     {
+        reset_game_time();
+
         // Initialize player position
         init_player();
         init_level_manager();
@@ -347,15 +349,15 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     if (choosingUpgrade)
     {
-        debug_log("Upgrade menu is active.");
-        debug_log("selectedOption: %d", selectedOption);
+        // debug_log("Upgrade menu is active.");
+        // debug_log("selectedOption: %d", selectedOption);
 
-        if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
-            debug_log("UP is held");
-        if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
-            debug_log("DOWN is held");
-        if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
-            debug_log("RETURN is held");
+        // if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
+        //     debug_log("UP is held");
+        // if (key_pressed(SDL_SCANCODE_DOWN, keystate, prevKeystate))
+        //     debug_log("DOWN is held");
+        // if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate))
+        //     debug_log("RETURN is held");
 
         if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
             selectedOption = (selectedOption - 1 + optionCount) % optionCount;
@@ -428,21 +430,22 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     }
 
     // Debugging!
-    debug_log("Time: %d", get_game_ticks());
-    debug_log("Player X: %.2f, Y: %.2f", player.entity.pos.x, player.entity.pos.y);
-    debug_log("Enemy count: %d", sizeof(enemies));
-    debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");
+    // debug_log("Game Ticks: %d", get_game_ticks());
+    // debug_log("Delta Time: %d", get_delta_time());
+    // debug_log("Player X: %.2f, Y: %.2f", player.entity.pos.x, player.entity.pos.y);
+    // debug_log("Enemy count: %d", sizeof(enemies));
+    // debug_log("Level up triggered: %s", is_level_up_pending() ? "true" : "false");
 
-    debug_log("Options count: %d", optionCount);
+    // debug_log("Options count: %d", optionCount);
 
-    debug_log("Player move speed: %.f2", playerMaxSpeed);
-    debug_log("Player bullet speed: %f.f2", bulletSpeed);
-    debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
-    debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
-    debug_log("Player hasShield: %s", hasShield ? "true" : "false");
-    debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
+    // debug_log("Player move speed: %.f2", playerMaxSpeed);
+    // debug_log("Player bullet speed: %f.f2", bulletSpeed);
+    // debug_log("Player hasMultiShot: %s", hasMultiShot ? "true" : "false");
+    // debug_log("Player hasHealthRegen: %s", hasHealthRegen ? "true" : "false");
+    // debug_log("Player hasShield: %s", hasShield ? "true" : "false");
+    // debug_log("Player hasPickupMagnet: %s", hasPickupMagnet ? "true" : "false");
 
-    debug_log("Spawning wave %d with enemyHealthMultiplier=%.2f\n", wave, enemyHealthMultiplier);
-    debug_log("Spawning wave %d with enemySpeedMultiplier=%.2f\n", wave, enemySpeedMultiplier);
-    debug_log("Spawning wave %d with enemyDamageMultiplier=%.2f\n", wave, enemyDamageMultiplier);
+    // debug_log("Spawning wave %d with enemyHealthMultiplier=%.2f\n", wave, enemyHealthMultiplier);
+    // debug_log("Spawning wave %d with enemySpeedMultiplier=%.2f\n", wave, enemySpeedMultiplier);
+    // debug_log("Spawning wave %d with enemyDamageMultiplier=%.2f\n", wave, enemyDamageMultiplier);
 }

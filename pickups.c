@@ -35,7 +35,7 @@ void spawn_pickup(float x, float y)
                 (int)16 * 1.5,
                 (int)16 * 1.5);
 
-            pickups[i].entity.despawningDuration = 5000; // despawn in 5 seconds
+            pickups[i].entity.despawningDuration = 5.0f; // despawn in 5 seconds
 
             SpriteID animFrames[] = {SPR_POWERUP_1};
 
@@ -57,10 +57,9 @@ void tick_pickups(void)
         if (!pickups[i].entity.isActive)
             continue;
 
-        move(&pickups[i].entity, DOWN, 2);
+        entity_tick(&pickups[i].entity);
 
-        // Animation
-        entity_animate(&pickups[i].entity);
+        move(&pickups[i].entity, DOWN, 2);
 
         // Stop falling at player Y and start despawning
         if (pickups[i].entity.pos.y >= player.entity.pos.y)
@@ -70,7 +69,8 @@ void tick_pickups(void)
             if (!pickups[i].entity.isDespawning)
             {
                 pickups[i].entity.isDespawning = true;
-                pickups[i].entity.despawningTime = get_game_ticks();
+                pickups[i].entity.despawningTimer = 0.0f;
+                pickups[i].entity.despawningDuration = 5.0f;
             }
         }
 
@@ -78,7 +78,7 @@ void tick_pickups(void)
         if (pickups[i].entity.isDespawning)
         {
             // Ran out of time, despawn.
-            if (get_game_ticks() - pickups[i].entity.despawningTime > pickups[i].entity.despawningDuration)
+            if (pickups[i].entity.hasDespawned)
             {
                 pickups[i].entity.isActive = false;
 
@@ -126,24 +126,22 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
         dst.x += shakeX;
         dst.y += shakeY;
 
-        // Default full opacity
-        Uint8 alpha = 255;
-
+        // Despawning Flash && Fade out
         if (pickup->entity.isDespawning)
         {
-            Uint32 elapsed = get_game_ticks() - pickup->entity.despawningTime;
+            Uint32 elapsed = (Uint32)(pickup->entity.despawningTimer * 1000.0f);
 
             // Flash: Between 3s and 4s
             if (elapsed >= 3000 && elapsed < 4000)
             {
-                alpha = ((elapsed / 100) % 2 == 0) ? 255 : 0;
+                pickup->entity.alpha = ((elapsed / 100) % 2 == 0) ? 255 : 0;
             }
 
             // Fade: between 4s and 5s
             else if (elapsed >= 4000 && elapsed <= 5000)
             {
                 float fade = (elapsed - 4000) / 1000.0f;
-                alpha = (Uint8)(255 * (1.0f - fade));
+                pickup->entity.alpha = (Uint8)(255 * (1.0f - fade));
             }
             else if (elapsed > 5000)
             {
@@ -152,7 +150,7 @@ void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
             }
         }
 
-        SDL_SetTextureAlphaMod(texture, alpha);
+        SDL_SetTextureAlphaMod(texture, pickup->entity.alpha);
         SDL_RenderCopy(renderer, texture, &src, &dst);
 
         // Reset Texture State

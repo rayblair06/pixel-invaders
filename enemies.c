@@ -68,6 +68,8 @@ void tick_enemies(void)
         if (!enemies[i].entity.isActive)
             continue;
 
+        entity_tick(&enemies[i].entity);
+
         Uint32 fadeDuration = 500; // ms
 
         Uint32 now = get_game_ticks();

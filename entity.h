@@ -15,9 +15,16 @@ typedef struct
 {
     // Lifecycle/state
     bool isActive;
+
     bool isDespawning;
-    Uint32 despawningTime;    // seconds since start of despawn
+    float despawningTimer;    // seconds since start of despawn
     float despawningDuration; // seconds to finish despawn
+    bool hasDespawned;        // completed despawning
+
+    bool isExploding;
+    float explodingTimer;    // seconds since start of exploding
+    float explodingDuration; // seonds to finish exploding
+    bool hasExploded;        // completed exploding
 
     // transform/kinematics
     Vec2 pos;    // top-left
@@ -28,8 +35,9 @@ typedef struct
 
     int z; // render order (lowest bottom)
 
-    // animation
+    // animation/visuals
     SpriteAnimation anim;
+    Uint32 alpha;
 } Entity;
 
 typedef enum
@@ -53,7 +61,10 @@ static inline SDL_Rect entity_rect(const Entity *entity)
 
 void entity_set_pos(Entity *entity, float x, float y);
 void entity_set_size(Entity *entity, float w, float h);
-void entity_animate(Entity *entity);
+void entity_animate(Entity *entity, float deltaTime);
+void tick_timer(Entity *entity, float deltaTime);
+
+void entity_tick(Entity *entity);
 
 void move(Entity *entity, Movement move, float speed);
 
