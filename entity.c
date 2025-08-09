@@ -18,6 +18,7 @@ Entity create_entity(float x, float y, int w, int h)
 
         .isExploding = false,
         .explodingTimer = 0,
+        .explodingDuration = 2.5f,
 
         .alpha = 255,
     };
@@ -54,7 +55,7 @@ void entity_animate(Entity *entity, float deltaTime)
     if (!entity)
         return;
 
-    if (entity->anim.frameCount <= 1 || entity->anim.frameTime >= 0.0f)
+    if (entity->anim.frameCount <= 1)
     {
         entity->anim.currentFrame = 0;
         entity->anim.frameTimer = 0.0f;
@@ -66,7 +67,17 @@ void entity_animate(Entity *entity, float deltaTime)
     while (entity->anim.frameTimer >= entity->anim.frameTime)
     {
         entity->anim.frameTimer -= entity->anim.frameTime;
-        entity->anim.currentFrame = (entity->anim.currentFrame + 1) % entity->anim.frameCount;
+
+        if (entity->anim.loop)
+        {
+            entity->anim.currentFrame = (entity->anim.currentFrame + 1) % entity->anim.frameCount;
+        }
+        else
+        {
+            // Stop at last frame
+            if (entity->anim.currentFrame < entity->anim.frameCount - 1)
+                entity->anim.currentFrame++;
+        }
     }
 }
 
@@ -78,9 +89,6 @@ void tick_timer(Entity *entity, float deltaTime)
     // Despawning timer
     if (entity->isDespawning)
     {
-        debug_log("Despawning timer: %.3f", entity->despawningTimer);
-        debug_log("Despawning duration: %.3f", entity->despawningDuration);
-
         entity->despawningTimer += deltaTime;
 
         if (entity->despawningTimer >= entity->despawningDuration)

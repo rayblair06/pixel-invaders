@@ -399,7 +399,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     // Game Over Screen
     if (isGameOver)
     {
-        pause_game();
+        // pause_game();
 
         SDL_Surface *overSurface = TTF_RenderText_Blended(font, "GAME OVER", white);
         SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);

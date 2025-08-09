@@ -29,6 +29,7 @@
     "unordered_map": "c",
     "stats.h": "c",
     "__node_handle": "c",
-    "__locale": "c"
+    "__locale": "c",
+    "utils.h": "c"
   }
 }

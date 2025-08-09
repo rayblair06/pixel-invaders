@@ -27,16 +27,8 @@ const float maxBoost = 1.2f;  // Max speed multiplier
 const float boostRate = 0.8f; // How fast the boost builds per second
 const float decayRate = 1.2f; // How fast the boost decays when not held
 
-bool isPlayerVisible = true;
-
 int health = 100;
 int healthMax = 100;
-
-bool isPlayerExploding = false;
-int explosionFrame = 0;
-Uint32 explosionStartTime = 0;
-int explosionFrameDurtion = 150; // ms per frame
-int explosionFrameCount = 2;
 
 // Upgrades
 bool hasMultiShot = false;
@@ -64,9 +56,6 @@ void init_player(void)
 
     playerMaxSpeed = 150.0f;
 
-    isPlayerVisible = true;
-    isPlayerExploding = false;
-
     hasMultiShot = false;
     hasHealthRegen = false;
     hasShield = false;
@@ -85,6 +74,13 @@ void tick_player(const Uint8 *keystate)
     float deltaTime = get_delta_time();
 
     entity_tick(&player.entity);
+
+    // If we've exploded, unalive player
+    if (player.entity.hasExploded)
+    {
+        player.entity.isActive = false;
+        return;
+    }
 
     bool moving = keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_RIGHT];
 
@@ -112,9 +108,9 @@ void tick_player(const Uint8 *keystate)
     // Display Boost particles
     // if (boostSpeedMultiplier > 1.0f)
     // {
-    float px = player.entity.pos.x + player.entity.size.x / 2;
-    float py = player.entity.pos.y + player.entity.size.y;
-    spawn_boost_particle(px, py);
+    // float px = player.entity.pos.x + player.entity.size.x / 2;
+    // float py = player.entity.pos.y + player.entity.size.y;
+    // spawn_boost_particle(px, py);
     // }
 
     // Move player based on key state
@@ -215,20 +211,6 @@ void tick_player(const Uint8 *keystate)
         spaceHeld = false;
     }
 
-    // Toggle explosion animations
-    if (isPlayerExploding)
-    {
-        Uint32 elapsed = get_game_ticks() - explosionStartTime;
-        explosionFrame = elapsed / explosionFrameDurtion;
-
-        if (explosionFrame >= explosionFrameCount)
-        {
-            explosionFrame = explosionFrame - 1; // stop on last frame
-            isPlayerExploding = false;
-            isPlayerVisible = false;
-        }
-    }
-
     // Regenerate health
     if (hasHealthRegen && health < healthMax)
     {
@@ -247,24 +229,12 @@ void tick_player(const Uint8 *keystate)
  */
 void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    SDL_Rect src;
-    SDL_Texture *texture = get_sprite_texture(SPR_SPACESHIP1_A);
-
-    if (!isPlayerVisible)
+    if (!player.entity.isActive)
         return;
 
-    if (isPlayerExploding)
-    {
-        SpriteID explosionSprites[] = {SPR_EXPLOSION1_A, SPR_EXPLOSION1_B, SPR_EXPLOSION1_C, SPR_EXPLOSION1_D, SPR_EXPLOSION1_E};
-
-        src = get_sprite(explosionSprites[explosionFrame]);
-    }
-    else
-    {
-        SpriteID frame = player.entity.anim.frames[player.entity.anim.currentFrame];
-        src = get_sprite(frame);
-        texture = get_sprite_texture(frame);
-    }
+    SpriteID frame = player.entity.anim.frames[player.entity.anim.currentFrame];
+    SDL_Rect src = get_sprite(frame);
+    SDL_Texture *texture = get_sprite_texture(frame);
 
     // Render shield around player
     if (hasShield)
@@ -290,6 +260,7 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
     dst.x += shakeX;
     dst.y += shakeY;
 
+    SDL_SetTextureAlphaMod(texture, player.entity.alpha);
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 
@@ -325,9 +296,10 @@ void trigger_player_shoot()
 
 void trigger_player_explosion()
 {
-    isPlayerExploding = true;
-    explosionStartTime = get_game_ticks();
-    explosionFrame = 0;
+    player.entity.isExploding = true;
+    player.entity.explodingTimer = 0;
+    player.entity.explodingDuration = 0.5f;
+    player.entity.anim = explosion1Anim;
 
     spawn_explosion_particles(player.entity.pos.x, player.entity.pos.y, 20);
     play_sound(SND_EXPLOSION);

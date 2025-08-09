@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 #define SPRITE_SIZE 32
 #define SPRITE_DRAW_SIZE SPRITE_SIZE * 2
@@ -72,6 +73,8 @@ typedef struct
     float frameTime;  // duration per frame
     float frameTimer; // accumulates time
     int currentFrame; // current frame index
+    bool loop;        // animation loops
+    bool hasEnded;    // animation has ended (only if loop = false)
 } SpriteAnimation;
 
 /**
@@ -90,6 +93,8 @@ static const SpriteAnimation explosion1Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = false,
+    .hasEnded = false,
 };
 
 static const SpriteID powerup1Frames[] = {
@@ -101,6 +106,8 @@ static const SpriteAnimation powerup1Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship1Frames[] = {
@@ -113,6 +120,8 @@ static const SpriteAnimation spaceship1Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship2Frames[] = {
@@ -125,6 +134,8 @@ static const SpriteAnimation spaceship2Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship3Frames[] = {
@@ -137,6 +148,8 @@ static const SpriteAnimation spaceship3Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship4Frames[] = {
@@ -148,6 +161,8 @@ static const SpriteAnimation spaceship4Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship5Frames[] = {
@@ -160,6 +175,8 @@ static const SpriteAnimation spaceship5Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship6Frames[] = {
@@ -172,6 +189,8 @@ static const SpriteAnimation spaceship6Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship7Frames[] = {
@@ -183,6 +202,8 @@ static const SpriteAnimation spaceship7Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship8Frames[] = {
@@ -195,6 +216,8 @@ static const SpriteAnimation spaceship8Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 static const SpriteID spaceship9Frames[] = {
@@ -207,6 +230,8 @@ static const SpriteAnimation spaceship9Anim = {
     .frameTime = 0.1f,
     .currentFrame = 0,
     .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
 };
 
 void init_sprites(SDL_Renderer *renderer);

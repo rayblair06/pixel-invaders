@@ -20,18 +20,10 @@ extern float playerAccel;
 extern float playerDrag;
 extern float playerMaxSpeed;
 
-extern bool isPlayerVisible;
-
 extern int level;
 
 extern int health;
 extern int healthMax;
-
-extern bool isPlayerExploding;
-extern int explosionFrame;
-extern Uint32 explosionStartTime;
-extern int explosionFrameDurtion;
-extern int explosionFrameCount;
 
 // Upgrades
 extern bool hasMultiShot;
