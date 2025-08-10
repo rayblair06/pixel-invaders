@@ -21,11 +21,6 @@ typedef struct
     float despawningDuration; // seconds to finish despawn
     bool hasDespawned;        // completed despawning
 
-    bool isExploding;
-    float explodingTimer;    // seconds since start of exploding
-    float explodingDuration; // seonds to finish exploding
-    bool hasExploded;        // completed exploding
-
     // transform/kinematics
     Vec2 pos;    // top-left
     Vec2 size;   // width/height
@@ -65,6 +60,7 @@ void entity_animate(Entity *entity, float deltaTime);
 void tick_timer(Entity *entity, float deltaTime);
 
 void entity_tick(Entity *entity);
+void entity_begin_despawn(Entity *entity, float duration_seconds);
 
 void move(Entity *entity, Movement move, float speed);
 

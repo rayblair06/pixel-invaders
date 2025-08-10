@@ -16,10 +16,6 @@ Entity create_entity(float x, float y, int w, int h)
         .despawningTimer = 0.0f,
         .despawningDuration = 5.0f,
 
-        .isExploding = false,
-        .explodingTimer = 0,
-        .explodingDuration = 2.5f,
-
         .alpha = 255,
     };
 
@@ -76,7 +72,10 @@ void entity_animate(Entity *entity, float deltaTime)
         {
             // Stop at last frame
             if (entity->anim.currentFrame < entity->anim.frameCount - 1)
+            {
                 entity->anim.currentFrame++;
+                entity->anim.hasEnded = true;
+            }
         }
     }
 }
@@ -97,18 +96,6 @@ void tick_timer(Entity *entity, float deltaTime)
             entity->hasDespawned = true;
         }
     }
-
-    // Exploding Timer
-    if (entity->isExploding)
-    {
-        entity->explodingTimer += deltaTime;
-
-        if (entity->explodingTimer >= entity->explodingDuration)
-        {
-            entity->explodingTimer = entity->explodingDuration;
-            entity->hasExploded = true;
-        }
-    }
 }
 
 /**
@@ -123,6 +110,16 @@ void entity_tick(Entity *entity)
 
     entity_animate(entity, deltaTime);
     tick_timer(entity, deltaTime);
+}
+
+/**
+ * Helper function trigger despawn
+ */
+void entity_begin_despawn(Entity *entity, float duration_seconds)
+{
+    entity->isDespawning = true;
+    entity->despawningTimer = 0.0f;
+    entity->despawningDuration = duration_seconds;
 }
 
 /**

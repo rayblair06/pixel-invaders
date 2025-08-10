@@ -75,10 +75,14 @@ void tick_player(const Uint8 *keystate)
 
     entity_tick(&player.entity);
 
-    // If we've exploded, unalive player
-    if (player.entity.hasExploded)
+    // If we've exploded, unalive player on animation end
+    if (player.entity.isDespawning)
     {
-        player.entity.isActive = false;
+        if (player.entity.anim.hasEnded == true)
+        {
+            player.entity.isActive = false;
+        }
+
         return;
     }
 
@@ -296,9 +300,12 @@ void trigger_player_shoot()
 
 void trigger_player_explosion()
 {
-    player.entity.isExploding = true;
-    player.entity.explodingTimer = 0;
-    player.entity.explodingDuration = 0.5f;
+    // Duration should be longer than animation, we'll trigger despawn after animation has finished
+    const float despawnDuration = 0.5f;
+    entity_begin_despawn(
+        &player.entity,
+        despawnDuration);
+
     player.entity.anim = explosion1Anim;
 
     spawn_explosion_particles(player.entity.pos.x, player.entity.pos.y, 20);

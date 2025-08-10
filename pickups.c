@@ -57,30 +57,30 @@ void tick_pickups(void)
         if (!pickups[i].entity.isActive)
             continue;
 
-        entity_tick(&pickups[i].entity);
+        Pickup *pickup = &pickups[i];
 
-        move(&pickups[i].entity, DOWN, 2);
+        entity_tick(&pickup->entity);
+
+        move(&pickup->entity, DOWN, 2);
 
         // Stop falling at player Y and start despawning
-        if (pickups[i].entity.pos.y >= player.entity.pos.y)
+        if (pickup->entity.pos.y >= player.entity.pos.y)
         {
-            pickups[i].entity.pos.y = player.entity.pos.y;
+            pickup->entity.pos.y = player.entity.pos.y;
 
-            if (!pickups[i].entity.isDespawning)
+            if (!pickup->entity.isDespawning)
             {
-                pickups[i].entity.isDespawning = true;
-                pickups[i].entity.despawningTimer = 0.0f;
-                pickups[i].entity.despawningDuration = 5.0f;
+                entity_begin_despawn(&pickup->entity, 5.0f);
             }
         }
 
         // Despawning
-        if (pickups[i].entity.isDespawning)
+        if (pickup->entity.isDespawning)
         {
             // Ran out of time, despawn.
-            if (pickups[i].entity.hasDespawned)
+            if (pickup->entity.hasDespawned)
             {
-                pickups[i].entity.isActive = false;
+                pickup->entity.isActive = false;
 
                 // Don't do anything after this
                 continue;
@@ -90,8 +90,8 @@ void tick_pickups(void)
         // Player Magnet
         if (hasPickupMagnet)
         {
-            float dx = player.entity.pos.x + player.entity.size.x / 2 - pickups[i].entity.pos.x;
-            float dy = player.entity.pos.y + player.entity.size.y / 2 - pickups[i].entity.pos.y;
+            float dx = player.entity.pos.x + player.entity.size.x / 2 - pickup->entity.pos.x;
+            float dy = player.entity.pos.y + player.entity.size.y / 2 - pickup->entity.pos.y;
             float distance = sqrtf(dx * dx + dy * dy);
 
             float magnetRange = 150.f;    // How far the feffect pulls from
@@ -99,8 +99,8 @@ void tick_pickups(void)
 
             if (distance < magnetRange)
             {
-                pickups[i].entity.pos.x += (dx / distance) * managetStrength;
-                pickups[i].entity.pos.y += (dy / distance) * managetStrength;
+                pickup->entity.pos.x += (dx / distance) * managetStrength;
+                pickup->entity.pos.y += (dy / distance) * managetStrength;
             }
         }
     }
