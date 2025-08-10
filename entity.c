@@ -74,6 +74,10 @@ void entity_animate(Entity *entity, float deltaTime)
             if (entity->anim.currentFrame < entity->anim.frameCount - 1)
             {
                 entity->anim.currentFrame++;
+            }
+
+            if (entity->anim.currentFrame == entity->anim.frameCount - 1)
+            {
                 entity->anim.hasEnded = true;
             }
         }

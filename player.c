@@ -308,6 +308,10 @@ void trigger_player_explosion()
 
     player.entity.anim = explosion1Anim;
 
-    spawn_explosion_particles(player.entity.pos.x, player.entity.pos.y, 20);
+    spawn_explosion_particles(
+        player.entity.pos.x + (player.entity.size.x / 2),
+        player.entity.pos.y + (player.entity.size.y / 2),
+        20);
+
     play_sound(SND_EXPLOSION);
 }
