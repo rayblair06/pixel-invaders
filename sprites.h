@@ -9,6 +9,9 @@
 
 typedef enum
 {
+    // Fallback (No image)
+    SPR_NONE,
+
     // Asteroids
     SPR_ASTERRIOD1,
     SPR_ASTERRIOD2,
@@ -29,6 +32,25 @@ typedef enum
     SPR_EXPLOSION1_C,
     SPR_EXPLOSION1_D,
     SPR_EXPLOSION1_E,
+
+    // Laser
+    SPR_LASER_CHARING1_A,
+    SPR_LASER_CHARING1_B,
+    SPR_LASER_CHARING1_C,
+    SPR_LASER_CHARING1_D,
+    SPR_LASER_CHARING1_E,
+    SPR_LASER_CHARING1_F,
+
+    SPR_LASER_FIRING1_A,
+    SPR_LASER_FIRING1_B,
+    SPR_LASER_FIRING1_C,
+    SPR_LASER_FIRING1_D,
+    SPR_LASER_FIRING1_E,
+    SPR_LASER_FIRING1_F,
+
+    SPR_LASER_DEACTIVATING1_A,
+    SPR_LASER_DEACTIVATING1_B,
+    SPR_LASER_DEACTIVATING1_C,
 
     // Powerups
     SPR_POWERUP_1,
@@ -80,6 +102,23 @@ typedef struct
 /**
  * Animation Sets
  */
+static const SpriteID spriteFallbackFrames[] = {
+    SPR_EXPLOSION1_A,
+    SPR_EXPLOSION1_B,
+    SPR_EXPLOSION1_C,
+    SPR_EXPLOSION1_D,
+    SPR_EXPLOSION1_E};
+
+static const SpriteAnimation spriteFallbackAnim = {
+    .frames = (SpriteID *)spriteFallbackFrames,
+    .frameCount = sizeof(spriteFallbackFrames) / sizeof(spriteFallbackFrames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
 static const SpriteID explosion1Frames[] = {
     SPR_EXPLOSION1_A,
     SPR_EXPLOSION1_B,
@@ -221,8 +260,8 @@ static const SpriteAnimation spaceship8Anim = {
 };
 
 static const SpriteID spaceship9Frames[] = {
-    SPR_SPACESHIP8_A,
-    SPR_SPACESHIP8_B};
+    SPR_SPACESHIP9_A,
+    SPR_SPACESHIP9_B};
 
 static const SpriteAnimation spaceship9Anim = {
     .frames = (SpriteID *)spaceship9Frames,

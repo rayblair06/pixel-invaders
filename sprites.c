@@ -4,6 +4,8 @@
 #include "sprites.h"
 
 const char *spritePaths[SPR_COUNT] = {
+    [SPR_NONE] = "assets/sprites/Explosion/explosion1.png",
+
     [SPR_ASTERRIOD1] = "assets/sprites/Asteroids/asteroid1.png",
     [SPR_ASTERRIOD2] = "assets/sprites/Asteroids/asteroid2.png",
 
@@ -33,6 +35,24 @@ const char *spritePaths[SPR_COUNT] = {
     [SPR_PROJECTILE_4] = "assets/sprites/Projectiles/projectile4.png",
     [SPR_PROJECTILE_5] = "assets/sprites/Projectiles/projectile5.png",
     [SPR_PROJECTILE_6] = "assets/sprites/Projectiles/projectile6.png",
+
+    [SPR_LASER_CHARING1_A] = "assets/sprites/Projectiles/Blast/blast1.png",
+    [SPR_LASER_CHARING1_B] = "assets/sprites/Projectiles/Blast/blast2.png",
+    [SPR_LASER_CHARING1_C] = "assets/sprites/Projectiles/Blast/blast3.png",
+    [SPR_LASER_CHARING1_D] = "assets/sprites/Projectiles/Blast/blast4.png",
+    [SPR_LASER_CHARING1_E] = "assets/sprites/Projectiles/Blast/blast5.png",
+    [SPR_LASER_CHARING1_F] = "assets/sprites/Projectiles/Blast/blast6.png",
+
+    [SPR_LASER_FIRING1_A] = "assets/sprites/Projectiles/Blast/blast7.png",
+    [SPR_LASER_FIRING1_B] = "assets/sprites/Projectiles/Blast/blast8.png",
+    [SPR_LASER_FIRING1_C] = "assets/sprites/Projectiles/Blast/blast9.png",
+    [SPR_LASER_FIRING1_D] = "assets/sprites/Projectiles/Blast/blast10.png",
+    [SPR_LASER_FIRING1_E] = "assets/sprites/Projectiles/Blast/blast11.png",
+    [SPR_LASER_FIRING1_F] = "assets/sprites/Projectiles/Blast/blast12.png",
+
+    [SPR_LASER_DEACTIVATING1_A] = "assets/sprites/Projectiles/Blast/blast13.png",
+    [SPR_LASER_DEACTIVATING1_B] = "assets/sprites/Projectiles/Blast/blast14.png",
+    [SPR_LASER_DEACTIVATING1_C] = "assets/sprites/Projectiles/Blast/blast15.png",
 
     [SPR_SPACESHIP1_A] = "assets/sprites/Spaceships/Spaceship 1/spaceship1-1.png",
     [SPR_SPACESHIP1_B] = "assets/sprites/Spaceships/Spaceship 1/spaceship1-2.png",

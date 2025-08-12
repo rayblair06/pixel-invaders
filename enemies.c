@@ -10,6 +10,7 @@
 #include "sprites.h"
 #include "stats.h"
 #include "waves.h"
+#include "utils.h"
 
 Enemy enemies[MAX_ENEMIES];
 
@@ -17,20 +18,12 @@ bool enemyFrameToggle = false;
 Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
 
-// Enemy Animation Frames
-typedef struct
-{
-    SpriteID frameA;
-    SpriteID frameB;
-} EnemySpriteFrames;
-
-const EnemySpriteFrames enemySprites[] = {
-    [ENEMY_BASIC] = {SPR_SPACESHIP4_A, SPR_SPACESHIP4_A},
-    [ENEMY_FAST] = {SPR_SPACESHIP5_A, SPR_SPACESHIP5_B},
-    [ENEMY_TANK] = {SPR_SPACESHIP6_A, SPR_SPACESHIP6_B},
-    [ENEMY_SHOOTER] = {SPR_SPACESHIP7_A, SPR_SPACESHIP7_A},
-    [ENEMY_BRUTE] = {SPR_SPACESHIP8_A, SPR_SPACESHIP8_B},
-};
+const SpriteAnimation enemySprites[] = {
+    [ENEMY_BASIC] = spaceship4Anim,
+    [ENEMY_FAST] = spaceship5Anim,
+    [ENEMY_TANK] = spaceship6Anim,
+    [ENEMY_SHOOTER] = spaceship7Anim,
+    [ENEMY_BRUTE] = spaceship8Anim};
 
 /**
  * Initialise enemies as deactivated
@@ -68,53 +61,53 @@ void tick_enemies(void)
         if (!enemies[i].entity.isActive)
             continue;
 
-        entity_tick(&enemies[i].entity);
+        Enemy *enemy = &enemies[i];
 
-        Uint32 fadeDuration = 500; // ms
-
-        Uint32 now = get_game_ticks();
+        entity_tick(&enemy->entity);
 
         // Fade out on death
-        if (enemies[i].isFadingOut)
+        if (enemy->entity.isDespawning)
         {
-            Uint32 elapsed = now - enemies[i].fadeStartTime;
-            float t = elapsed / (float)fadeDuration;
-            if (t >= 1.0f)
+            float elapsed = enemy->entity.despawningTimer / enemy->entity.despawningDuration;
+
+            debug_log(
+                "Despawning: despawningTimer=%.2f, despawningDuration=%.f seconds",
+                enemy->entity.despawningTimer, enemy->entity.despawningDuration);
+
+            // Fade out
+            enemy->entity.alpha = (Uint8)(255.0f * (1.0f - elapsed));
+
+            if (enemy->entity.hasDespawned)
             {
-                enemies[i].entity.isActive = false;
-                enemies[i].isFadingOut = false;
+                enemy->entity.isActive = false;
 
                 play_sound(SND_ENEMY_DEATH);
 
                 spawn_pickup(
-                    enemies[i].entity.pos.x + (enemies[i].entity.size.x / 2),
-                    enemies[i].entity.pos.y);
-            }
-            else
-            {
-                enemies[i].alpha = 255 * (1.0f - t);
+                    enemy->entity.pos.x + (enemy->entity.size.x / 2),
+                    enemy->entity.pos.y);
             }
 
             // Skip all actions dying
             continue;
         }
 
-        move(&enemies[i].entity, DOWN, enemies[i].speed);
+        move(&enemy->entity, DOWN, enemy->speed);
 
-        if (enemies[i].entity.pos.y > 0)
+        if (enemy->type == ENEMY_BASIC && enemy->entity.pos.y > 0)
         {
-            enemies[i].canShoot = true;
+            enemy->canShoot = true;
         }
 
-        // Only basic shoot
-        if (enemies[i].type == ENEMY_BASIC && enemies[i].canShoot)
+        // Only enemies that canShoot, shoot!
+        if (enemy->canShoot)
         {
             if (rand() % 500 == 0)
             {
                 spawn_enemy_bullet(
-                    enemies[i].entity.pos.x + enemies[i].entity.size.x / 2,
-                    enemies[i].entity.pos.y + enemies[i].entity.size.y,
-                    enemies[i].damage);
+                    enemy->entity.pos.x + enemy->entity.size.x / 2,
+                    enemy->entity.pos.y + enemy->entity.size.y,
+                    enemy->damage);
             }
         }
     }
@@ -132,21 +125,21 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
         if (!enemies[i].entity.isActive)
             continue;
 
+        Enemy *enemy = &enemies[i];
+
         Uint32 flashDuration = 100; // ms
 
-        SpriteID frame = get_enemy_sprite(&enemies[i]);
-
+        // TODO: Move to helper function
+        SpriteID frame = enemy->entity.anim.frames[enemy->entity.anim.currentFrame];
         SDL_Rect src = get_sprite(frame);
         SDL_Texture *texture = get_sprite_texture(frame);
 
-        SDL_Rect dst = entity_rect(&enemies[i].entity);
+        SDL_Rect dst = entity_rect(&enemy->entity);
         dst.x += shakeX;
         dst.y += shakeY;
 
-        if (enemies[i].isFadingOut)
-        {
-            SDL_SetTextureAlphaMod(texture, enemies[i].alpha);
-        }
+        SDL_SetTextureAlphaMod(texture, enemy->entity.alpha);
+        SDL_RenderCopy(renderer, texture, &src, &dst);
 
         // Check if recently damaged
         if (now - enemies[i].damageFlashTimer < flashDuration)
@@ -189,6 +182,8 @@ Enemy create_enemy(float x, float y, EnemyType type)
 
     enemy.type = type;
 
+    enemy.entity.anim = enemySprites[enemy.type];
+
     switch (type)
     {
     case ENEMY_BASIC:
@@ -224,12 +219,6 @@ Enemy create_enemy(float x, float y, EnemyType type)
     return enemy;
 }
 
-SpriteID get_enemy_sprite(const Enemy *enemy)
-{
-    EnemySpriteFrames frames = enemySprites[enemy->type];
-    return enemyFrameToggle ? frames.frameB : frames.frameA;
-}
-
 void damage_enemy(Enemy *enemy)
 {
     enemy->health = enemy->health - bulletDamage;
@@ -243,9 +232,8 @@ void damage_enemy(Enemy *enemy)
     else
     {
         // They dead, fade out and deactivate
-        enemy->isFadingOut = true;
-        enemy->fadeStartTime = get_game_ticks();
-        enemy->alpha = 255;
+        entity_begin_despawn(&enemy->entity, 0.5f);
+
         record_kill();
     }
 }

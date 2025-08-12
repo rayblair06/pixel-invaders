@@ -236,9 +236,7 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
     if (!player.entity.isActive)
         return;
 
-    SpriteID frame = player.entity.anim.frames[player.entity.anim.currentFrame];
-    SDL_Rect src = get_sprite(frame);
-    SDL_Texture *texture = get_sprite_texture(frame);
+    entity_render(&player.entity, renderer, shakeX, shakeY);
 
     // Render shield around player
     if (hasShield)
@@ -259,13 +257,6 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         draw_circle(renderer, player.entity.pos.x + player.entity.size.x / 2, player.entity.pos.y + player.entity.size.y / 2, radius);
     }
-
-    SDL_Rect dst = entity_rect(&player.entity);
-    dst.x += shakeX;
-    dst.y += shakeY;
-
-    SDL_SetTextureAlphaMod(texture, player.entity.alpha);
-    SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 
 void trigger_player_shoot()

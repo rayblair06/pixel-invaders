@@ -60,6 +60,7 @@ void entity_animate(Entity *entity, float deltaTime);
 void tick_timer(Entity *entity, float deltaTime);
 
 void entity_tick(Entity *entity);
+void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shakeY);
 void entity_begin_despawn(Entity *entity, float duration_seconds);
 
 void move(Entity *entity, Movement move, float speed);

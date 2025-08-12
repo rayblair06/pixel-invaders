@@ -20,7 +20,12 @@ void init_boss(void)
 
 void spawn_boss(float x, float y, int wave)
 {
-    currentBoss.entity = create_entity(x, y, 128 * 2, 72 * 2);
+    currentBoss.entity = create_entity(
+        x - (128 / 2),
+        y,
+        128 * 2,
+        72 * 2);
+    currentBoss.entity.anim = spaceship9Anim;
     currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
 
     currentBoss.phaseTwo = false;
@@ -86,7 +91,7 @@ void tick_boss()
     }
 
     // Bobbing
-    float bobbing = 5.0f * sinf(get_game_ticks() / 500.0f);
+    float bobbing = 0.5f * sinf(get_game_ticks() / 500.0f);
     currentBoss.entity.pos.y = currentBoss.entity.pos.y + bobbing;
 
     if (currentBoss.isMoving)
@@ -266,12 +271,7 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     if (!bossActive)
         return;
 
-    SDL_Rect src = get_sprite(SPR_SPACESHIP9_A); // temp boss sprite
-    SDL_Texture *texture = get_sprite_texture(SPR_SPACESHIP9_A);
-
-    SDL_Rect dst = entity_rect(&currentBoss.entity);
-    dst.x += shakeX;
-    dst.y += shakeY;
+    entity_render(&currentBoss.entity, renderer, shakeX, shakeY);
 
     if (currentBoss.chargingLaser)
     {
@@ -361,8 +361,6 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         trigger_screen_shake();
     }
-
-    SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 
 void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)

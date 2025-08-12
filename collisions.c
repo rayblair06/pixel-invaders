@@ -29,7 +29,7 @@ void check_collisions(void)
             if (!enemies[j].entity.isActive)
                 continue;
 
-            if (enemies[j].isFadingOut)
+            if (enemies[j].entity.isDespawning)
                 continue;
 
             if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&enemies[j].entity)))

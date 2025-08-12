@@ -34,10 +34,6 @@ typedef struct
     int damage;
 
     Uint32 damageFlashTimer;
-
-    bool isFadingOut;
-    Uint32 fadeStartTime;
-    Uint8 alpha;
 } Enemy;
 
 extern Enemy enemies[MAX_ENEMIES];
@@ -49,7 +45,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY);
 void update_enemy_animation_state(void);
 
 Enemy create_enemy(float x, float y, EnemyType type);
-SpriteID get_enemy_sprite(const Enemy *enemy);
+void get_enemy_sprite(const Enemy *enemy);
 void damage_enemy(Enemy *enemy);
 
 // Move these to effects?

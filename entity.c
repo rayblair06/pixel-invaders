@@ -16,6 +16,7 @@ Entity create_entity(float x, float y, int w, int h)
         .despawningTimer = 0.0f,
         .despawningDuration = 5.0f,
 
+        .anim = spriteFallbackAnim,
         .alpha = 255,
     };
 
@@ -114,6 +115,34 @@ void entity_tick(Entity *entity)
 
     entity_animate(entity, deltaTime);
     tick_timer(entity, deltaTime);
+}
+
+/**
+ * Helper function: Render entity
+ * TODO: Move renderer, shakeX, and shakeY to globals?
+ * TODO: Make more defensive, check it can render entity or fallback to no image?
+ */
+void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shakeY)
+{
+    if (!entity)
+        return;
+
+    // Clamp frame
+    if (entity->anim.currentFrame < 0 || entity->anim.currentFrame > entity->anim.frameCount)
+    {
+        entity->anim.currentFrame = 0;
+    }
+
+    SpriteID frame = entity->anim.frames[entity->anim.currentFrame];
+    SDL_Rect src = get_sprite(frame);
+    SDL_Texture *texture = get_sprite_texture(frame);
+
+    SDL_Rect dst = entity_rect(entity);
+    dst.x += shakeX;
+    dst.y += shakeY;
+
+    SDL_SetTextureAlphaMod(texture, entity->alpha);
+    SDL_RenderCopy(renderer, texture, &src, &dst);
 }
 
 /**
