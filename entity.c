@@ -18,7 +18,7 @@ Entity create_entity(float x, float y, int w, int h)
 
         .anim = spriteFallbackAnim,
         .alpha = 255,
-    };
+        .color = {.r = 255, .g = 255, .b = 255}};
 
     entity_set_pos(&entity, x, y);
     entity_set_size(&entity, w, h);
@@ -153,17 +153,9 @@ void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shake
     dst.x += shakeX;
     dst.y += shakeY;
 
-    // Flash red when damaged
-    if (entity->isHit)
-    {
-        SDL_SetTextureColorMod(texture, 255, 64, 64);
-    }
-
     SDL_SetTextureAlphaMod(texture, entity->alpha);
+    SDL_SetTextureColorMod(texture, entity->color.r, entity->color.g, entity->color.b);
     SDL_RenderCopy(renderer, texture, &src, &dst);
-
-    // Reset colours
-    SDL_SetTextureColorMod(texture, 255, 255, 255);
 }
 
 /**

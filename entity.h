@@ -13,6 +13,11 @@ typedef struct
 
 typedef struct
 {
+    int r, g, b;
+} ColorRGB;
+
+typedef struct
+{
     // Lifecycle/state
     bool isActive;
 
@@ -37,6 +42,7 @@ typedef struct
     // animation/visuals
     SpriteAnimation anim;
     Uint32 alpha;
+    ColorRGB color;
 } Entity;
 
 typedef enum

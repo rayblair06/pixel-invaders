@@ -121,6 +121,20 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         Enemy *enemy = &enemies[i];
 
+        // Flash red when damaged
+        if (enemy->entity.isHit)
+        {
+            enemy->entity.color.r = 255;
+            enemy->entity.color.g = 64;
+            enemy->entity.color.b = 64;
+        }
+        else
+        {
+            enemy->entity.color.r = 255;
+            enemy->entity.color.g = 255;
+            enemy->entity.color.b = 255;
+        }
+
         entity_render(&enemy->entity, renderer, shakeX, shakeY);
     }
 }

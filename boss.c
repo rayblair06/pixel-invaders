@@ -273,6 +273,20 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     entity_render(&currentBoss.entity, renderer, shakeX, shakeY);
 
+    // Flash red when damaged
+    if (currentBoss.entity.isHit)
+    {
+        currentBoss.entity.color.r = 255;
+        currentBoss.entity.color.g = 64;
+        currentBoss.entity.color.b = 64;
+    }
+    else
+    {
+        currentBoss.entity.color.r = 255;
+        currentBoss.entity.color.g = 255;
+        currentBoss.entity.color.b = 255;
+    }
+
     if (currentBoss.chargingLaser)
     {
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);

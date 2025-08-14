@@ -238,6 +238,20 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 
     entity_render(&player.entity, renderer, shakeX, shakeY);
 
+    // Flash red when damaged
+    if (player.entity.isHit)
+    {
+        player.entity.color.r = 255;
+        player.entity.color.g = 64;
+        player.entity.color.b = 64;
+    }
+    else
+    {
+        player.entity.color.r = 255;
+        player.entity.color.g = 255;
+        player.entity.color.b = 255;
+    }
+
     // Render shield around player
     if (hasShield)
     {
