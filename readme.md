@@ -34,6 +34,9 @@ The game features enemy waves, upgrades, pickups, and roguelite-style mechanics 
 
 ![PixelInvaders Screenshot 2](screenshot2.png)
 
+
+![PixelInvaders Screenshot 3](screenshot3.png)
+
 ---
 
 ## **Dependencies**
