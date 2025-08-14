@@ -255,6 +255,7 @@ void reduce_health(int amount)
 
     play_sound(SND_HIT);
 
+    entity_trigger_hit(&player.entity, 0.05f);
     trigger_screen_shake();
     trigger_red_flash();
 

@@ -16,10 +16,14 @@ typedef struct
     // Lifecycle/state
     bool isActive;
 
-    bool isDespawning;
+    bool isDespawning;        // Flag for when an entity is despawning
     float despawningTimer;    // seconds since start of despawn
     float despawningDuration; // seconds to finish despawn
     bool hasDespawned;        // completed despawning
+
+    bool isHit;        // Flag for when an entity has been hit
+    float hitTimer;    // seconds since start of hit
+    float hitDuration; // seconds to finish hit animation
 
     // transform/kinematics
     Vec2 pos;    // top-left
@@ -62,6 +66,7 @@ void tick_timer(Entity *entity, float deltaTime);
 void entity_tick(Entity *entity);
 void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shakeY);
 void entity_begin_despawn(Entity *entity, float duration_seconds);
+void entity_trigger_hit(Entity *entity, float duration_seconds);
 
 void move(Entity *entity, Movement move, float speed);
 

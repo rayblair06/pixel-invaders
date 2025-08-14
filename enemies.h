@@ -42,7 +42,6 @@ void init_enemies(void);
 void spawn_enemy(float x, float y, EnemyType type);
 void tick_enemies(void);
 void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY);
-void update_enemy_animation_state(void);
 
 Enemy create_enemy(float x, float y, EnemyType type);
 void get_enemy_sprite(const Enemy *enemy);

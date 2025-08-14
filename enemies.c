@@ -70,10 +70,6 @@ void tick_enemies(void)
         {
             float elapsed = enemy->entity.despawningTimer / enemy->entity.despawningDuration;
 
-            debug_log(
-                "Despawning: despawningTimer=%.2f, despawningDuration=%.f seconds",
-                enemy->entity.despawningTimer, enemy->entity.despawningDuration);
-
             // Fade out
             enemy->entity.alpha = (Uint8)(255.0f * (1.0f - elapsed));
 
@@ -118,8 +114,6 @@ void tick_enemies(void)
  */
 void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 {
-    Uint32 now = get_game_ticks();
-
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         if (!enemies[i].entity.isActive)
@@ -127,45 +121,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         Enemy *enemy = &enemies[i];
 
-        Uint32 flashDuration = 100; // ms
-
-        // TODO: Move to helper function
-        SpriteID frame = enemy->entity.anim.frames[enemy->entity.anim.currentFrame];
-        SDL_Rect src = get_sprite(frame);
-        SDL_Texture *texture = get_sprite_texture(frame);
-
-        SDL_Rect dst = entity_rect(&enemy->entity);
-        dst.x += shakeX;
-        dst.y += shakeY;
-
-        SDL_SetTextureAlphaMod(texture, enemy->entity.alpha);
-        SDL_RenderCopy(renderer, texture, &src, &dst);
-
-        // Check if recently damaged
-        if (now - enemies[i].damageFlashTimer < flashDuration)
-        {
-            SDL_SetTextureColorMod(texture, 255, 64, 64);
-        }
-
-        SDL_RenderCopy(renderer, texture, &src, &dst);
-
-        // Reset colours and alpha
-        SDL_SetTextureColorMod(texture, 255, 255, 255);
-        SDL_SetTextureAlphaMod(texture, 255);
-    }
-}
-
-/**
- * Toggle enemy animations
- */
-void update_enemy_animation_state(void)
-{
-    Uint32 now = get_game_ticks();
-
-    if (now - lastFrameSwitch > frameInterval)
-    {
-        enemyFrameToggle = !enemyFrameToggle;
-        lastFrameSwitch = now;
+        entity_render(&enemy->entity, renderer, shakeX, shakeY);
     }
 }
 
@@ -225,8 +181,7 @@ void damage_enemy(Enemy *enemy)
 
     if (enemy->health > 0)
     {
-        enemy->damageFlashTimer = get_game_ticks();
-
+        entity_trigger_hit(&enemy->entity, 0.05f);
         play_sound(SND_HIT);
     }
     else

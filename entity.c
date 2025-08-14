@@ -101,6 +101,18 @@ void tick_timer(Entity *entity, float deltaTime)
             entity->hasDespawned = true;
         }
     }
+
+    // Hit timer
+    if (entity->isHit)
+    {
+        entity->hitTimer += deltaTime;
+
+        if (entity->hitTimer >= entity->hitDuration)
+        {
+            entity->hitTimer = entity->hitDuration;
+            entity->isHit = false;
+        }
+    }
 }
 
 /**
@@ -141,8 +153,17 @@ void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shake
     dst.x += shakeX;
     dst.y += shakeY;
 
+    // Flash red when damaged
+    if (entity->isHit)
+    {
+        SDL_SetTextureColorMod(texture, 255, 64, 64);
+    }
+
     SDL_SetTextureAlphaMod(texture, entity->alpha);
     SDL_RenderCopy(renderer, texture, &src, &dst);
+
+    // Reset colours
+    SDL_SetTextureColorMod(texture, 255, 255, 255);
 }
 
 /**
@@ -153,6 +174,16 @@ void entity_begin_despawn(Entity *entity, float duration_seconds)
     entity->isDespawning = true;
     entity->despawningTimer = 0.0f;
     entity->despawningDuration = duration_seconds;
+}
+
+/**
+ * Helper function trigger hit
+ */
+void entity_trigger_hit(Entity *entity, float duration_seconds)
+{
+    entity->isHit = true;
+    entity->hitTimer = 0.0f;
+    entity->hitDuration = duration_seconds;
 }
 
 /**
