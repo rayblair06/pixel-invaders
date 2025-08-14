@@ -120,10 +120,12 @@ void check_collisions(void)
         if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.entity)))
         {
             // Double damage but enemy instantly disappears
-            reduce_player_health(enemies[i].damage * 2);
-            damage_enemy(&enemies[i], 1000000); // Instant kill
-
-            record_kill();
+            if (!enemies[i].entity.isDespawning)
+            {
+                damage_enemy(&enemies[i], 1000000); // Instant kill
+                reduce_player_health(enemies[i].damage * 2);
+                record_kill();
+            }
         }
     }
 
