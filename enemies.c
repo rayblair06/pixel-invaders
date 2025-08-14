@@ -189,9 +189,9 @@ Enemy create_enemy(float x, float y, EnemyType type)
     return enemy;
 }
 
-void damage_enemy(Enemy *enemy)
+void damage_enemy(Enemy *enemy, int amount)
 {
-    enemy->health = enemy->health - bulletDamage;
+    enemy->health = enemy->health - amount;
 
     if (enemy->health > 0)
     {
@@ -223,7 +223,7 @@ void trigger_damage_radius(float x, float y, float radius)
 
         if (distance < radius)
         {
-            damage_enemy(&enemies[i]);
+            damage_enemy(&enemies[i], bulletDamage / 2);
         }
     }
 }

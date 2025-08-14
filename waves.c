@@ -198,7 +198,6 @@ void tick_waves(void)
             }
             else
             {
-                // spawn_boss(SCREEN_WIDTH / 2 - 64, -200, wave);
                 spawn_wave();
             }
 

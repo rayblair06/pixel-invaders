@@ -34,7 +34,7 @@ void check_collisions(void)
 
             if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&enemies[j].entity)))
             {
-                damage_enemy(&enemies[j]);
+                damage_enemy(&enemies[j], bulletDamage);
 
                 bullets[i].pierceCount--;
 
@@ -65,7 +65,7 @@ void check_collisions(void)
 
         if (check_overlap(entity_rect(&enemyBullets[i].entity), entity_rect(&player.entity)))
         {
-            reduce_health(enemyBullets[i].damage);
+            reduce_player_health(enemyBullets[i].damage);
 
             enemyBullets[i].entity.isActive = false;
         }
@@ -89,7 +89,7 @@ void check_collisions(void)
                 continue;
             }
 
-            currentBoss.health = currentBoss.health - bulletDamage;
+            damage_boss(&currentBoss, bulletDamage);
 
             bullets[i].pierceCount--;
 
@@ -120,9 +120,9 @@ void check_collisions(void)
         if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.entity)))
         {
             // Double damage but enemy instantly disappears
-            reduce_health(enemies[i].damage * 2);
+            reduce_player_health(enemies[i].damage * 2);
+            damage_enemy(&enemies[i], 1000000); // Instant kill
 
-            enemies[i].entity.isActive = false;
             record_kill();
         }
     }
@@ -157,7 +157,7 @@ void check_collisions(void)
         if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.entity), laserHitbox))
         {
             // TODO: Move to boss variable
-            reduce_health(25);
+            reduce_player_health(25);
             currentBoss.laserDamageTimer = currentBoss.laserDamageCooldown;
         }
     }
@@ -181,7 +181,7 @@ void check_collisions(void)
                 break;
             }
 
-            reduce_health(enemies[i].damage);
+            reduce_player_health(enemies[i].damage);
         }
     }
 

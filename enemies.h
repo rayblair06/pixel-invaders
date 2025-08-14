@@ -45,7 +45,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY);
 
 Enemy create_enemy(float x, float y, EnemyType type);
 void get_enemy_sprite(const Enemy *enemy);
-void damage_enemy(Enemy *enemy);
+void damage_enemy(Enemy *enemy, int amount);
 
 // Move these to effects?
 void trigger_damage_radius(float x, float y, float radius);

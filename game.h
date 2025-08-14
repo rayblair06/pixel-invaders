@@ -61,6 +61,6 @@ void trigger_red_flash(void);
 
 void tick_waves(void);
 
-void reduce_health(int amount);
+void reduce_player_health(int amount);
 
 #endif

@@ -47,5 +47,6 @@ void spawn_boss(float x, float y, int wave);
 void tick_boss(void);
 void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY);
 void render_boss_health(SDL_Renderer *renderer, TTF_Font *font);
+void damage_boss(Boss *boss, int amount);
 
 #endif

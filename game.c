@@ -249,7 +249,7 @@ void trigger_red_flash(void)
 /**
  * Handle when a reduction of health
  */
-void reduce_health(int amount)
+void reduce_player_health(int amount)
 {
     health = health - amount;
 

@@ -11,7 +11,7 @@ const char *soundPaths[SND_COUNT] = {
     [SND_PICKUP] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/UIBeep_Lock On_05.wav",
     [SND_HIT] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTRico_Ricochet Metallic_04.wav",
     [SND_SHIELD_BREAK] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/GUNMech_Scope Deactivate_11.wav",
-    [SND_BOSS_ROAR] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/CREAMnstr_Beast Vocalisation_09.wav",
+    [SND_BOSS_ROAR] = "assets/audio/music/fx/scream.wav",
 };
 
 static int loadedSounds = 0;
@@ -21,8 +21,8 @@ static Mix_Chunk *sounds[SND_COUNT];
 const char *musicPaths[MUS_COUNT] = {
     [MUS_MENU] = "assets/audio/music/menu.wav",
     [MUS_GAME] = "assets/audio/music/battle.wav",
-    [MUS_GAMEOVER] = "assets/audio/music/menu.wav", // TODO:
-    [MUS_BOSS] = "assets/audio/music/battle.wav",
+    [MUS_GAMEOVER] = "assets/audio/music/menu.wav",
+    [MUS_BOSS] = "assets/audio/music/in-the-wreckage.wav",
 };
 
 static int loadedMusic = 0;

@@ -6,6 +6,7 @@
 #include "game.h"
 #include "player.h"
 #include "particles.h"
+#include "stats.h"
 #include "ui.h"
 #include "waves.h"
 
@@ -56,6 +57,7 @@ void spawn_boss(float x, float y, int wave)
     currentBoss.movementSpeed = 2.0f + (1.0f * (wave % bossWave));
     bossActive = true;
 
+    play_sound(SND_BOSS_ROAR);
     play_music(MUS_BOSS, true);
 }
 
@@ -72,6 +74,8 @@ void tick_boss()
         return;
 
     float deltaTime = get_delta_time();
+
+    entity_tick(&currentBoss.entity);
 
     // Move boss into view
     if (currentBoss.spawning)
@@ -262,7 +266,7 @@ void tick_boss()
         bossActive = false;
         play_sound(SND_EXPLOSION);
         spawn_explosion_particles(currentBoss.entity.pos.x + currentBoss.entity.size.x / 2, currentBoss.entity.pos.y + currentBoss.entity.size.y, 50);
-        play_music(MUS_GAME, true); // return music to mornal
+        play_music(MUS_GAME, true); // return music to normal
     }
 }
 
@@ -397,4 +401,22 @@ void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)
     SDL_RenderDrawRect(renderer, &bg);
 
     generate_text(renderer, font, "The Abyssal Wraith", SCREEN_WIDTH / 2 - 100, 50, (SDL_Color){255, 255, 255});
+}
+
+void damage_boss(Boss *boss, int amount)
+{
+    boss->health = boss->health - amount;
+
+    if (boss->health > 0)
+    {
+        entity_trigger_hit(&boss->entity, 0.05f);
+        play_sound(SND_HIT);
+    }
+    else
+    {
+        // They dead, fade out and deactivate
+        entity_begin_despawn(&boss->entity, 0.5f);
+
+        record_boss_kill();
+    }
 }
