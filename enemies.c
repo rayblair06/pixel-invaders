@@ -18,12 +18,12 @@ bool enemyFrameToggle = false;
 Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
 
-const SpriteAnimation enemySprites[] = {
-    [ENEMY_BASIC] = spaceship4Anim,
-    [ENEMY_FAST] = spaceship5Anim,
-    [ENEMY_TANK] = spaceship6Anim,
-    [ENEMY_SHOOTER] = spaceship7Anim,
-    [ENEMY_BRUTE] = spaceship8Anim};
+const SpriteAnimation *enemySprites[] = {
+    [ENEMY_BASIC] = &spaceship4Anim,
+    [ENEMY_FAST] = &spaceship5Anim,
+    [ENEMY_TANK] = &spaceship6Anim,
+    [ENEMY_SHOOTER] = &spaceship7Anim,
+    [ENEMY_BRUTE] = &spaceship8Anim};
 
 /**
  * Initialise enemies as deactivated
@@ -152,7 +152,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
 
     enemy.type = type;
 
-    enemy.entity.anim = enemySprites[enemy.type];
+    enemy.entity.anim = *enemySprites[enemy.type];
 
     switch (type)
     {

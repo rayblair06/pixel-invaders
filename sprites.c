@@ -79,6 +79,180 @@ typedef struct
     int height;
 } Sprite;
 
+/**
+ * Animation Sets
+ */
+static const SpriteID spriteFallbackFrames[] = {
+    SPR_EXPLOSION1_A,
+    SPR_EXPLOSION1_B,
+    SPR_EXPLOSION1_C,
+    SPR_EXPLOSION1_D,
+    SPR_EXPLOSION1_E};
+
+const SpriteAnimation spriteFallbackAnim = {
+    .frames = (SpriteID *)spriteFallbackFrames,
+    .frameCount = sizeof(spriteFallbackFrames) / sizeof(spriteFallbackFrames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID explosion1Frames[] = {
+    SPR_EXPLOSION1_A,
+    SPR_EXPLOSION1_B,
+    SPR_EXPLOSION1_C,
+    SPR_EXPLOSION1_D,
+    SPR_EXPLOSION1_E};
+
+const SpriteAnimation explosion1Anim = {
+    .frames = (SpriteID *)explosion1Frames,
+    .frameCount = sizeof(explosion1Frames) / sizeof(explosion1Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = false,
+    .hasEnded = false,
+};
+
+static const SpriteID powerup1Frames[] = {
+    SPR_POWERUP_1};
+
+const SpriteAnimation powerup1Anim = {
+    .frames = (SpriteID *)powerup1Frames,
+    .frameCount = sizeof(powerup1Frames) / sizeof(powerup1Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship1Frames[] = {
+    SPR_SPACESHIP1_A,
+    SPR_SPACESHIP1_B};
+
+const SpriteAnimation spaceship1Anim = {
+    .frames = (SpriteID *)spaceship1Frames,
+    .frameCount = sizeof(spaceship1Frames) / sizeof(spaceship1Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship2Frames[] = {
+    SPR_SPACESHIP2_A,
+    SPR_SPACESHIP2_B};
+
+const SpriteAnimation spaceship2Anim = {
+    .frames = (SpriteID *)spaceship2Frames,
+    .frameCount = sizeof(spaceship2Frames) / sizeof(spaceship2Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship3Frames[] = {
+    SPR_SPACESHIP3_A,
+    SPR_SPACESHIP3_B};
+
+const SpriteAnimation spaceship3Anim = {
+    .frames = (SpriteID *)spaceship3Frames,
+    .frameCount = sizeof(spaceship3Frames) / sizeof(spaceship3Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship4Frames[] = {
+    SPR_SPACESHIP4_A};
+
+const SpriteAnimation spaceship4Anim = {
+    .frames = (SpriteID *)spaceship4Frames,
+    .frameCount = sizeof(spaceship4Frames) / sizeof(spaceship4Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship5Frames[] = {
+    SPR_SPACESHIP5_A,
+    SPR_SPACESHIP5_B};
+
+const SpriteAnimation spaceship5Anim = {
+    .frames = (SpriteID *)spaceship5Frames,
+    .frameCount = sizeof(spaceship5Frames) / sizeof(spaceship5Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship6Frames[] = {
+    SPR_SPACESHIP6_A,
+    SPR_SPACESHIP6_B};
+
+const SpriteAnimation spaceship6Anim = {
+    .frames = (SpriteID *)spaceship6Frames,
+    .frameCount = sizeof(spaceship6Frames) / sizeof(spaceship6Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship7Frames[] = {
+    SPR_SPACESHIP7_A};
+
+const SpriteAnimation spaceship7Anim = {
+    .frames = (SpriteID *)spaceship7Frames,
+    .frameCount = sizeof(spaceship7Frames) / sizeof(spaceship7Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship8Frames[] = {
+    SPR_SPACESHIP8_A,
+    SPR_SPACESHIP8_B};
+
+const SpriteAnimation spaceship8Anim = {
+    .frames = (SpriteID *)spaceship8Frames,
+    .frameCount = sizeof(spaceship8Frames) / sizeof(spaceship8Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
+static const SpriteID spaceship9Frames[] = {
+    SPR_SPACESHIP9_A,
+    SPR_SPACESHIP9_B};
+
+const SpriteAnimation spaceship9Anim = {
+    .frames = (SpriteID *)spaceship9Frames,
+    .frameCount = sizeof(spaceship9Frames) / sizeof(spaceship9Frames[0]),
+    .frameTime = 0.1f,
+    .currentFrame = 0,
+    .frameTimer = 0.0f,
+    .loop = true,
+    .hasEnded = false,
+};
+
 static Sprite sprites[SPR_COUNT];
 static int loadedSpriteCount = 0;
 
