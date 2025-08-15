@@ -1,7 +1,3 @@
-#ifndef VERSION_H
-#define VERSION_H
-
-#define GAME_VERSION "alpha"
-#define BUILD_DATE "2025-07-20"
-
-#endif
+#pragma once
+#define GAME_VERSION "v0.0.4-3-gad50306"
+#define BUILD_DATE "2025-08-15"

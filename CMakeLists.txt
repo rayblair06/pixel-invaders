@@ -74,7 +74,7 @@ if(NOT GIT_TAG)
 endif()
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
-configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_BINARY_DIR}/version.h)
+configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_SOURCE_DIR}/version.h)
 include_directories(${CMAKE_BINARY_DIR})
 
 # -------------------------------
