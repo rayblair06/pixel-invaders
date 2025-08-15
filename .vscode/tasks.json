@@ -4,51 +4,25 @@
     {
       "label": "Build Pixel Invaders: Rogue Mode",
       "type": "shell",
-      "command": "clang",
-      "args": [
-        "audio.c",
-        "boss.c",
-        "bullets.c",
-        "constants.c",
-        "collisions.c",
-        "entity.c",
-        "enemies.c",
-        "level_manager.c",
-        "game.c",
-        "main.c",
-        "particles.c",
-        "pickups.c",
-        "player.c",
-        "stats.c",
-        "sprites.c",
-        "scene_manager.c",
-        "ui.c",
-        "upgrades.c",
-        "utils.c",
-        "waves.c",
-        "-o",
-        "build/game",
-        "-I/opt/homebrew/include",
-        "-L/opt/homebrew/lib",
-        "-lSDL2",
-        "-lSDL2_ttf",
-        "-lSDL2_mixer",
-        "-lSDL2_image"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "command": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build --config Debug",
+      "options": {
+        "env": {
+          "PKG_CONFIG_PATH": "/opt/homebrew/lib/pkgconfig" // Change to /usr/local/lib/pkgconfig if Intel Mac
+        }
+      },
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
     },
     {
       "label": "Run Pixel Invaders: Rogue Mode",
       "type": "shell",
-      "command": "./build/game",
-      "dependsOn": ["Build Pixel Invaders: Rogue Mode"],
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      }
+      "command": "./build/PixelInvaders", // change if output binary name differs
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Build Pixel Invaders: Rogue Mode",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always" }
     }
   ]
 }
