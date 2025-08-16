@@ -85,7 +85,7 @@ endif()
 # -------------------------------
 # Get git tag (fallback if not in a repo)
 execute_process(
-    COMMAND git describe --tags --always --dirty
+    COMMAND git describe --tags --always
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE GIT_TAG
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -95,16 +95,8 @@ if(NOT GIT_TAG)
 endif()
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
-
-# Generate version.h from version.h.in into build tree
-set(GENERATED_DIR ${CMAKE_BINARY_DIR}/generated)
-file(MAKE_DIRECTORY ${GENERATED_DIR})
-configure_file(${CMAKE_SOURCE_DIR}/version.h.in
-               ${GENERATED_DIR}/version.h
-               @ONLY)
-
-# Make generated header visible to PixelInvaders
-target_include_directories(PixelInvaders PRIVATE ${GENERATED_DIR})
+configure_file(${CMAKE_SOURCE_DIR}/version.h.in ${CMAKE_SOURCE_DIR}/version.h)
+include_directories(${CMAKE_BINARY_DIR})
 
 # -------------------------------
 # Install Rules
