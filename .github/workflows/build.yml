@@ -79,7 +79,7 @@ jobs:
             cp /opt/homebrew/lib/lib${lib}-*.dylib dist/libs/ || true
           done
           # Fix rpath to look for local libs
-          install_name_tool -add_rpath "@executable_path/libs" dist/PixelInvaders
+          install_name_tool -add_rpath "@executable_path/libs" dist/PixelInvaders.app/Contents/MacOS/PixelInvaders
           for dylib in dist/libs/*.dylib; do
             install_name_tool -id "@executable_path/libs/$(basename $dylib)" $dylib
           done
