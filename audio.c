@@ -2,16 +2,16 @@
 #include "audio.h"
 
 const char *soundPaths[SND_COUNT] = {
-    [SND_SHOOT] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTBy_Bullet By Centred Fast_02.wav",
-    [SND_LASER] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/SCIMisc_Reload Alien Tech_02.wav",
-    [SND_CHARGE1] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BEEP_Targeting Loop_06.wav",
-    [SND_CHARGE2] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/LASRGun_Electron Impeller Charged Fire_02.wav",
-    [SND_ENEMY_DEATH] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/ANMLBat_Creature Vocalisation_01.wav",
-    [SND_EXPLOSION] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/EXPLDsgn_Explosion Impact_14.wav",
-    [SND_PICKUP] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/UIBeep_Lock On_05.wav",
-    [SND_HIT] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/BLLTRico_Ricochet Metallic_04.wav",
-    [SND_SHIELD_BREAK] = "assets/audio/sounds/Sci Fi Weapons Cyberpunk Arsenal Preview/Audio/GUNMech_Scope Deactivate_11.wav",
-    [SND_BOSS_ROAR] = "assets/audio/music/fx/scream.wav",
+    [SND_SHOOT] = "assets/audio/sounds/BLLTBy_Bullet By Centred Fast_02.wav",
+    [SND_LASER] = "assets/audio/sounds/SCIMisc_Reload Alien Tech_02.wav",
+    [SND_CHARGE1] = "assets/audio/sounds/BEEP_Targeting Loop_06.wav",
+    [SND_CHARGE2] = "assets/audio/sounds/LASRGun_Electron Impeller Charged Fire_02.wav",
+    [SND_ENEMY_DEATH] = "assets/audio/sounds/ANMLBat_Creature Vocalisation_01.wav",
+    [SND_EXPLOSION] = "assets/audio/sounds/EXPLDsgn_Explosion Impact_14.wav",
+    [SND_PICKUP] = "assets/audio/sounds/UIBeep_Lock On_05.wav",
+    [SND_HIT] = "assets/audio/sounds/BLLTRico_Ricochet Metallic_04.wav",
+    [SND_SHIELD_BREAK] = "assets/audio/sounds/GUNMech_Scope Deactivate_11.wav",
+    [SND_BOSS_ROAR] = "assets/audio/sounds/scream.wav",
 };
 
 static int loadedSounds = 0;

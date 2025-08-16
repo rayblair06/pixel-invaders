@@ -16,7 +16,7 @@
     {
       "label": "Run Pixel Invaders: Rogue Mode",
       "type": "shell",
-      "command": "./build/PixelInvaders", // change if output binary name differs
+      "command": "./build/PixelInvaders.app/Contents/MacOS/PixelInvaders", // change if output binary name differs
       "options": {
         "cwd": "${workspaceFolder}"
       },
