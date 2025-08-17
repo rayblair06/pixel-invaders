@@ -74,15 +74,40 @@ jobs:
       - name: Bundle SDL dylibs (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          mkdir -p dist/libs
+          APP=dist/PixelInvaders.app
+          EXE="$APP/Contents/MacOS/PixelInvaders"
+          FWK="$APP/Contents/Frameworks"
+
+          mkdir -p "$FWK"
+
+          # 1) Copy SDL dylibs from Homebrew into the bundle's Frameworks dir
           for lib in SDL2 SDL2_image SDL2_ttf SDL2_mixer; do
-            cp /opt/homebrew/lib/lib${lib}-*.dylib dist/libs/ || true
+            src=$(ls /opt/homebrew/lib/lib${lib}-*.dylib | head -n1)
+            cp "$src" "$FWK/"
           done
-          # Fix rpath to look for local libs
-          install_name_tool -add_rpath "@executable_path/libs" dist/PixelInvaders.app/Contents/MacOS/PixelInvaders
-          for dylib in dist/libs/*.dylib; do
-            install_name_tool -id "@executable_path/libs/$(basename $dylib)" $dylib
+
+          # 2) Point each copied dylib's "install name" (its ID) to @rpath/...
+          for dylib in "$FWK"/*.dylib; do
+            base=$(basename "$dylib")
+            install_name_tool -id "@rpath/$base" "$dylib"
           done
+
+          # 3) Rewrite the app binary to look for SDL at @rpath/..., not /opt/homebrew/...
+          #    (Check actual names with: otool -L "$EXE")
+          for base in libSDL2-*.dylib libSDL2_image-*.dylib libSDL2_ttf-*.dylib libSDL2_mixer-*.dylib; do
+            if otool -L "$EXE" | grep -q "/opt/homebrew/lib/$base"; then
+              install_name_tool -change "/opt/homebrew/lib/$base" "@rpath/$base" "$EXE"
+            fi
+          done
+
+          # 4) Add an rpath in the app binary to point at the Frameworks dir
+          #    (Use ../Frameworks relative to the executable)
+          install_name_tool -add_rpath "@executable_path/../Frameworks" "$EXE" || true
+
+          # 5) Ad-hoc sign everything so Gatekeeper has fewer reasons to complain
+          #    (Not notarized, but better than completely unsigned)
+          codesign --force --deep --sign - "$FWK"/*.dylib
+          codesign --force --deep --sign - "$APP"
 
       # -------------------------------
       # Bundle SDL Libraries (Linux)
@@ -107,8 +132,13 @@ jobs:
           7z a ../PixelInvaders-${{ matrix.os }}.zip *
           cd ..
 
-      - name: Package Game (Linux/macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Package App (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent dist/PixelInvaders.app PixelInvaders-macos.zip
+
+      - name: Package Game (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           cd dist
           zip -r ../PixelInvaders-${{ matrix.os }}.zip .
