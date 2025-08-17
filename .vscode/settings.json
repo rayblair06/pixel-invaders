@@ -30,6 +30,7 @@
     "stats.h": "c",
     "__node_handle": "c",
     "__locale": "c",
-    "utils.h": "c"
+    "utils.h": "c",
+    "ui.h": "c"
   }
 }

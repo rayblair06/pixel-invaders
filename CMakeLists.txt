@@ -21,6 +21,7 @@ set(SOURCES
     particles.c
     pickups.c
     player.c
+    options.c
     scene_manager.c
     stats.c
     sprites.c

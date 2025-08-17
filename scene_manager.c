@@ -14,6 +14,7 @@
 #include "entity.h"
 #include "level_manager.h"
 #include "game.h"
+#include "options.h"
 #include "sprites.h"
 #include "particles.h"
 #include "pickups.h"
@@ -133,6 +134,7 @@ extern void stop_game();
 const char *
     mainMenuOptions[] = {"Start Game",
                          "Previous Runs",
+                         "Options",
                          "Quit"};
 
 int selectedMenuOption = 0;
@@ -178,6 +180,9 @@ void manage_scene(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate,
     case SCENE_PREVIOUS_RUNS:
         scene_previous_runs(renderer, font, keystate, prevKeystate);
         break;
+    case SCENE_OPTIONS:
+        scene_options(renderer, font, keystate, prevKeystate);
+        break;
     }
 }
 
@@ -213,6 +218,11 @@ void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keysta
 
             break;
         case 2:
+            scene = SCENE_OPTIONS;
+            options_open();
+
+            break;
+        case 3:
             stop_game();
             break;
         }
@@ -243,6 +253,21 @@ void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *ke
     {
         scene = SCENE_MAIN_MENU;
     }
+}
+
+void scene_options(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+{
+    render_background(renderer);
+
+    options_handle_input(keystate, prevKeystate);
+
+    if (!options_is_open())
+    {
+        scene = SCENE_MAIN_MENU;
+        return;
+    }
+
+    options_render(renderer, font);
 }
 
 void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)

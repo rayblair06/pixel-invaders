@@ -14,6 +14,7 @@
 #include "entity.h"
 #include "level_manager.h"
 #include "game.h"
+#include "options.h"
 #include "sprites.h"
 #include "particles.h"
 #include "pickups.h"
@@ -66,8 +67,15 @@ int main(int argc, char *argv[])
         SDL_FreeSurface(icon);
     }
 
+    options_init(window);
+
     // Create a renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    // Scale to resolution
+    // SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    // SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    // SDL_RenderSetIntegerScale(renderer, SDL_FALSE);
 
     init_sprites(renderer);
     init_audio();
