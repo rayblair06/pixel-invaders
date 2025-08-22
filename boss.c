@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "audio.h"
 #include "boss.h"
+#include "bullets.h"
 #include "constants.h"
 #include "enemies.h"
 #include "game.h"
@@ -35,6 +36,10 @@ void spawn_boss(float x, float y, int wave)
 
     currentBoss.attackTimer = 3.0f;
     currentBoss.targetX = currentBoss.entity.pos.x;
+
+    currentBoss.sideGunsAttackTimer = 2.0f;
+    currentBoss.isReadyToShoot = false;
+    currentBoss.isSideGunsShooting = false;
 
     currentBoss.chargingLaser = false;
     currentBoss.laserFiring = false;
@@ -121,6 +126,7 @@ void tick_boss()
         // Determine target position (player's x + some random offset)
         float playerCenter = player.entity.pos.x + player.entity.size.x / 2;
         currentBoss.targetX = playerCenter + randomOffset;
+        currentBoss.sideGunsTargetX = playerCenter + randomOffset;
 
         // Move towards targetX
         float bossMovementSpeed = !currentBoss.phaseTwo ? currentBoss.movementSpeed : currentBoss.movementSpeed + 0.5f;
@@ -174,6 +180,46 @@ void tick_boss()
     //         currentBoss.moveDirection = true; // Go right
     //     }
     // }
+
+    // Side guns logic
+    if (!currentBoss.isReadyToShoot && !currentBoss.isSideGunsShooting)
+    {
+        currentBoss.sideGunsAttackTimer -= deltaTime;
+
+        if (currentBoss.sideGunsAttackTimer <= 0)
+        {
+            currentBoss.isReadyToShoot = true;
+        }
+    }
+
+    if (currentBoss.isReadyToShoot)
+    {
+        currentBoss.isSideGunsShooting = true;
+        currentBoss.isReadyToShoot = false;
+    }
+
+    if (!currentBoss.isReadyToShoot && currentBoss.isSideGunsShooting)
+    {
+        int bossCenterX = currentBoss.entity.pos.x + (currentBoss.entity.size.x / 2);
+        int bossTurrentY = currentBoss.entity.pos.y + (currentBoss.entity.size.y - 35);
+
+        int bossTurrentOneX = bossCenterX - 80;
+        int bossTurrentTwoX = bossCenterX - 55;
+        int bossTurrentThreeX = bossCenterX + 55;
+        int bossTurrentFourX = bossCenterX + 80;
+
+        play_sound(SND_SHOOT2);
+
+        // Fire 4 bullets
+        spawn_enemy_bullet(bossTurrentOneX, bossTurrentY, 10);
+        spawn_enemy_bullet(bossTurrentTwoX, bossTurrentY, 10);
+        spawn_enemy_bullet(bossTurrentThreeX, bossTurrentY, 10);
+        spawn_enemy_bullet(bossTurrentFourX, bossTurrentY, 10);
+
+        // Reset firing logic
+        currentBoss.isSideGunsShooting = false;
+        currentBoss.sideGunsAttackTimer = !currentBoss.phaseTwo ? 2.0f : 0.5f;
+    }
 
     // Laser Attack logic
     if (!currentBoss.chargingLaser && !currentBoss.laserFiring)
