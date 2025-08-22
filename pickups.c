@@ -63,14 +63,17 @@ void tick_pickups(void)
 
         move(&pickup->entity, DOWN, 2);
 
-        // Stop falling at player Y and start despawning
-        if (pickup->entity.pos.y >= player.entity.pos.y)
+        // Stop falling when reaches player and start despawning
+        const float stopPositionY = (player.entity.pos.y + (player.entity.size.y / 2));
+        const float timeToDespawn = 10.0f; // 10 seconds
+
+        if (pickup->entity.pos.y >= stopPositionY)
         {
-            pickup->entity.pos.y = player.entity.pos.y;
+            pickup->entity.pos.y = stopPositionY;
 
             if (!pickup->entity.isDespawning)
             {
-                entity_begin_despawn(&pickup->entity, 5.0f);
+                entity_begin_despawn(&pickup->entity, timeToDespawn);
             }
         }
 
