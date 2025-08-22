@@ -299,7 +299,7 @@ void trigger_player_shoot()
         spreadAngles[2] = 0.2f;
     }
 
-    SoundID fireSound = hasMultiShot ? SND_SHOOT : SND_SHOOT;
+    SoundID fireSound = hasMultiShot ? SND_SHOOT1 : SND_SHOOT1;
 
     play_sound(fireSound);
 

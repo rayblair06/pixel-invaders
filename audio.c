@@ -2,7 +2,8 @@
 #include "audio.h"
 
 const char *soundPaths[SND_COUNT] = {
-    [SND_SHOOT] = "assets/audio/sounds/BLLTBy_Bullet By Centred Fast_02.wav",
+    [SND_SHOOT1] = "assets/audio/sounds/BLLTBy_Bullet By Centred Fast_02.wav",
+    [SND_SHOOT2] = "assets/audio/sounds/LASRGun_Classic Blaster A Fire_03.wav",
     [SND_LASER] = "assets/audio/sounds/SCIMisc_Reload Alien Tech_02.wav",
     [SND_CHARGE1] = "assets/audio/sounds/BEEP_Targeting Loop_06.wav",
     [SND_CHARGE2] = "assets/audio/sounds/LASRGun_Electron Impeller Charged Fire_02.wav",

@@ -100,6 +100,8 @@ void tick_enemies(void)
         {
             if (rand() % 500 == 0)
             {
+                play_sound(SND_SHOOT2);
+
                 spawn_enemy_bullet(
                     enemy->entity.pos.x + enemy->entity.size.x / 2,
                     enemy->entity.pos.y + enemy->entity.size.y,
