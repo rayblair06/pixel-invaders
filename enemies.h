@@ -5,7 +5,7 @@
 #include "entity.h"
 #include "sprites.h"
 
-#define MAX_ENEMIES 50
+#define MAX_ENEMIES 255
 
 struct Enemy;
 

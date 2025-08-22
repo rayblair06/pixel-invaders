@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include "entity.h"
 
-#define MAX_BULLETS 100
+#define MAX_BULLETS 255
 
 typedef struct
 {
@@ -25,7 +25,7 @@ extern Bullet bullets[MAX_BULLETS];
 extern float bulletSpeed;
 extern float bulletDamage;
 
-#define MAX_ENEMY_BULLETS 50
+#define MAX_ENEMY_BULLETS 255
 
 typedef struct
 {
