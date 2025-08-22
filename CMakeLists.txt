@@ -76,7 +76,7 @@ endif()
 # -------------------------------
 if (MSVC)
     # Disable sprintf warnings
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    # add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Disable conversion warnings (int ↔ float)
     target_compile_options(PixelInvaders PRIVATE /wd4244 /wd4305)
 endif()

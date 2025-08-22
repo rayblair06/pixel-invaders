@@ -10,6 +10,7 @@ typedef enum
     VIDEO_WINDOWED,
     VIDEO_BORDERLESS,
     VIDEO_FULLSCREEN,
+
     VIDEO_MODE_COUNT,
 } VideoMode;
 

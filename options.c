@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdio.h>
 #include <string.h>
 #include "constants.h"
 #include "options.h"
@@ -93,6 +94,9 @@ void options_apply(SDL_Window *window)
     case VIDEO_FULLSCREEN:
         set_borderless(win, true);
         set_fullscreen(win, true);
+        break;
+    case VIDEO_MODE_COUNT:
+        fprintf(stderr, "Error: VIDEO_MODE_COUNT used as a real mode!\n");
         break;
     }
 }
