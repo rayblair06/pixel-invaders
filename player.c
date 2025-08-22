@@ -48,7 +48,7 @@ Uint32 regenHealthCooldown = 10000; // ms
 
 bool canShoot = true;        // flag for if we can fire
 float shootTimer = 0.0f;     // seconds since last fire
-float shootCooldown = 0.25f; // seconds til can fire again (500ms)
+float shootCooldown = 0.25f; // seconds til can fire again (250ms)
 
 /**
  * Initialises the player
