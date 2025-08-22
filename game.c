@@ -253,7 +253,7 @@ void reduce_player_health(int amount)
 {
     health = health - amount;
 
-        entity_trigger_hit(&player.entity, 0.05f);
+    entity_trigger_hit(&player.entity, 0.05f);
     play_sound(SND_HIT);
     trigger_screen_shake();
     trigger_red_flash();
