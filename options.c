@@ -174,9 +174,9 @@ void options_render(SDL_Renderer *renderer, TTF_Font *font)
     if (!s_open)
         return;
 
-    // Build lines
-    const int itemCount = 4;
-    const char *labels[itemCount];
+#define OPTION_LABELS 4
+
+    const char *labels[OPTION_LABELS];
 
     static char modeLine[64];
     static char resLine[64];
@@ -197,5 +197,5 @@ void options_render(SDL_Renderer *renderer, TTF_Font *font)
     int panelY = (SCREEN_HEIGHT - panelH) / 2;
 
     // render_panel(renderer, panelX, panelY, panelW, panelH);
-    render_menu(renderer, font, "Options", labels, itemCount, s_row, panelX + 25, panelY + 60);
+    render_menu(renderer, font, "Options", labels, OPTION_LABELS, s_row, panelX + 25, panelY + 60);
 }
