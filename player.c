@@ -46,6 +46,10 @@ int regenAmount = 10;
 Uint32 lastRegenHealthTime = 0;
 Uint32 regenHealthCooldown = 10000; // ms
 
+bool canShoot = true;        // flag for if we can fire
+float shootTimer = 0.0f;     // seconds since last fire
+float shootCooldown = 0.25f; // seconds til can fire again (500ms)
+
 /**
  * Initialises the player
  */
@@ -197,22 +201,27 @@ void tick_player(const Uint8 *keystate)
     // cameraOffsetX += (targetX - cameraOffsetX) * deltaTime * cameraSmoothness;
     // cameraOffsetY += (targetY - cameraOffsetY) * deltaTime * cameraSmoothness;
 
-    // Shoot bullet if SPACE is pressed
-    static bool spaceHeld = false;
-
+    // Shoot if space is pressed and we are able to shoot
     if (keystate[SDL_SCANCODE_SPACE])
     {
-        // prevent holding space from firing too fast
-        if (!spaceHeld)
+        if (canShoot)
         {
             trigger_player_shoot();
-        }
 
-        spaceHeld = true;
+            canShoot = false;
+            shootTimer = 0.0f;
+        }
     }
-    else
+
+    // Shoot cooldown
+    if (!canShoot)
     {
-        spaceHeld = false;
+        shootTimer += deltaTime;
+
+        if (shootTimer >= shootCooldown)
+        {
+            canShoot = true;
+        }
     }
 
     // Regenerate health
