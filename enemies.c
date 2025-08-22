@@ -193,12 +193,10 @@ void damage_enemy(Enemy *enemy, int amount)
 {
     enemy->health = enemy->health - amount;
 
-    if (enemy->health > 0)
-    {
-        entity_trigger_hit(&enemy->entity, 0.05f);
-        play_sound(SND_HIT);
-    }
-    else
+    entity_trigger_hit(&enemy->entity, 0.05f);
+    play_sound(SND_HIT);
+
+    if (enemy->health <= 0)
     {
         // They dead, fade out and deactivate
         entity_begin_despawn(&enemy->entity, 0.5f);

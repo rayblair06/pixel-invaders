@@ -408,12 +408,10 @@ void damage_boss(Boss *boss, int amount)
 {
     boss->health = boss->health - amount;
 
-    if (boss->health > 0)
-    {
-        entity_trigger_hit(&boss->entity, 0.05f);
-        play_sound(SND_HIT);
-    }
-    else
+    entity_trigger_hit(&boss->entity, 0.05f);
+    play_sound(SND_HIT);
+
+    if (boss->health <= 0)
     {
         // They dead, fade out and deactivate
         entity_begin_despawn(&boss->entity, 0.5f);
