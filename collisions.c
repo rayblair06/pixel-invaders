@@ -11,9 +11,34 @@
 #include "player.h"
 #include "stats.h"
 
-bool check_overlap(SDL_Rect a, SDL_Rect b)
+/**
+ * Scale Rects for use in smaller/larger hitboxes
+ */
+static SDL_Rect scale_rect(SDL_Rect rect, float scale)
 {
-    return SDL_HasIntersection(&a, &b);
+    if (scale <= 0.0f)
+        return (SDL_Rect){rect.x, rect.y, 0, 0};
+
+    int newWidth = (int)(rect.w * scale);
+    int newHeight = (int)(rect.h * scale);
+    int centerX = rect.x + rect.w / 2;
+    int centerY = rect.y + rect.h / 2;
+
+    SDL_Rect scaledRect;
+    scaledRect.w = newWidth;
+    scaledRect.h = newHeight;
+    scaledRect.x = centerX - newWidth / 2;
+    scaledRect.y = centerY - newHeight / 2;
+
+    return scaledRect;
+}
+
+bool check_overlap(SDL_Rect a, float aScale, SDL_Rect b, float bScale)
+{
+    SDL_Rect scaledA = scale_rect(a, aScale);
+    SDL_Rect scaledB = scale_rect(b, bScale);
+
+    return SDL_HasIntersection(&scaledA, &scaledB);
 }
 
 void check_collisions(void)
@@ -32,7 +57,11 @@ void check_collisions(void)
             if (enemies[j].entity.isDespawning)
                 continue;
 
-            if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&enemies[j].entity)))
+            if (check_overlap(
+                    entity_rect(&bullets[i].entity),
+                    bullets[i].entity.hitboxScale,
+                    entity_rect(&enemies[j].entity),
+                    enemies[j].entity.hitboxScale))
             {
                 damage_enemy(&enemies[j], bulletDamage);
 
@@ -63,7 +92,11 @@ void check_collisions(void)
         if (!enemyBullets[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&enemyBullets[i].entity), entity_rect(&player.entity)))
+        if (check_overlap(
+                entity_rect(&enemyBullets[i].entity),
+                enemyBullets[i].entity.hitboxScale,
+                entity_rect(&player.entity),
+                player.entity.hitboxScale))
         {
             reduce_player_health(enemyBullets[i].damage);
 
@@ -80,7 +113,11 @@ void check_collisions(void)
         if (!currentBoss.entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&bullets[i].entity), entity_rect(&currentBoss.entity)))
+        if (check_overlap(
+                entity_rect(&bullets[i].entity),
+                bullets[i].entity.hitboxScale,
+                entity_rect(&currentBoss.entity),
+                currentBoss.entity.hitboxScale))
         {
             // If our boss is still spawning, just remove bullet
             if (currentBoss.spawning)
@@ -117,7 +154,11 @@ void check_collisions(void)
         if (!enemies[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&enemies[i].entity), entity_rect(&player.entity)))
+        if (check_overlap(
+                entity_rect(&enemies[i].entity),
+                enemies[i].entity.hitboxScale,
+                entity_rect(&player.entity),
+                player.entity.hitboxScale))
         {
             // Double damage but enemy instantly disappears
             if (!enemies[i].entity.isDespawning)
@@ -135,7 +176,11 @@ void check_collisions(void)
         if (!pickups[i].entity.isActive)
             continue;
 
-        if (check_overlap(entity_rect(&pickups[i].entity), entity_rect(&player.entity)))
+        if (check_overlap(
+                entity_rect(&pickups[i].entity),
+                pickups[i].entity.hitboxScale,
+                entity_rect(&player.entity),
+                player.entity.hitboxScale))
         {
             pickups[i].entity.isActive = false;
 
@@ -155,11 +200,12 @@ void check_collisions(void)
             currentBoss.entity.pos.y + currentBoss.entity.size.y,
             8,
             SCREEN_HEIGHT - (currentBoss.entity.pos.y + currentBoss.entity.size.y)};
+        float laserHitboxSale = 1.0f;
 
-        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.entity), laserHitbox))
+        if (currentBoss.laserDamageTimer <= 0.0f && check_overlap(entity_rect(&player.entity), player.entity.hitboxScale, laserHitbox, laserHitboxSale))
         {
             // TODO: Move to boss variable
-            reduce_player_health(25);
+            reduce_player_health(75);
             currentBoss.laserDamageTimer = currentBoss.laserDamageCooldown;
         }
     }

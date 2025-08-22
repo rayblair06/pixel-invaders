@@ -16,6 +16,8 @@ Entity create_entity(float x, float y, int w, int h)
         .despawningTimer = 0.0f,
         .despawningDuration = 5.0f,
 
+        .hitboxScale = 0.5f,
+
         .anim = spriteFallbackAnim,
         .alpha = 255,
         .color = {.r = 255, .g = 255, .b = 255}};

@@ -37,7 +37,8 @@ typedef struct
     Vec2 acc;    // aceleration (px/s^2)
     float angle; // degrees
 
-    int z; // render order (lowest bottom)
+    float hitboxScale; // Scale of hitbox in relation to entity (1.0f = 1:1)
+    int z;             // render order (lowest bottom)
 
     // animation/visuals
     SpriteAnimation anim;
