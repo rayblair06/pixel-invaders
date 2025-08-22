@@ -28,7 +28,7 @@ void spawn_boss(float x, float y, int wave)
         72 * 2);
     currentBoss.entity.hitboxScale = 0.9f;
     currentBoss.entity.anim = spaceship9Anim;
-    currentBoss.health = currentBoss.healthMax = 50 + (25 * (wave % bossWave));
+    currentBoss.health = currentBoss.healthMax = 200 + (25 * (wave % bossWave));
 
     currentBoss.phaseTwo = false;
     currentBoss.active = true;
