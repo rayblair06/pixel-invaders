@@ -191,7 +191,7 @@ void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keysta
     SDL_Color white = {225, 255, 255, 255};
 
     render_background(renderer);
-    render_menu(renderer, font, "Pixel Invaders", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
+    render_menu(renderer, font, "PIXEL INVADERS", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
 
     generate_text(renderer, font, GAME_VERSION, 10, SCREEN_HEIGHT - 30, white);
 

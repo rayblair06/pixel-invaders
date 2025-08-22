@@ -90,6 +90,7 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
 void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
 {
     SDL_Color white = {255, 255, 255};
+    SDL_Color gold = {255, 215, 0};
     SDL_Color yellow = {255, 255, 0};
 
     int titleHeight = (title != NULL) ? 40 : 0;
@@ -105,20 +106,40 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     // Optional: Generate Menu Title
     if (title != NULL)
     {
-        SDL_Color titleColor = white;
-        SDL_Surface *titleSurface = TTF_RenderText_Blended(font, title, titleColor);
+        TTF_Font *titleFont = TTF_OpenFont("assets/fonts/PixelifySans-SemiBold.ttf", 42);
+        SDL_Color titleColor = gold;
+        SDL_Surface *titleSurface = TTF_RenderText_Blended(titleFont, title, titleColor);
         SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
+        SDL_Color shadowColor = {0, 0, 0, 150};
+        SDL_Surface *shadowSurface = TTF_RenderText_Blended(titleFont, title, shadowColor);
+        SDL_Texture *shadowTexture = SDL_CreateTextureFromSurface(renderer, shadowSurface);
+
+        int titleX = panelX + panelWidth / 2 - titleSurface->w / 2;
+        int titleY = panelY + paddingY - 40;
+        int titleWidth = titleSurface->w;
+        int titleHeight = titleSurface->h;
+
+        SDL_Rect shadowRect = {
+            titleX + 2,
+            titleY + 2,
+            titleWidth,
+            titleHeight};
+
+        SDL_RenderCopy(renderer, shadowTexture, NULL, &shadowRect);
+
         SDL_Rect titleRect = {
-            panelX + panelWidth / 2 - titleSurface->w / 2,
-            panelY + paddingY,
-            titleSurface->w,
-            titleSurface->h};
+            titleX,
+            titleY,
+            titleWidth,
+            titleHeight};
 
         SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
 
         SDL_FreeSurface(titleSurface);
         SDL_DestroyTexture(titleTexture);
+        SDL_FreeSurface(shadowSurface);
+        SDL_DestroyTexture(shadowTexture);
     }
 
     int optionStartY = panelY + paddingY + titleHeight;
@@ -140,9 +161,16 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
 
         if (i == selectedIndex)
         {
-            SDL_Rect arrow = {dst.x - 30, dst.y + 4, 10, 10};
+            int x = dst.x - 20;
+            int y = dst.y + dst.h / 2;
+
             SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-            SDL_RenderFillRect(renderer, &arrow);
+
+            for (int dy = -6; dy <= 6; dy++)
+            {
+                int lineLength = 6 - abs(dy);
+                SDL_RenderDrawLine(renderer, x, y + dy, x + lineLength, y + dy);
+            }
         }
 
         SDL_FreeSurface(surface);
