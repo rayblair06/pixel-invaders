@@ -33,10 +33,15 @@ jobs:
       - name: Install Dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
+          brew update-reset || true
           brew update
-          brew install cmake pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip
 
-          # Ensure pkg-config can find SDL2
+          # Try install, then upgrade, then re-link if needed
+          brew install cmake || brew upgrade cmake || brew link --overwrite cmake
+
+          brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer zip || true
+
+          # Ensure pkg-config sees Homebrew (Apple Silicon path)
           echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
 
       # -------------------------------
@@ -134,7 +139,7 @@ jobs:
       - name: Package App (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          ditto -c -k --sequesterRsrc --keepParent dist/PixelInvaders.app PixelInvaders-${{ matrix.os }}.zip
+          ditto -c -k --sequesterRsrc --keepParent dist/PixelInvaders.app PixelInvaders-macos.zip
 
       - name: Package Game (Linux)
         if: matrix.os == 'ubuntu-latest'
