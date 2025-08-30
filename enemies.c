@@ -301,7 +301,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         enemy.stats.baseDamage = 1.0f;
 
         enemy.stats.firePattern = FIRE_STRAIGHT;
-        enemy.stats.fireCooldown = 1.8f;
+        enemy.stats.fireCooldown = 4.8f;
         enemy.stats.fireJitter = 0.35f;
         enemy.stats.burstSize = 1;
         enemy.stats.burstInterval = 0.0f;
@@ -337,7 +337,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         enemy.stats.baseDamage = 1.0f;
 
         enemy.stats.firePattern = FIRE_AIMED;
-        enemy.stats.fireCooldown = 1.1f;
+        enemy.stats.fireCooldown = 3.8f;
         enemy.stats.fireJitter = 0.25f;
         enemy.stats.burstSize = 2;
         enemy.stats.burstInterval = 0.12f;
@@ -348,7 +348,7 @@ Enemy create_enemy(float x, float y, EnemyType type)
         enemy.stats.baseDamage = 1.5f;
 
         enemy.stats.firePattern = FIRE_TWIN;
-        enemy.stats.fireCooldown = 2.4f;
+        enemy.stats.fireCooldown = 3.4f;
         enemy.stats.fireJitter = 0.4f;
         enemy.stats.burstSize = 1;
         enemy.stats.burstInterval = 0.0f;
