@@ -20,6 +20,15 @@ typedef enum
     ENEMY_TYPE_COUNT
 } EnemyType;
 
+typedef enum
+{
+    FIRE_NONE = 0,
+    FIRE_STRAIGHT, // single bullet straight down
+    FIRE_AIMED,    // aim at player
+    FIRE_TWIN,     // two muzzle shot
+    FIRE_SPREAD3,  // 3-way spread
+} EnemyFirePattern;
+
 typedef struct
 {
     // Base values of unit
@@ -32,9 +41,24 @@ typedef struct
     float speed;
     int damage;
 
-    // Abilities
-    bool hasBob;     // Bobs out of the way of shots
-    bool hasWeapons; // Ability to shoot
+    // Shooting
+    EnemyFirePattern firePattern;
+    float fireCooldown; // seconds between "attack cycles"
+    float fireTimer;    // counts down with dt
+    float fireJitter;   // +- seconds added on each reset
+
+    int burstSize;       // shots per burst (1 = none)
+    int burstLeft;       // remaining shots in current burst
+    float burstInterval; // time between shots inside the burst (seconds)
+    float burstTimer;    // countdown between burst shots
+
+    // Orbiter-only fields (ignored for other types)
+    float ang;          // current angle (radians)
+    float angSpeed;     // radians/src
+    float orbitRadius;  // pixels
+    float radiusDrift;  // pixels/sec (negative to tighten spiral)
+    float descendSpeed; // pixels/sec (downward)
+    float centerX;      // horizontal track center (pixels)
 } EnemyStats;
 
 typedef void (*EnemyBehaviour)(struct Enemy *);

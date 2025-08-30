@@ -210,11 +210,11 @@ void tick_boss()
 
         play_sound(SND_SHOOT2);
 
-        // Fire 4 bullets
-        spawn_enemy_bullet(bossTurrentOneX, bossTurrentY, 10);
-        spawn_enemy_bullet(bossTurrentTwoX, bossTurrentY, 10);
-        spawn_enemy_bullet(bossTurrentThreeX, bossTurrentY, 10);
-        spawn_enemy_bullet(bossTurrentFourX, bossTurrentY, 10);
+        // Fire 4 bullets TODO: Fix
+        // spawn_enemy_bullet(bossTurrentOneX, bossTurrentY, 10);
+        // spawn_enemy_bullet(bossTurrentTwoX, bossTurrentY, 10);
+        // spawn_enemy_bullet(bossTurrentThreeX, bossTurrentY, 10);
+        // spawn_enemy_bullet(bossTurrentFourX, bossTurrentY, 10);
 
         // Reset firing logic
         currentBoss.isSideGunsShooting = false;

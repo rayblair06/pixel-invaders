@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "constants.h"
 #include "bullets.h"
+#include "enemies.h"
 #include "entity.h"
 #include "game.h"
 #include "particles.h"
@@ -148,7 +149,7 @@ void init_enemy_bullets(void)
     }
 }
 
-void spawn_enemy_bullet(float x, float y, int damage)
+void spawn_enemy_bullet(float x, float y, float vx, float vy, int damage)
 {
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
@@ -166,6 +167,66 @@ void spawn_enemy_bullet(float x, float y, int damage)
             break;
         }
     }
+}
+
+/**
+ * Shoot type: fire one straight down from the enemy's center-bottom
+ */
+void enemy_fire_straight(const Enemy *enemy, float speed, int damage)
+{
+    float cx = enemy->entity.pos.x + enemy->entity.size.x * 0.5f;
+    float y = enemy->entity.pos.y + enemy->entity.size.y;
+
+    spawn_enemy_bullet(cx, y, 0.0f, speed, damage);
+}
+
+/**
+ * Shoot type: fire aimed at x, y
+ */
+void enemy_fire_aimed(const Enemy *enemy, float tx, float ty, float speed, int damage)
+{
+    float sx = enemy->entity.pos.x + enemy->entity.size.x * 0.5f;
+    float sy = enemy->entity.pos.y + enemy->entity.size.y;
+
+    float dx = tx - sx;
+    float dy = ty - sy;
+
+    float len = SDL_sqrtf(dx * dx + dy * dy);
+
+    spawn_enemy_bullet(sx, sy, (dx / len) * speed, (dy / len) * speed, damage);
+}
+
+/**
+ * Shoot type: fire 3-way spread (straight + slight angles)
+ */
+void enemy_fire_spread3(const Enemy *enemy, float baseSpeed, float angleDeg, int damage)
+{
+    float cx = enemy->entity.pos.x + enemy->entity.size.x * 0.5f;
+    float y = enemy->entity.pos.y + enemy->entity.size.y;
+
+    // Center
+    spawn_enemy_bullet(cx, y, 0.0f, baseSpeed, damage);
+
+    // left/right wiht small X velocity
+    float a = angleDeg * 3.1415926f / 180.0f;
+    float vx = baseSpeed * SDL_sinf(a);
+    float vy = baseSpeed * SDL_cosf(a);
+
+    spawn_enemy_bullet(cx, y, -vx, vy, damage);
+    spawn_enemy_bullet(cx, y, vx, vy, damage);
+}
+
+/**
+ * Shoot type: two muzzles
+ */
+void enemy_fire_twin(const Enemy *enemy, float speed, int damage, float offsetX)
+{
+    float leftX = enemy->entity.pos.x + enemy->entity.size.x * 0.5f - offsetX;
+    float rightX = enemy->entity.pos.x + enemy->entity.size.x * 0.5f + offsetX;
+    float y = enemy->entity.pos.y + enemy->entity.size.y;
+
+    spawn_enemy_bullet(leftX, y, 0.0f, speed, damage);
+    spawn_enemy_bullet(rightX, y, 0.0f, speed, damage);
 }
 
 void tick_enemy_bullets(void)
