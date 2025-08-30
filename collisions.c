@@ -186,7 +186,7 @@ void check_collisions(void)
 
             play_sound(SND_PICKUP);
 
-            add_experience(10);
+            add_experience(25);
         }
     }
 
