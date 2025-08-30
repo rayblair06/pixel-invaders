@@ -12,11 +12,11 @@ typedef enum
     SCENE_OPTIONS,
 } Scene;
 
-void manage_scene(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate);
+void manage_scene(const Uint8 *keystate, const Uint8 *prevKeystate);
 
-void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate);
-void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate);
-void scene_options(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate);
-void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate);
+void scene_main_menu(const Uint8 *keystate, const Uint8 *prevKeystate);
+void scene_previous_runs(const Uint8 *keystate, const Uint8 *prevKeystate);
+void scene_options(const Uint8 *keystate, const Uint8 *prevKeystate);
+void scene_game(const Uint8 *keystate, const Uint8 *prevKeystate);
 
 #endif

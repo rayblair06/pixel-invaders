@@ -71,7 +71,7 @@ void entity_animate(Entity *entity, float deltaTime);
 void tick_timer(Entity *entity, float deltaTime);
 
 void entity_tick(Entity *entity);
-void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shakeY);
+void entity_render(Entity *entity, int shakeX, int shakeY);
 void entity_begin_despawn(Entity *entity, float duration_seconds);
 void entity_trigger_hit(Entity *entity, float duration_seconds);
 

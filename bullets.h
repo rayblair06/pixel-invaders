@@ -41,7 +41,7 @@ extern float enemyBulletSpeed;
 void init_bullets(void);
 void spawn_bullet(float x, float y, float angle);
 void tick_bullets(void);
-void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
+void render_bullets(int shakeX, int shakeY);
 void trigger_bullet_explosion(Bullet *bullet);
 
 void init_enemy_bullets(void);
@@ -51,6 +51,6 @@ void entity_fire_aimed(const Entity *entity, float tx, float ty, float speed, in
 void entity_fire_spread3(const Entity *entity, float baseSpeed, float angleDeg, int damage);
 void entity_fire_twin(const Entity *entity, float speed, int damage, float offsetX);
 void tick_enemy_bullets(void);
-void render_enemy_bullets(SDL_Renderer *renderer, int shakeX, int shakeY);
+void render_enemy_bullets(int shakeX, int shakeY);
 
 #endif

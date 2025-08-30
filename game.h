@@ -4,6 +4,14 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
+typedef struct App
+{
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+} App;
+
+App *app(void);
+
 typedef enum
 {
     STATE_NONE, // Game isn't running
@@ -30,6 +38,8 @@ extern bool flashRed;
 extern Uint32 flashStartTime;
 extern Uint32 flashDuration;
 
+void init_app(void);
+
 void init_game(void);
 
 // Returns the current name time in ms (paused time excluded)
@@ -51,7 +61,7 @@ void resume_game(void);
 // Returns whether game is currently paused
 bool is_game_paused(void);
 
-void render_background(SDL_Renderer *renderer);
+void render_background(void);
 
 void update_screen_shake(void);
 void trigger_screen_shake(void);

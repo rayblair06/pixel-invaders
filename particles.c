@@ -90,8 +90,10 @@ void tick_particles(void)
     }
 }
 
-void render_particles(SDL_Renderer *renderer)
+void render_particles()
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
         if (!particles[i].active)

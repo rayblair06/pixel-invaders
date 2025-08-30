@@ -12,8 +12,9 @@
 #include "bullets.h"
 #include "enemies.h"
 #include "entity.h"
-#include "level_manager.h"
+#include "fonts.h"
 #include "game.h"
+#include "level_manager.h"
 #include "options.h"
 #include "sprites.h"
 #include "particles.h"
@@ -99,8 +100,10 @@ void tick_planets()
     }
 }
 
-void render_planets(SDL_Renderer *renderer)
+void render_planets()
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     for (int i = 0; i < MAX_PLANETS; i++)
     {
         if (!planets[i].active)
@@ -147,11 +150,9 @@ bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
     return current[key] && !previous[key];
 }
 
-void render_run_history(SDL_Renderer *renderer, TTF_Font *font)
+void render_run_history(TTF_Font *font)
 {
-    SDL_Color white = {255, 255, 255, 255};
-
-    generate_text(renderer, font, "=== Last Runs===", 50, 100, white);
+    generate_text(font, "=== Last Runs===", 50, 100, COLOR_WHITE);
 
     for (int i = 0; i < runHistory.runCount; i++)
     {
@@ -160,40 +161,40 @@ void render_run_history(SDL_Renderer *renderer, TTF_Font *font)
 
         sprintf(line, "Run %d: Wave %d, Kills %d, EXP %d", i + 1, run->finalWave, run->totalKills, run->totalExperience);
 
-        generate_text(renderer, font, line, 50, 100 + i * 40, white);
+        generate_text(font, line, 50, 100 + i * 40, COLOR_WHITE);
     }
 }
 
 /**
  * Manage which scene we're in
  */
-void manage_scene(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+void manage_scene(const Uint8 *keystate, const Uint8 *prevKeystate)
 {
     switch (scene)
     {
     case SCENE_MAIN_MENU:
-        scene_main_menu(renderer, font, keystate, prevKeystate);
+        scene_main_menu(keystate, prevKeystate);
         break;
     case SCENE_GAME:
-        scene_game(renderer, font, keystate, prevKeystate);
+        scene_game(keystate, prevKeystate);
         break;
     case SCENE_PREVIOUS_RUNS:
-        scene_previous_runs(renderer, font, keystate, prevKeystate);
+        scene_previous_runs(keystate, prevKeystate);
         break;
     case SCENE_OPTIONS:
-        scene_options(renderer, font, keystate, prevKeystate);
+        scene_options(keystate, prevKeystate);
         break;
     }
 }
 
-void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+void scene_main_menu(const Uint8 *keystate, const Uint8 *prevKeystate)
 {
-    SDL_Color white = {225, 255, 255, 255};
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
 
-    render_background(renderer);
-    render_menu(renderer, font, "PIXEL INVADERS", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
+    render_background();
+    render_menu("PIXEL INVADERS", mainMenuOptions, mainMenuOptionCount, selectedMenuOption, 16, 16);
 
-    generate_text(renderer, font, GAME_VERSION, 10, SCREEN_HEIGHT - 30, white);
+    generate_text(font, GAME_VERSION, 10, SCREEN_HEIGHT - 30, COLOR_WHITE);
 
     if (key_pressed(SDL_SCANCODE_UP, keystate, prevKeystate))
         selectedMenuOption = (selectedMenuOption - 1 + mainMenuOptionCount) % mainMenuOptionCount;
@@ -229,25 +230,24 @@ void scene_main_menu(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keysta
     }
 }
 
-void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+void scene_previous_runs(const Uint8 *keystate, const Uint8 *prevKeystate)
 {
-    SDL_Color white = {225, 255, 255, 255};
-
-    render_background(renderer);
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    render_background();
 
     char statsLineTotalRuns[64];
     sprintf(statsLineTotalRuns, "Total runs %d", metaData.totalRuns);
-    generate_text(renderer, font, statsLineTotalRuns, 10, 10, white);
+    generate_text(font, statsLineTotalRuns, 10, 10, COLOR_WHITE);
 
     char statsLineBestWave[64];
     sprintf(statsLineBestWave, "Best Wave %d", metaData.bestWave);
-    generate_text(renderer, font, statsLineBestWave, 10, 40, white);
+    generate_text(font, statsLineBestWave, 10, 40, COLOR_WHITE);
 
     char statsLineTotalExperience[64];
     sprintf(statsLineTotalExperience, "Total Experience %d", metaData.totalExperienceEarned);
-    generate_text(renderer, font, statsLineTotalExperience, 10, 70, white);
+    generate_text(font, statsLineTotalExperience, 10, 70, COLOR_WHITE);
 
-    render_run_history(renderer, font);
+    render_run_history(font);
 
     if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))
     {
@@ -255,9 +255,10 @@ void scene_previous_runs(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *ke
     }
 }
 
-void scene_options(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+void scene_options(const Uint8 *keystate, const Uint8 *prevKeystate)
 {
-    render_background(renderer);
+    SDL_Renderer *renderer = app()->renderer;
+    render_background();
 
     options_handle_input(keystate, prevKeystate);
 
@@ -267,12 +268,14 @@ void scene_options(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate
         return;
     }
 
-    options_render(renderer, font);
+    options_render();
 }
 
-void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, const Uint8 *prevKeystate)
+void scene_game(const Uint8 *keystate, const Uint8 *prevKeystate)
 {
+    SDL_Renderer *renderer = app()->renderer;
     SDL_Color white = {225, 255, 255, 255};
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
 
     // Initialise these on first launch of game
     if (initialiseGameProps)
@@ -296,15 +299,15 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
         initialiseGameProps = false;
     }
 
-    render_background(renderer);
-    render_planets(renderer);
+    render_background();
+    render_planets();
 
-    render_player(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
-    render_bullets(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
-    render_enemy_bullets(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
-    render_enemies(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
-    render_pickups(renderer, (int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
-    render_particles(renderer);
+    render_player((int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_bullets((int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_enemy_bullets((int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_enemies((int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_pickups((int)(shakeOffsetX + cameraOffsetX), (int)(shakeOffsetY + cameraOffsetY));
+    render_particles();
 
     if (!is_game_paused())
     {
@@ -322,19 +325,19 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
             tick_boss();
     }
 
-    render_boss(renderer, shakeOffsetX, shakeOffsetY);
-    render_boss_health(renderer, font);
+    render_boss(shakeOffsetX, shakeOffsetY);
+    render_boss_health();
 
     check_collisions();
 
     update_screen_shake();
     update_red_flash();
 
-    render_stats_panel(renderer, font, 10, 10, 30);
+    render_stats_panel(10, 10, 30);
 
     update_experience_visual();
-    render_health_bar(renderer, font, SCREEN_WIDTH - 220, SCREEN_HEIGHT - 20, 200, 10);
-    render_xp_bar(renderer, font, 10, SCREEN_HEIGHT - 20, 200, 10);
+    render_health_bar(SCREEN_WIDTH - 220, SCREEN_HEIGHT - 20, 200, 10);
+    render_xp_bar(10, SCREEN_HEIGHT - 20, 200, 10);
 
     // Boss overlay
     if (bossActive)
@@ -345,7 +348,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     if (bossActive && get_game_ticks() - bossSpawnTime < 2000)
     {
-        generate_text(renderer, font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 175, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
+        generate_text(font, "The Abyssal Wraith Approaches!", SCREEN_WIDTH / 2 - 175, SCREEN_HEIGHT / 2, (SDL_Color){255, 0, 0, 255});
     }
 
     // Trigger Upgrade Menu delay
@@ -361,14 +364,16 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
     if (choosingUpgrade)
     {
         // Reorganise labels so they match the selections
-        const char *upgrade_labels[UPGRADE_COUNT];
+        const char *upgrade_titles[UPGRADE_COUNT];
+        const char *upgrade_descriptions[UPGRADE_COUNT];
 
         for (int i = 0; i < optionCount; i++)
         {
-            upgrade_labels[i] = upgrades[options[i]].name;
+            upgrade_titles[i] = upgrades[options[i]].name;
+            upgrade_descriptions[i] = upgrades[options[i]].description;
         }
 
-        render_menu(renderer, font, "Choose an Upgrade", upgrade_labels, optionCount, selectedOption, 32, 32);
+        render_upgrade_menu("Choose an Upgrade", upgrade_titles, upgrade_descriptions, optionCount, selectedOption, 32, 32);
     }
 
     if (choosingUpgrade)
@@ -410,7 +415,7 @@ void scene_game(SDL_Renderer *renderer, TTF_Font *font, const Uint8 *keystate, c
 
     if (showRunSummary)
     {
-        render_run_summary(renderer, font, &currentRun);
+        render_run_summary(font, &currentRun);
 
         // Unpause game
         if (key_pressed(SDL_SCANCODE_RETURN, keystate, prevKeystate) || key_pressed(SDL_SCANCODE_KP_ENTER, keystate, prevKeystate))

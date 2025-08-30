@@ -1,6 +1,7 @@
 #include <math.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
+#include "game.h"
 #include "sprites.h"
 
 const char *spritePaths[SPR_COUNT] = {
@@ -256,8 +257,10 @@ const SpriteAnimation spaceship9Anim = {
 static Sprite sprites[SPR_COUNT];
 static int loadedSpriteCount = 0;
 
-void init_sprites(SDL_Renderer *renderer)
+void init_sprites()
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     // Initialize Image package
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
     {
@@ -334,8 +337,10 @@ SDL_Texture *get_sprite_texture(SpriteID id)
  * Draw a Circle
  * Maybe move to utils lib
  */
-void draw_circle(SDL_Renderer *renderer, int cx, int cy, int radius)
+void draw_circle(int cx, int cy, int radius)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     const int segments = 64;
     float angleStep = 2 * M_PI / segments;
 

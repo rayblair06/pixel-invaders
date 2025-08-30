@@ -38,7 +38,7 @@ extern Uint32 lastRegenTime;
 
 void init_player();
 void tick_player(const Uint8 *keystate);
-void render_player(SDL_Renderer *renderer, int shakeX, int shakeY);
+void render_player(int shakeX, int shakeY);
 
 void trigger_player_shoot();
 void trigger_player_explosion();

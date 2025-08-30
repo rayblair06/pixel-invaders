@@ -81,7 +81,7 @@ extern Enemy enemies[MAX_ENEMIES];
 void init_enemies(void);
 void spawn_enemy(float x, float y, EnemyType type);
 void tick_enemies(void);
-void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY);
+void render_enemies(int shakeX, int shakeY);
 
 Enemy create_enemy(float x, float y, EnemyType type);
 void get_enemy_sprite(const Enemy *enemy);

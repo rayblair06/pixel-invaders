@@ -11,34 +11,38 @@
  * Upgrade List
  */
 UpgradeInfo upgrades[UPGRADE_COUNT] = {
-    {UPGRADE_THRUSTERS_1, "Ship Trusters I (Acceleration)", 1, -1},
-    {UPGRADE_THRUSTERS_2, "Ship Trusters II (Acceleration)", 1, UPGRADE_THRUSTERS_1},
-    {UPGRADE_THRUSTERS_3, "Ship Trusters III (Acceleration)", 1, UPGRADE_THRUSTERS_2},
+    // Offensive Upgrades
+    {UPGRADE_PIERCE, "Piercing Bullets", "Bullets pass through one extra enemy.", 4, -1},
+    {UPGRADE_MULTI_SHOT, "Multi-Shot", "Fire additional bullets in parallel.", 8, -1},
+    {UPGRADE_EXPLOSIVE, "Explosive Bullets", "Bullets explode on impact, damaging nearby foes.", 10, -1},
+    {UPGRADE_SPREAD_SHOT, "Spread-Shot", "Fire a wider cone of bullets at once.", 12, UPGRADE_MULTI_SHOT},
 
-    {UPGRADE_AFTERBURNERS_1, "Afterburners I (Drag)", 1, -1},
-    {UPGRADE_AFTERBURNERS_2, "Afterburners II (Drag)", 1, UPGRADE_AFTERBURNERS_1},
-    {UPGRADE_AFTERBURNERS_3, "Afterburners III (Drag)", 1, UPGRADE_AFTERBURNERS_2},
+    // Defensive Upgrades
+    {UPGRADE_HEALTH_REGEN, "Health Regen", "Slowly regenerate health over time.", 4, -1},
+    {UPGRADE_SHIELD, "Shield", "Blocks one hit, regenerates between waves.", 6, -1},
+    {UPGRADE_PICKUP_MAGNET, "Pickup Magnet", "Pulls in experience orbs from further away.", 8, -1},
 
-    {UPGRADE_DRIVE_CORE_1, "Drive Core I (Speed)", 1, -1},
-    {UPGRADE_DRIVE_CORE_2, "Drive Core II (Speed)", 1, UPGRADE_DRIVE_CORE_1},
-    {UPGRADE_DRIVE_CORE_3, "Drive Core III (Speed)", 1, UPGRADE_DRIVE_CORE_2},
+    // Attribute Upgrades
+    {UPGRADE_THRUSTERS_1, "Ship Thrusters I", "Increase acceleration for tighter control.", 1, -1},
+    {UPGRADE_THRUSTERS_2, "Ship Thrusters II", "Further boost acceleration.", 1, UPGRADE_THRUSTERS_1},
+    {UPGRADE_THRUSTERS_3, "Ship Thrusters III", "Maximum acceleration upgrade.", 1, UPGRADE_THRUSTERS_2},
 
-    {UPGRADE_BULLET_SPEED_1, "Bullet Speed I", 1, -1},
-    {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", 1, UPGRADE_BULLET_SPEED_1},
-    {UPGRADE_BULLET_SPEED_3, "Bullet Speed III", 1, UPGRADE_BULLET_SPEED_2},
+    {UPGRADE_AFTERBURNERS_1, "Afterburners I", "Reduce drag for smoother movement.", 1, -1},
+    {UPGRADE_AFTERBURNERS_2, "Afterburners II", "Further reduce drag for speed retention.", 1, UPGRADE_AFTERBURNERS_1},
+    {UPGRADE_AFTERBURNERS_3, "Afterburners III", "Minimal drag for peak maneuverability.", 1, UPGRADE_AFTERBURNERS_2},
 
-    {UPGRADE_BULLET_DAMAGE_1, "Bullet Damage I", 1, -1},
-    {UPGRADE_BULLET_DAMAGE_2, "Bullet Damage II", 1, UPGRADE_BULLET_DAMAGE_1},
-    {UPGRADE_BULLET_DAMAGE_3, "Bullet Damage III", 1, UPGRADE_BULLET_SPEED_2},
+    {UPGRADE_DRIVE_CORE_1, "Drive Core I", "Increase top movement speed.", 1, -1},
+    {UPGRADE_DRIVE_CORE_2, "Drive Core II", "Further increase top speed.", 1, UPGRADE_DRIVE_CORE_1},
+    {UPGRADE_DRIVE_CORE_3, "Drive Core III", "Maximum ship speed unlocked.", 1, UPGRADE_DRIVE_CORE_2},
 
-    {UPGRADE_PIERCE, "Piercing Bullets", 4, -1},
-    {UPGRADE_MULTI_SHOT, "Multi-Shot", 8, -1},
-    {UPGRADE_EXPLOSIVE, "Explosive Bullets", 10, -1},
-    {UPGRADE_SPREAD_SHOT, "Spread-Shot", 12, UPGRADE_MULTI_SHOT},
+    {UPGRADE_BULLET_SPEED_1, "Bullet Speed I", "Bullets travel faster.", 1, -1},
+    {UPGRADE_BULLET_SPEED_2, "Bullet Speed II", "Further increase bullet speed.", 1, UPGRADE_BULLET_SPEED_1},
+    {UPGRADE_BULLET_SPEED_3, "Bullet Speed III", "Maximum bullet velocity.", 1, UPGRADE_BULLET_SPEED_2},
 
-    {UPGRADE_HEALTH_REGEN, "Health Regen", 4, -1},
-    {UPGRADE_SHIELD, "Shield", 6, -1},
-    {UPGRADE_PICKUP_MAGNET, "Pickup Magnet", 8, -1}};
+    {UPGRADE_BULLET_DAMAGE_1, "Bullet Damage I", "Increase bullet damage.", 1, -1},
+    {UPGRADE_BULLET_DAMAGE_2, "Bullet Damage II", "Further increase bullet damage.", 1, UPGRADE_BULLET_DAMAGE_1},
+    {UPGRADE_BULLET_DAMAGE_3, "Bullet Damage III", "Maximum bullet damage boost.", 1, UPGRADE_BULLET_DAMAGE_2},
+};
 
 /**
  * Which upgrades are active

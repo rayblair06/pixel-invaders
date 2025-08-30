@@ -30,9 +30,9 @@ extern Resolution gResList[];
 extern int gResCount;
 
 // lifecycle
-void options_init(SDL_Window *window);
-void options_apply(SDL_Window *window);
-void options_render(SDL_Renderer *renderer, TTF_Font *font);
+void options_init();
+void options_apply();
+void options_render();
 void options_handle_input(const Uint8 *keys, const Uint8 *prev);
 
 // helpers

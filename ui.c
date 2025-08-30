@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "constants.h"
+#include "fonts.h"
 #include "game.h"
 #include "level_manager.h"
 #include "player.h"
@@ -15,8 +16,10 @@
 /**
  * Helper function for generating text on screen
  */
-void generate_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y, SDL_Color color)
+void generate_text(TTF_Font *font, const char *text, int x, int y, SDL_Color color)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     // Create surface and texture from text
     SDL_Surface *textSurface = TTF_RenderText_Blended(font, text, color);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -34,21 +37,21 @@ void generate_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, int
 /**
  * Helper function to generate a single stat
  */
-void render_stat(SDL_Renderer *renderer, TTF_Font *font, const char *label, int value, int x, int y, SDL_Color color)
+void render_stat(const char *label, int value, int x, int y, SDL_Color color)
 {
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+
     char buffer[64];
     snprintf(buffer, sizeof(buffer), "%s : %d", label, value);
-    generate_text(renderer, font, buffer, x, y, color);
+    generate_text(font, buffer, x, y, color);
 }
 
 /**
  * Render stats panel
  */
-void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int lineHeight)
+void render_stats_panel(int x, int y, int lineHeight)
 {
-    SDL_Color white = {225, 255, 255, 255};
-
-    render_stat(renderer, font, "Wave", wave, x, y + lineHeight * 0, white);
+    render_stat("Wave", wave, x, y + lineHeight * 0, COLOR_WHITE);
 }
 
 // void render_panel(SDL_Renderer *renderer, int x, int y, int w, int h)
@@ -87,11 +90,10 @@ void render_stats_panel(SDL_Renderer *renderer, TTF_Font *font, int x, int y, in
 //     }
 // }
 
-void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
+void render_menu(const char *title, const char *options[], int optionCount, int selectedIndex, int paddingX, int paddingY)
 {
-    SDL_Color white = {255, 255, 255};
-    SDL_Color gold = {255, 215, 0};
-    SDL_Color yellow = {255, 255, 0};
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    SDL_Renderer *renderer = app()->renderer;
 
     int titleHeight = (title != NULL) ? 40 : 0;
 
@@ -107,7 +109,7 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     if (title != NULL)
     {
         TTF_Font *titleFont = TTF_OpenFont("assets/fonts/PixelifySans-SemiBold.ttf", 42);
-        SDL_Color titleColor = gold;
+        SDL_Color titleColor = COLOR_GOLD;
         SDL_Surface *titleSurface = TTF_RenderText_Blended(titleFont, title, titleColor);
         SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
 
@@ -148,6 +150,101 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     {
         const char *label = options[i];
 
+        SDL_Surface *surface = TTF_RenderText_Blended(font, label, i == selectedIndex ? COLOR_YELLOW : COLOR_WHITE);
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+        SDL_Rect dst = {
+            panelX + paddingX + (panelWidth - 2 * paddingX) / 2 - surface->w / 2,
+            optionStartY + i * 40,
+            surface->w,
+            surface->h};
+
+        SDL_RenderCopy(renderer, texture, NULL, &dst);
+
+        if (i == selectedIndex)
+        {
+            int x = dst.x - 20;
+            int y = dst.y + dst.h / 2;
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+
+            for (int dy = -6; dy <= 6; dy++)
+            {
+                int lineLength = 6 - abs(dy);
+                SDL_RenderDrawLine(renderer, x, y + dy, x + lineLength, y + dy);
+            }
+        }
+
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+}
+
+void render_upgrade_menu(const char *title, const char *titles[], const char *descriptions[], int optionCount, int selectedIndex, int paddingX, int paddingY)
+{
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    SDL_Renderer *renderer = app()->renderer;
+    SDL_Color white = {255, 255, 255};
+    SDL_Color gold = {255, 215, 0};
+    SDL_Color yellow = {255, 255, 0};
+
+    TTF_Font *titleFont = TTF_OpenFont("assets/fonts/PixelifySans-SemiBold.ttf", 42);
+    TTF_Font *descriptionFont = TTF_OpenFont("assets/fonts/PixelifySans-SemiBold.ttf", 20);
+
+    int titleHeight = (title != NULL) ? 40 : 0;
+
+    int panelWidth = 300 + paddingX * 2;
+    int panelHeight = titleHeight + optionCount * 40 + paddingY * 2;
+
+    int panelX = SCREEN_WIDTH / 2 - panelWidth / 2;
+    int panelY = SCREEN_HEIGHT / 2 - panelHeight / 2;
+
+    // render_panel(renderer, panelX, panelY, panelWidth, panelHeight);
+
+    // Optional: Generate Menu Title
+    if (title != NULL)
+    {
+        SDL_Color titleColor = gold;
+        SDL_Surface *titleSurface = TTF_RenderText_Blended(titleFont, title, titleColor);
+        SDL_Texture *titleTexture = SDL_CreateTextureFromSurface(renderer, titleSurface);
+
+        SDL_Color shadowColor = {0, 0, 0, 150};
+        SDL_Surface *shadowSurface = TTF_RenderText_Blended(titleFont, title, shadowColor);
+        SDL_Texture *shadowTexture = SDL_CreateTextureFromSurface(renderer, shadowSurface);
+
+        int titleX = panelX + panelWidth / 2 - titleSurface->w / 2;
+        int titleY = panelY + paddingY - 40;
+        int titleWidth = titleSurface->w;
+        int titleHeight = titleSurface->h;
+
+        SDL_Rect shadowRect = {
+            titleX + 2,
+            titleY + 2,
+            titleWidth,
+            titleHeight};
+
+        SDL_RenderCopy(renderer, shadowTexture, NULL, &shadowRect);
+
+        SDL_Rect titleRect = {
+            titleX,
+            titleY,
+            titleWidth,
+            titleHeight};
+
+        SDL_RenderCopy(renderer, titleTexture, NULL, &titleRect);
+
+        SDL_FreeSurface(titleSurface);
+        SDL_DestroyTexture(titleTexture);
+        SDL_FreeSurface(shadowSurface);
+        SDL_DestroyTexture(shadowTexture);
+    }
+
+    int optionStartY = panelY + paddingY + titleHeight;
+
+    for (int i = 0; i < optionCount; i++)
+    {
+        const char *label = titles[i];
+
         SDL_Surface *surface = TTF_RenderText_Blended(font, label, i == selectedIndex ? yellow : white);
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -178,8 +275,10 @@ void render_menu(SDL_Renderer *renderer, TTF_Font *font, const char *title, cons
     }
 }
 
-void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
+void render_health_bar(int x, int y, int width, int height)
 {
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    SDL_Renderer *renderer = app()->renderer;
     SDL_Color white = {255, 255, 255, 255};
 
     // Draw background bar
@@ -210,9 +309,11 @@ void render_health_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int
     SDL_DestroyTexture(textTexture);
 }
 
-void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int width, int height)
+void render_xp_bar(int x, int y, int width, int height)
 {
-    SDL_Color white = {255, 255, 255, 255};
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    SDL_Renderer *renderer = app()->renderer;
+
     float experienceProgress = experienceVisual / (float)experienceToNextLevel;
 
     // Draw background bar
@@ -233,7 +334,7 @@ void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int wid
     char experienceLabel[32];
     sprintf(experienceLabel, "%d / %d", experience, experienceToNextLevel);
 
-    SDL_Surface *textSurface = TTF_RenderText_Blended(font, experienceLabel, white);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, experienceLabel, COLOR_WHITE);
     SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_Rect textRect = {x + (width - textSurface->w / 2) / 2, y + (height - textSurface->h / 2) / 2, textSurface->w / 2, textSurface->h / 2};
@@ -245,11 +346,13 @@ void render_xp_bar(SDL_Renderer *renderer, TTF_Font *font, int x, int y, int wid
     // Draw level number overlay
     char levelLabel[16];
     sprintf(levelLabel, "Lv %d", playerLevel);
-    generate_text(renderer, font, levelLabel, 220, SCREEN_HEIGHT - 28, white);
+    generate_text(font, levelLabel, 220, SCREEN_HEIGHT - 28, COLOR_WHITE);
 }
 
-void render_vignette(SDL_Renderer *renderer)
+void render_vignette()
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100); // dim
 

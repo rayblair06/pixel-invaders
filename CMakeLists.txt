@@ -15,8 +15,9 @@ set(SOURCES
     collisions.c
     entity.c
     enemies.c
-    level_manager.c
+    fonts.c
     game.c
+    level_manager.c
     main.c
     particles.c
     pickups.c

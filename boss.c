@@ -4,6 +4,7 @@
 #include "bullets.h"
 #include "constants.h"
 #include "enemies.h"
+#include "fonts.h"
 #include "game.h"
 #include "player.h"
 #include "particles.h"
@@ -317,12 +318,14 @@ void tick_boss()
     }
 }
 
-void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_boss(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     if (!bossActive)
         return;
 
-    entity_render(&currentBoss.entity, renderer, shakeX, shakeY);
+    entity_render(&currentBoss.entity, shakeX, shakeY);
 
     // Flash red when damaged
     if (currentBoss.entity.isHit)
@@ -428,8 +431,11 @@ void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY)
     }
 }
 
-void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)
+void render_boss_health()
 {
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+    SDL_Renderer *renderer = app()->renderer;
+
     if (!bossActive)
         return;
 
@@ -447,7 +453,7 @@ void render_boss_health(SDL_Renderer *renderer, TTF_Font *font)
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &bg);
 
-    generate_text(renderer, font, "The Abyssal Wraith", SCREEN_WIDTH / 2 - 100, 50, (SDL_Color){255, 255, 255});
+    generate_text(font, "The Abyssal Wraith", SCREEN_WIDTH / 2 - 100, 50, COLOR_WHITE);
 }
 
 void damage_boss(Boss *boss, int amount)

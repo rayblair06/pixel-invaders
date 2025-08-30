@@ -101,8 +101,9 @@ void tick_bullets(void)
 /**
  * Render Active Bullets on Screen
  */
-void render_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_bullets(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
     SDL_Rect src;
     SDL_Texture *texture = get_sprite_texture(SPR_PROJECTILE_1);
 
@@ -247,8 +248,10 @@ void tick_enemy_bullets(void)
     }
 }
 
-void render_enemy_bullets(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_enemy_bullets(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     SDL_Rect src = get_sprite(SPR_PROJECTILE_2);
     SDL_Texture *texture = get_sprite_texture(SPR_PROJECTILE_2);
 

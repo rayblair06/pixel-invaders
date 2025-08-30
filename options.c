@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "constants.h"
+#include "fonts.h"
+#include "game.h"
 #include "options.h"
 #include "ui.h"
 
@@ -37,8 +39,9 @@ static void set_fullscreen(SDL_Window *window, bool on)
     SDL_SetWindowFullscreen(window, flags);
 }
 
-void options_init(SDL_Window *window)
+void options_init()
 {
+    SDL_Window *window = app()->window;
     s_window = window;
 
     // Try to pick the closest list resolution to current window
@@ -63,11 +66,12 @@ void options_init(SDL_Window *window)
 
     gVideo.resolutionIndex = best;
     gVideo.videoMode = VIDEO_WINDOWED;
-    options_apply(NULL);
+    options_apply();
 }
 
-void options_apply(SDL_Window *window)
+void options_apply()
 {
+    SDL_Window *window = app()->window;
     SDL_Window *win = window ? window : s_window;
     if (!win)
         return;
@@ -158,7 +162,7 @@ void options_handle_input(const Uint8 *keys, const Uint8 *prev)
     {
         if (s_row == 2)
         {
-            options_apply(NULL);
+            options_apply();
         }
         else if (s_row == 3)
         {
@@ -169,8 +173,11 @@ void options_handle_input(const Uint8 *keys, const Uint8 *prev)
 #undef PRESSED
 }
 
-void options_render(SDL_Renderer *renderer, TTF_Font *font)
+void options_render()
 {
+    SDL_Renderer *renderer = app()->renderer;
+    const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
+
     if (!s_open)
         return;
 
@@ -197,5 +204,5 @@ void options_render(SDL_Renderer *renderer, TTF_Font *font)
     int panelY = (SCREEN_HEIGHT - panelH) / 2;
 
     // render_panel(renderer, panelX, panelY, panelW, panelH);
-    render_menu(renderer, font, "Options", labels, OPTION_LABELS, s_row, panelX + 25, panelY + 60);
+    render_menu("Options", labels, OPTION_LABELS, s_row, panelX + 25, panelY + 60);
 }

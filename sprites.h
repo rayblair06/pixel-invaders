@@ -112,12 +112,12 @@ extern const SpriteAnimation spaceship7Anim;
 extern const SpriteAnimation spaceship8Anim;
 extern const SpriteAnimation spaceship9Anim;
 
-void init_sprites(SDL_Renderer *renderer);
+void init_sprites();
 void cleanup_sprites(void);
 
 SDL_Rect get_sprite(SpriteID id);
 SDL_Texture *get_sprite_texture(SpriteID id);
 
-void draw_circle(SDL_Renderer *renderer, int cx, int cy, int radius);
+void draw_circle(int cx, int cy, int radius);
 
 #endif

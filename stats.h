@@ -55,6 +55,6 @@ bool load_run_history(void);
 void save_run_history(void);
 void add_run_to_history(RunData *run);
 
-void render_run_summary(SDL_Renderer *renderer, TTF_Font *font, RunData *run);
+void render_run_summary(TTF_Font *font, RunData *run);
 
 #endif

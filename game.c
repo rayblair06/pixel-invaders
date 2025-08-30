@@ -8,6 +8,10 @@
 #include "sprites.h"
 #include "waves.h"
 
+static App g_app;
+
+App *app(void) { return &g_app; }
+
 bool initialiseGameProps = false;
 bool isGameOver = false;
 
@@ -34,6 +38,20 @@ float cameraOffsetY = 0;
 bool flashRed = false;
 Uint32 flashStartTime = 0;
 Uint32 flashDuration = 200; // ms
+
+void init_app()
+{
+    // Create a window
+    SDL_Window *window = SDL_CreateWindow("Pixel Invaders: Rogue Mode",
+                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                          SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+    // Create a renderer
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    g_app.window = window;
+    g_app.renderer = renderer;
+}
 
 void init_game(void)
 {
@@ -169,8 +187,9 @@ void render_parallax_layer(SDL_Renderer *renderer, SDL_Texture *texture, float o
 /**
  * Renders our game background
  */
-void render_background(SDL_Renderer *renderer)
+void render_background()
 {
+    SDL_Renderer *renderer = app()->renderer;
     SDL_Texture *bgSkyTexture = get_sprite_texture(BG_TILE1);
     SDL_Texture *bgStarsTexture = get_sprite_texture(BG_TILE2);
 

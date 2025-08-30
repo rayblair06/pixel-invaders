@@ -12,8 +12,9 @@
 #include "bullets.h"
 #include "enemies.h"
 #include "entity.h"
-#include "level_manager.h"
+#include "fonts.h"
 #include "game.h"
+#include "level_manager.h"
 #include "options.h"
 #include "sprites.h"
 #include "particles.h"
@@ -39,45 +40,25 @@ int main(int argc, char *argv[])
     // Initialize SDL
     SDL_Init(SDL_INIT_VIDEO);
 
-    // Initialize Fonts
-    if (TTF_Init() == -1)
-    {
-        printf("TTF_Init failed: %s\n", TTF_GetError());
-        return 1;
-    }
-
-    TTF_Font *font = TTF_OpenFont("assets/fonts/Roboto-Regular.ttf", 24);
-
-    if (!font)
-    {
-        printf("Failed to load font: %s\n", TTF_GetError());
-        return 1;
-    }
-
-    // Create a window
-    SDL_Window *window = SDL_CreateWindow("Pixel Invaders: Rogue Mode",
-                                          SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                          SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    init_app();
+    init_fonts();
 
     // Icon
     SDL_Surface *icon = IMG_Load("assets/icon.png");
     if (icon)
     {
-        SDL_SetWindowIcon(window, icon);
+        SDL_SetWindowIcon(app()->window, icon);
         SDL_FreeSurface(icon);
     }
 
-    options_init(window);
-
-    // Create a renderer
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    options_init();
 
     // Scale to resolution
     // SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     // SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
     // SDL_RenderSetIntegerScale(renderer, SDL_FALSE);
 
-    init_sprites(renderer);
+    init_sprites();
     init_audio();
 
     // Play menu music
@@ -108,15 +89,13 @@ int main(int argc, char *argv[])
         const Uint8 *prevKeystate = prevKeystateBuffer;
 
         manage_scene(
-            renderer,
-            font,
             keystate,
             prevKeystate);
 
         memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
 
         // Show the render
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(app()->renderer);
 
         SDL_Delay(16); // ~60 FPS
 
@@ -125,9 +104,9 @@ int main(int argc, char *argv[])
 
     // Clean up
     cleanup_sprites();
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_CloseFont(font);
+    SDL_DestroyRenderer(app()->renderer);
+    SDL_DestroyWindow(app()->window);
+    cleanup_fonts();
     cleanup_audio();
     SDL_Quit();
     TTF_Quit();

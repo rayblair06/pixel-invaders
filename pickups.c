@@ -112,8 +112,10 @@ void tick_pickups(void)
 /**
  * Render Active Pickups on Screen
  */
-void render_pickups(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_pickups(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     for (int i = 0; i < MAX_PICKUPS; i++)
     {
         if (!pickups[i].entity.isActive)

@@ -3,6 +3,18 @@
 
 typedef enum
 {
+    // Offensive Upgrades
+    UPGRADE_PIERCE,
+    UPGRADE_MULTI_SHOT,
+    UPGRADE_EXPLOSIVE,
+    UPGRADE_SPREAD_SHOT,
+
+    // Defensive Upgrades
+    UPGRADE_HEALTH_REGEN,
+    UPGRADE_SHIELD,
+    UPGRADE_PICKUP_MAGNET,
+
+    // Attribute Upgrades
     UPGRADE_THRUSTERS_1,
     UPGRADE_THRUSTERS_2,
     UPGRADE_THRUSTERS_3,
@@ -23,15 +35,6 @@ typedef enum
     UPGRADE_BULLET_DAMAGE_2,
     UPGRADE_BULLET_DAMAGE_3,
 
-    UPGRADE_PIERCE,
-    UPGRADE_MULTI_SHOT,
-    UPGRADE_EXPLOSIVE,
-    UPGRADE_SPREAD_SHOT,
-
-    UPGRADE_HEALTH_REGEN,
-    UPGRADE_SHIELD,
-    UPGRADE_PICKUP_MAGNET,
-
     UPGRADE_COUNT
 } UpgradeType;
 
@@ -39,6 +42,7 @@ typedef struct
 {
     UpgradeType type;
     const char *name;
+    const char *description;
     int unlockLevel;          // Level requirement
     UpgradeType prerequisite; // Upgrades to be unlocked first
 } UpgradeInfo;

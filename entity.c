@@ -136,8 +136,10 @@ void entity_tick(Entity *entity)
  * TODO: Move renderer, shakeX, and shakeY to globals?
  * TODO: Make more defensive, check it can render entity or fallback to no image?
  */
-void entity_render(Entity *entity, SDL_Renderer *renderer, int shakeX, int shakeY)
+void entity_render(Entity *entity, int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     if (!entity)
         return;
 

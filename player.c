@@ -240,12 +240,14 @@ void tick_player(const Uint8 *keystate)
 /**
  * Draw the player on the screen
  */
-void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_player(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     if (!player.entity.isActive)
         return;
 
-    entity_render(&player.entity, renderer, shakeX, shakeY);
+    entity_render(&player.entity, shakeX, shakeY);
 
     // Flash red when damaged
     if (player.entity.isHit)
@@ -278,7 +280,7 @@ void render_player(SDL_Renderer *renderer, int shakeX, int shakeY)
 
         SDL_SetRenderDrawColor(renderer, 0, green, 255, 255);
 
-        draw_circle(renderer, player.entity.pos.x + player.entity.size.x / 2, player.entity.pos.y + player.entity.size.y / 2, radius);
+        draw_circle(player.entity.pos.x + player.entity.size.x / 2, player.entity.pos.y + player.entity.size.y / 2, radius);
     }
 }
 

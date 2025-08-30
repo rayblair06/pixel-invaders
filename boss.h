@@ -50,8 +50,8 @@ extern Uint32 bossSpawnTime;
 void init_boss(void);
 void spawn_boss(float x, float y, int wave);
 void tick_boss(void);
-void render_boss(SDL_Renderer *renderer, int shakeX, int shakeY);
-void render_boss_health(SDL_Renderer *renderer, TTF_Font *font);
+void render_boss(int shakeX, int shakeY);
+void render_boss_health();
 void damage_boss(Boss *boss, int amount);
 
 #endif

@@ -251,8 +251,10 @@ void tick_enemies(void)
 /**
  * Render Active Enemies on Screen
  */
-void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
+void render_enemies(int shakeX, int shakeY)
 {
+    SDL_Renderer *renderer = app()->renderer;
+
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         if (!enemies[i].entity.isActive)
@@ -274,7 +276,7 @@ void render_enemies(SDL_Renderer *renderer, int shakeX, int shakeY)
             enemy->entity.color.b = 255;
         }
 
-        entity_render(&enemy->entity, renderer, shakeX, shakeY);
+        entity_render(&enemy->entity, shakeX, shakeY);
     }
 }
 
