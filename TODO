@@ -1,0 +1,15 @@
+<!-- - ENEMY_ORBITER should bop around in a circular moment while moving down to avoid shots. -->
+<!-- - ENEMY_SENTINEL should fire two shots. -->
+- Video mode is totally fucked.
+- Descriptions to Upgrades
+- Fix level-up balance to be more fun? Maybe have better upgrades first rather than just stat upgrades?
+- Overhaul stats and fix previous runs
+
+
+Upgrade Ideas:
+- Experience Boost
+- Two shots
+
+Bugs:
+- required level for upgrade doesn't work, is off by 1?
+- Firerate jitter isn't random enough
