@@ -1,40 +1,46 @@
-# **PixelInvaders**
+# **PixelInvaders: Rogue Mode**
 
-**PixelInvaders** is a retro-inspired 2D shooter game written in **C** using **SDL2** and its extensions.
-The game features enemy waves, upgrades, pickups, and roguelite-style mechanics such as player leveling and skill choices.
+**PixelInvaders** is a retro-inspired roguelike 2D space shooter written in **C** using **SDL2** and its extensions.  
+Battle endless enemy waves, dodge intricate patterns, level up with powerful upgrades, and push for the highest wave in this modern twist on the classic arcade genre.
 
 ---
 
 ## **Features**
 
-* 🚀 **Space shooter gameplay** with enemies, bullets, and pickups.
-* 🏆 **Wave system** with progressive difficulty and bosses every 5 waves.
-* ⚡ **Player upgrades** (e.g., multi-shot, shields, bullet speed, pickup magnet).
-* 🎵 **Sound effects and background music** using SDL2\_mixer.
-* 🎨 **Custom sprites and UI panels** with animated enemies and pickups.
-* 🎮 **Cross-platform build** (Windows, macOS, Linux).
+* 🚀 **Fast-paced space combat** with smooth controls and responsive movement.
+* 🛸 **Enemy variety**:
+  - **Drone** – basic shooter with steady pace.  
+  - **Orbiter** – circles and spirals down the screen, hard to hit.  
+  - **Razor** – boomerang-style dash attacker.  
+  - **Viper** – fast, aggressive shooter.  
+  - **Sentinel** – large twin-gun tank enemy.  
+  - **Boss fights** – appear every 5 waves with unique mechanics.
+* ⚔️ **Smaller, forgiving hitboxes** for tighter and more skill-based dodging.
+* ⚡ **Player upgrades** – choose between branching skills like multi-shot, health regeneration, shields, pickup magnet, bullet speed boosts, and more.
+* 🧩 **Roguelite progression** – gain EXP, pick upgrades each level-up, and push further each run.
+* 🎵 **Immersive audio** – background music and sound effects powered by **SDL2_mixer**.
+* 🎨 **Pixel-art sprites and UI** – animated enemies, projectiles, pickups, and effects.
+* 🎛️ **Options Menu** – in-game settings for video modes (windowed, borderless, fullscreen) and resolution changes.
+* 🕹️ **Cross-platform** – runs on Windows, macOS, and Linux via SDL2.
 
 ---
 
 ## **How to Play**
 
-* **Movement:** `Arrow Keys` or `A`/`D`
-* **Shoot:** `Space`
-* **Select Upgrade:** `Up`/`Down` + `Enter` when the upgrade menu appears.
-* **Goal:** Defeat enemy waves and survive as long as possible.
-* **Pickups:** Collect dropped pickups for experience points.
-* **Level Up:** Gain experience to level up and select powerful upgrades.
+* **Move:** `Arrow Keys` or `A`/`D`  
+* **Shoot:** `Space`  
+* **Select Upgrades:** `Up`/`Down` + `Enter`  
+* **Pause / Options:** `Esc`  
+* **Goal:** Survive against endless waves, defeat bosses, and build powerful upgrade combos.  
+
+Pick up **experience orbs** from defeated enemies, level up, and adapt your build each run.
 
 ---
 
 ## **Screenshots**
 
-![PixelInvaders Screenshot 1](screenshot1.png)
-
-
-![PixelInvaders Screenshot 2](screenshot2.png)
-
-
+![PixelInvaders Screenshot 1](screenshot1.png)  
+![PixelInvaders Screenshot 2](screenshot2.png)  
 ![PixelInvaders Screenshot 3](screenshot3.png)
 
 ---
@@ -44,52 +50,53 @@ The game features enemy waves, upgrades, pickups, and roguelite-style mechanics 
 PixelInvaders is built on **SDL2** and its common extensions:
 
 * [SDL2](https://github.com/libsdl-org/SDL)
-* [SDL2\_image](https://github.com/libsdl-org/SDL_image)
-* [SDL2\_ttf](https://github.com/libsdl-org/SDL_ttf)
-* [SDL2\_mixer](https://github.com/libsdl-org/SDL_mixer)
+* [SDL2_image](https://github.com/libsdl-org/SDL_image)
+* [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf)
+* [SDL2_mixer](https://github.com/libsdl-org/SDL_mixer)
 
-On Linux, you can install these via:
-
+### Install on Linux (Debian/Ubuntu)
 ```bash
 sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
-```
+````
 
-On macOS (via Homebrew):
+### Install on macOS (Homebrew)
 
 ```bash
 brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer
 ```
 
-On Windows, the GitHub Actions pipeline fetches precompiled SDL2 binaries automatically.
+### Windows
+
+The GitHub Actions pipeline fetches precompiled SDL2 binaries automatically.
 
 ---
 
 ## **Building from Source**
 
-### **1. Clone the Repository**
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/rayblair06/PixelInvaders.git
 cd PixelInvaders
 ```
 
-### **2. Build with CMake**
+### 2. Build with CMake
 
 ```bash
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-The executable will be found at:
+Executables:
 
-* **Linux/macOS:** `build/PixelInvaders`
+* **Linux/macOS:** `build/PixelInvaders` or inside `.app` bundle on macOS
 * **Windows:** `build/PixelInvaders.exe`
 
 ---
 
 ## **Running the Game**
 
-Make sure the `assets/` folder is in the same directory as the game binary:
+Make sure the `assets/` folder is in the same directory as the binary:
 
 ```bash
 ./PixelInvaders
@@ -99,25 +106,27 @@ Make sure the `assets/` folder is in the same directory as the game binary:
 
 ## **Cross-Platform Builds**
 
-GitHub Actions automatically builds and packages **Windows**, **macOS**, and **Linux** releases using SDL2.
+GitHub Actions automatically builds and packages **Windows**, **macOS**, and **Linux** releases.
 
-### **Building Manually for Windows**
-
-If you are building locally on Windows, ensure SDL2 and its extensions are placed in the correct folders or add them to your CMake paths.
+For Windows manual builds, ensure SDL2 and its extensions are correctly linked or placed in your CMake paths.
 
 ---
 
 ## **Development Notes**
 
-* The project is modularized with separate files for **player**, **enemies**, **bullets**, **waves**, **audio**, and **UI**.
-* Upgrades and game logic are defined in `upgrades.c`, `game.c`, and `waves.c`.
-* `version.h` is auto-generated during builds with the Git tag and build date.
+* Modularized C source: `player.c`, `enemies.c`, `bullets.c`, `waves.c`, `audio.c`, `ui.c`, `options.c`, etc.
+* Enemy AI and movement patterns are type-driven (`Drone`, `Orbiter`, `Razor`, `Viper`, `Sentinel`).
+* Unified shooting system with cooldowns + jitter supports spread shots, aimed shots, and twin cannons.
+* Hitboxes are center-scaled for fairness (player and enemies have smaller-than-sprite hit areas).
+* `options.c` manages resolution and fullscreen/window modes.
+* `version.h` is generated at build with Git tag + build date.
 
 ---
 
 ## **Contributing**
 
-Pull requests are welcome! If you have ideas for new upgrades, enemy types, or visual effects, feel free to contribute.
+Pull requests are welcome!
+Ideas for **new enemy patterns**, **player upgrades**, or **visual/audio effects** are especially appreciated.
 
 ---
 
