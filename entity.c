@@ -208,7 +208,7 @@ void move(Entity *entity, Movement move, float speed)
     }
 }
 
-inline float entity_center_x(Entity *entity)
+float entity_center_x(Entity *entity)
 {
     return entity->pos.x + entity->size.x * 0.5f;
 }

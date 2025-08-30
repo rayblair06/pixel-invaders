@@ -176,7 +176,7 @@ void spawn_enemy_bullet(float x, float y, float vx, float vy, int damage)
  */
 void entity_fire_straight(const Entity *entity, float speed, int damage)
 {
-    float cx = entity->pos.x + entity->size.x * 0.5f;
+    float cx = entity_center_x(entity);
     float y = entity->pos.y + entity->size.y;
 
     spawn_enemy_bullet(cx, y, 0.0f, speed, damage);
@@ -187,7 +187,7 @@ void entity_fire_straight(const Entity *entity, float speed, int damage)
  */
 void entity_fire_aimed(const Entity *entity, float tx, float ty, float speed, int damage)
 {
-    float sx = entity->pos.x + entity->size.x * 0.5f;
+    float sx = entity_center_x(entity);
     float sy = entity->pos.y + entity->size.y;
 
     float dx = tx - sx;
@@ -203,7 +203,7 @@ void entity_fire_aimed(const Entity *entity, float tx, float ty, float speed, in
  */
 void entity_fire_spread3(const Entity *entity, float baseSpeed, float angleDeg, int damage)
 {
-    float cx = entity->pos.x + entity->size.x * 0.5f;
+    float cx = entity_center_x(entity);
     float y = entity->pos.y + entity->size.y;
 
     // Center
@@ -223,8 +223,8 @@ void entity_fire_spread3(const Entity *entity, float baseSpeed, float angleDeg, 
  */
 void entity_fire_twin(const Entity *entity, float speed, int damage, float offsetX)
 {
-    float leftX = entity->pos.x + entity->size.x * 0.5f - offsetX;
-    float rightX = entity->pos.x + entity->size.x * 0.5f + offsetX;
+    float leftX = entity_center_x(entity) - offsetX;
+    float rightX = entity_center_x(entity) + offsetX;
     float y = entity->pos.y + entity->size.y;
 
     spawn_enemy_bullet(leftX, y, 0.0f, speed, damage);

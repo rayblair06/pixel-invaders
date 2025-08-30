@@ -77,6 +77,6 @@ void entity_trigger_hit(Entity *entity, float duration_seconds);
 
 void move(Entity *entity, Movement move, float speed);
 
-inline float entity_center_x(Entity *entity);
+float entity_center_x(Entity *entity);
 
 #endif
