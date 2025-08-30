@@ -163,6 +163,7 @@ void spawn_enemy_bullet(float x, float y, float vx, float vy, int damage)
 
             enemyBullets[i].entity.isActive = true;
             enemyBullets[i].damage = damage;
+            play_sound(SND_SHOOT2);
 
             break;
         }
