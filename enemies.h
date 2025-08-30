@@ -11,13 +11,31 @@ struct Enemy;
 
 typedef enum
 {
-    ENEMY_BASIC,
-    ENEMY_FAST,
-    ENEMY_TANK,
-    ENEMY_SHOOTER,
-    ENEMY_BRUTE,
+    ENEMY_DRONE,    // Basic shooter, medium pace
+    ENEMY_ORBITER,  // Circular, erratic, no shooting, fast
+    ENEMY_RAZOR,    // Boomerang, straight fast dash, no shooting
+    ENEMY_VIPER,    // Fast, shooter
+    ENEMY_SENTINEL, // Bigger winged shooter, twin shots, moderate pace
+
     ENEMY_TYPE_COUNT
 } EnemyType;
+
+typedef struct
+{
+    // Base values of unit
+    float baseHealth;
+    float baseSpeed;
+    float baseDamage;
+
+    // Current values of unit
+    int health;
+    float speed;
+    int damage;
+
+    // Abilities
+    bool hasBob;     // Bobs out of the way of shots
+    bool hasWeapons; // Ability to shoot
+} EnemyStats;
 
 typedef void (*EnemyBehaviour)(struct Enemy *);
 
@@ -29,9 +47,7 @@ typedef struct
     EnemyBehaviour tick;
     bool canShoot;
 
-    int health;
-    float speed;
-    int damage;
+    EnemyStats stats;
 
     Uint32 damageFlashTimer;
 } Enemy;

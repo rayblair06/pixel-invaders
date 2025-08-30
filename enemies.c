@@ -19,11 +19,11 @@ Uint32 lastFrameSwitch = 0;
 const Uint32 frameInterval = 500; // ms
 
 const SpriteAnimation *enemySprites[] = {
-    [ENEMY_BASIC] = &spaceship4Anim,
-    [ENEMY_FAST] = &spaceship5Anim,
-    [ENEMY_TANK] = &spaceship6Anim,
-    [ENEMY_SHOOTER] = &spaceship7Anim,
-    [ENEMY_BRUTE] = &spaceship8Anim};
+    [ENEMY_DRONE] = &spaceship4Anim,
+    [ENEMY_ORBITER] = &spaceship5Anim,
+    [ENEMY_RAZOR] = &spaceship6Anim,
+    [ENEMY_VIPER] = &spaceship7Anim,
+    [ENEMY_SENTINEL] = &spaceship8Anim};
 
 /**
  * Initialise enemies as deactivated
@@ -88,9 +88,10 @@ void tick_enemies(void)
             continue;
         }
 
-        move(&enemy->entity, DOWN, enemy->speed);
+        move(&enemy->entity, DOWN, enemy->stats.speed);
 
-        if (enemy->type == ENEMY_BASIC && enemy->entity.pos.y > 0)
+        // Once into the playarea enable shooting
+        if (enemy->stats.hasWeapons && enemy->entity.pos.y > 0)
         {
             enemy->canShoot = true;
         }
@@ -105,7 +106,7 @@ void tick_enemies(void)
                 spawn_enemy_bullet(
                     enemy->entity.pos.x + enemy->entity.size.x / 2,
                     enemy->entity.pos.y + enemy->entity.size.y,
-                    enemy->damage);
+                    enemy->stats.damage);
             }
         }
     }
@@ -158,47 +159,57 @@ Enemy create_enemy(float x, float y, EnemyType type)
 
     switch (type)
     {
-    case ENEMY_BASIC:
-        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.0f;
-        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.0f;
+    case ENEMY_DRONE:
+        enemy.stats.baseHealth = 1.0f;
+        enemy.stats.baseSpeed = 1.0f;
+        enemy.stats.baseDamage = 1.0f;
+        enemy.stats.hasWeapons = true;
         break;
-    case ENEMY_FAST:
-        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 1.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
-        enemy.damage = baseEnemyDamage * enemyDamageMultiplier * 0.8f;
+    case ENEMY_ORBITER:
+        enemy.stats.baseHealth = 1.0f;
+        enemy.stats.baseSpeed = 1.2f;
+        enemy.stats.baseDamage = 0.0f;
+        enemy.stats.hasWeapons = false;
         break;
-    case ENEMY_TANK:
-        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 5.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
-        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.5f;
+    case ENEMY_RAZOR:
+        enemy.stats.baseHealth = 1.0f;
+        enemy.stats.baseSpeed = 1.5f;
+        enemy.stats.baseDamage = 0.0f;
+        enemy.stats.hasWeapons = false;
         break;
-    case ENEMY_SHOOTER:
-        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 2.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 1.2f;
-        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 1.0f;
+    case ENEMY_VIPER:
+        enemy.stats.baseHealth = 1.0f;
+        enemy.stats.baseSpeed = 1.2f;
+        enemy.stats.baseDamage = 1.0f;
+        enemy.stats.hasWeapons = true;
         break;
-    case ENEMY_BRUTE:
-        enemy.health = (int)(baseEnemyHealth * enemyHealthMultiplier * 8.0f);
-        enemy.speed = baseEnemySpeed * enemySpeedMultiplier * 0.5f;
-        enemy.damage = (int)baseEnemyDamage * enemyDamageMultiplier * 2.5f;
+    case ENEMY_SENTINEL:
+        enemy.stats.baseHealth = 1.0f;
+        enemy.stats.baseSpeed = 1.2f;
+        enemy.stats.baseDamage = 1.5f;
+        enemy.stats.hasWeapons = true;
         break;
     case ENEMY_TYPE_COUNT:
         // do nothing
         break;
     }
 
+    // Calculate stats based on base values and wave
+    enemy.stats.health = (int)(baseEnemyHealth * enemyHealthMultiplier * enemy.stats.baseHealth);
+    enemy.stats.speed = baseEnemySpeed * enemySpeedMultiplier * enemy.stats.baseSpeed;
+    enemy.stats.damage = (int)baseEnemyDamage * enemyDamageMultiplier * enemy.stats.baseDamage;
+
     return enemy;
 }
 
 void damage_enemy(Enemy *enemy, int amount)
 {
-    enemy->health = enemy->health - amount;
+    enemy->stats.health = enemy->stats.health - amount;
 
     entity_trigger_hit(&enemy->entity, 0.05f);
     play_sound(SND_HIT);
 
-    if (enemy->health <= 0)
+    if (enemy->stats.health <= 0)
     {
         // They dead, fade out and deactivate
         entity_begin_despawn(&enemy->entity, 0.5f);

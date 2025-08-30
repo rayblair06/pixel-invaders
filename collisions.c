@@ -164,7 +164,7 @@ void check_collisions(void)
             if (!enemies[i].entity.isDespawning)
             {
                 damage_enemy(&enemies[i], 1000000); // Instant kill
-                reduce_player_health(enemies[i].damage * 2);
+                reduce_player_health(enemies[i].stats.damage * 2);
                 record_kill();
             }
         }
@@ -229,7 +229,7 @@ void check_collisions(void)
                 break;
             }
 
-            reduce_player_health(enemies[i].damage);
+            reduce_player_health(enemies[i].stats.damage);
         }
     }
 

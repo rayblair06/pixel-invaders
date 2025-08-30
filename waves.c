@@ -130,33 +130,33 @@ static void spawn_wave(void)
         // Only basic before wave 3
         if (wave < 3)
         {
-            typesAvailable[typesCount++] = ENEMY_BASIC;
+            typesAvailable[typesCount++] = ENEMY_DRONE;
         }
         else if (wave < 7)
         {
-            typesAvailable[typesCount++] = ENEMY_BASIC;
-            typesAvailable[typesCount++] = ENEMY_FAST;
+            typesAvailable[typesCount++] = ENEMY_DRONE;
+            typesAvailable[typesCount++] = ENEMY_ORBITER;
         }
         else if (wave < 10)
         {
-            typesAvailable[typesCount++] = ENEMY_BASIC;
-            typesAvailable[typesCount++] = ENEMY_FAST;
-            typesAvailable[typesCount++] = ENEMY_TANK;
+            typesAvailable[typesCount++] = ENEMY_DRONE;
+            typesAvailable[typesCount++] = ENEMY_ORBITER;
+            typesAvailable[typesCount++] = ENEMY_RAZOR;
         }
         else if (wave < 12)
         {
-            typesAvailable[typesCount++] = ENEMY_BASIC;
-            typesAvailable[typesCount++] = ENEMY_FAST;
-            typesAvailable[typesCount++] = ENEMY_TANK;
-            typesAvailable[typesCount++] = ENEMY_SHOOTER;
+            typesAvailable[typesCount++] = ENEMY_DRONE;
+            typesAvailable[typesCount++] = ENEMY_ORBITER;
+            typesAvailable[typesCount++] = ENEMY_RAZOR;
+            typesAvailable[typesCount++] = ENEMY_VIPER;
         }
         else
         {
-            typesAvailable[typesCount++] = ENEMY_BASIC;
-            typesAvailable[typesCount++] = ENEMY_FAST;
-            typesAvailable[typesCount++] = ENEMY_TANK;
-            typesAvailable[typesCount++] = ENEMY_SHOOTER;
-            typesAvailable[typesCount++] = ENEMY_BRUTE;
+            typesAvailable[typesCount++] = ENEMY_DRONE;
+            typesAvailable[typesCount++] = ENEMY_ORBITER;
+            typesAvailable[typesCount++] = ENEMY_RAZOR;
+            typesAvailable[typesCount++] = ENEMY_VIPER;
+            typesAvailable[typesCount++] = ENEMY_SENTINEL;
         }
 
         EnemyType type = typesAvailable[rand() % typesCount];
