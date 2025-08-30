@@ -208,13 +208,13 @@ void tick_boss()
         int bossTurrentThreeX = bossCenterX + 55;
         int bossTurrentFourX = bossCenterX + 80;
 
-        play_sound(SND_SHOOT2);
+        // TODO: Move to Boss struct
+        const int damage = 10;
 
-        // Fire 4 bullets TODO: Fix
-        // spawn_enemy_bullet(bossTurrentOneX, bossTurrentY, 10);
-        // spawn_enemy_bullet(bossTurrentTwoX, bossTurrentY, 10);
-        // spawn_enemy_bullet(bossTurrentThreeX, bossTurrentY, 10);
-        // spawn_enemy_bullet(bossTurrentFourX, bossTurrentY, 10);
+        // Fire 4 bullets
+        // TODO: Y offsetchat
+        entity_fire_twin(&currentBoss.entity, enemyBulletSpeed, damage, 80.0f);
+        entity_fire_twin(&currentBoss.entity, enemyBulletSpeed, damage, 55.0f);
 
         // Reset firing logic
         currentBoss.isSideGunsShooting = false;

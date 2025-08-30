@@ -45,16 +45,16 @@ static void enemy_perform_shot(Enemy *enemy)
     switch (enemy->stats.firePattern)
     {
     case FIRE_STRAIGHT:
-        enemy_fire_straight(enemy, speed, damage);
+        entity_fire_straight(&enemy->entity, speed, damage);
         break;
     case FIRE_AIMED:
-        enemy_fire_aimed(enemy, playerX, playerY, speed, damage);
+        entity_fire_aimed(&enemy->entity, playerX, playerY, speed, damage);
         break;
     case FIRE_SPREAD3:
-        enemy_fire_spread3(enemy, speed, 12.0f, damage);
+        entity_fire_spread3(&enemy->entity, speed, 12.0f, damage);
         break;
     case FIRE_TWIN:
-        enemy_fire_twin(enemy, speed, damage, 10.0f);
+        entity_fire_twin(&enemy->entity, speed, damage, 10.0f);
         break;
     default:
         break;
