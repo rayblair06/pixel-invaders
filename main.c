@@ -53,11 +53,6 @@ int main(int argc, char *argv[])
 
     options_init();
 
-    // Scale to resolution
-    // SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    // SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-    // SDL_RenderSetIntegerScale(renderer, SDL_FALSE);
-
     init_sprites();
     init_audio();
 
@@ -75,6 +70,10 @@ int main(int argc, char *argv[])
     while (running)
     {
         update_game_time();
+
+        // Black out the background, clear the old render so we don't get flicker
+        SDL_SetRenderDrawColor(app()->renderer, 0, 0, 0, 255);
+        SDL_RenderClear(app()->renderer);
 
         // Handle events and keystates
         while (SDL_PollEvent(&event))
@@ -94,7 +93,7 @@ int main(int argc, char *argv[])
 
         memcpy(prevKeystateBuffer, SDL_GetKeyboardState(NULL), SDL_NUM_SCANCODES);
 
-        // Show the render
+        // Show the new render
         SDL_RenderPresent(app()->renderer);
 
         SDL_Delay(16); // ~60 FPS
