@@ -140,7 +140,7 @@ jobs:
       - name: Package App (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          ditto -c -k --sequesterRsrc --keepParent dist/PixelInvaders.app PixelInvaders-macos.zip
+          ditto -c -k --sequesterRsrc --keepParent dist/PixelInvaders.app PixelInvaders-macos-latest.zip
 
       - name: Package Game (Linux)
         if: matrix.os == 'ubuntu-latest'
