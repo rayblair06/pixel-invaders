@@ -152,7 +152,7 @@ bool key_pressed(SDL_Scancode key, const Uint8 *current, const Uint8 *previous)
 
 void render_run_history(TTF_Font *font)
 {
-    generate_text(font, "=== Last Runs===", 50, 100, COLOR_WHITE);
+    generate_text(font, "=== Last Runs ===", 50, 100, COLOR_WHITE);
 
     for (int i = 0; i < runHistory.runCount; i++)
     {
@@ -161,7 +161,7 @@ void render_run_history(TTF_Font *font)
 
         sprintf(line, "Run %d: Wave %d, Kills %d, EXP %d", i + 1, run->finalWave, run->totalKills, run->totalExperience);
 
-        generate_text(font, line, 50, 100 + i * 40, COLOR_WHITE);
+        generate_text(font, line, 50, 140 + i * 40, COLOR_WHITE);
     }
 }
 
@@ -235,17 +235,17 @@ void scene_previous_runs(const Uint8 *keystate, const Uint8 *prevKeystate)
     const TTF_Font *font = get_font(FT_SECONDARY, FT_MEDIUM);
     render_background();
 
-    char statsLineTotalRuns[64];
-    sprintf(statsLineTotalRuns, "Total runs %d", metaData.totalRuns);
-    generate_text(font, statsLineTotalRuns, 10, 10, COLOR_WHITE);
+    // char statsLineTotalRuns[64];
+    // sprintf(statsLineTotalRuns, "Total runs %d", metaData.totalRuns);
+    // generate_text(font, statsLineTotalRuns, 10, 10, COLOR_WHITE);
 
-    char statsLineBestWave[64];
-    sprintf(statsLineBestWave, "Best Wave %d", metaData.bestWave);
-    generate_text(font, statsLineBestWave, 10, 40, COLOR_WHITE);
+    // char statsLineBestWave[64];
+    // sprintf(statsLineBestWave, "Best Wave %d", metaData.bestWave);
+    // generate_text(font, statsLineBestWave, 10, 40, COLOR_WHITE);
 
-    char statsLineTotalExperience[64];
-    sprintf(statsLineTotalExperience, "Total Experience %d", metaData.totalExperienceEarned);
-    generate_text(font, statsLineTotalExperience, 10, 70, COLOR_WHITE);
+    // char statsLineTotalExperience[64];
+    // sprintf(statsLineTotalExperience, "Total Experience %d", metaData.totalExperienceEarned);
+    // generate_text(font, statsLineTotalExperience, 10, 70, COLOR_WHITE);
 
     render_run_history(font);
 
@@ -428,8 +428,6 @@ void scene_game(const Uint8 *keystate, const Uint8 *prevKeystate)
     // Game Over Screen
     if (isGameOver)
     {
-        // pause_game();
-
         SDL_Surface *overSurface = TTF_RenderText_Blended(font, "GAME OVER", white);
         SDL_Texture *overTexture = SDL_CreateTextureFromSurface(renderer, overSurface);
         SDL_Rect overRect = {SCREEN_WIDTH / 2 - overSurface->w / 2, SCREEN_HEIGHT / 2 - overSurface->h / 2, overSurface->w, overSurface->h};

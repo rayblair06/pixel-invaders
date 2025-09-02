@@ -1,3 +1,9 @@
+#include <sys/stat.h>
+#include <sys/types.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
@@ -9,16 +15,26 @@ RunData currentRun;
 MetaData metaData;
 RunHistory runHistory;
 
+static void ensure_save_directory(void)
+{
+#ifdef _WIN32
+    _mkdir("save");
+#else
+    mkdir("save", 0755);
+#endif
+}
+
 // Initialise stats at the start of a run
 void init_stats(void)
 {
     memset(&currentRun, 0, sizeof(RunData));
     load_meta(&metaData);
+    load_run_history();
 }
 
 void tick_run_time(float deltaTime)
 {
-    currentRun.timePlayed += deltaTime;
+    currentRun.timePlayed += (int)deltaTime;
 }
 
 void record_kill(void)
@@ -50,7 +66,14 @@ void record_upgrade(int upgradeIndex)
         // Attend upgrade name to summary
         char buffer[64];
         sprintf(buffer, "%s x%d, ", upgrades[upgradeIndex].name, currentRun.upgradesChosen[upgradeIndex]);
-        strcat(currentRun.upgradeSummary, buffer);
+
+        size_t used = strlen(currentRun.upgradeSummary);
+        size_t left = strlen(currentRun.upgradeSummary) - used - 1;
+
+        if (left > 0)
+        {
+            strncat(currentRun.upgradeSummary, buffer, left);
+        }
     }
 }
 
@@ -59,13 +82,18 @@ void record_upgrade(int upgradeIndex)
  */
 void save_meta(void)
 {
+    ensure_save_directory();
     FILE *file = fopen("save/meta_data.dat", "wb");
 
-    if (file)
+    if (!file)
     {
-        fwrite(&metaData, sizeof(MetaData), 1, file);
-        fclose(file);
+        perror("fopen meta_data.dat");
+        return;
     }
+
+    fwrite(&metaData, sizeof(MetaData), 1, file);
+
+    fclose(file);
 }
 
 /**
@@ -73,15 +101,18 @@ void save_meta(void)
  */
 bool load_meta(MetaData *meta)
 {
+    ensure_save_directory();
     FILE *file = fopen("save/meta_data.dat", "rb");
 
     if (!file)
+    {
         return false;
+    }
 
-    fread(meta, sizeof(MetaData), 1, file);
+    bool ok = fread(meta, sizeof(MetaData), 1, file) == 1;
     fclose(file);
 
-    return true;
+    return ok;
 }
 
 /**
@@ -117,6 +148,7 @@ void log_current_run(void)
  */
 bool load_run_history(void)
 {
+    ensure_save_directory();
     FILE *file = fopen("save/run_history.dat", "rb");
 
     if (!file)
@@ -125,7 +157,13 @@ bool load_run_history(void)
         return false;
     }
 
-    fread(&runHistory, sizeof(RunHistory), 1, file);
+    if (fread(&runHistory, sizeof(RunHistory), 1, file) != 1)
+    {
+        fclose(file);
+        runHistory.runCount = 0;
+        return false;
+    }
+
     fclose(file);
     return true;
 }
@@ -135,13 +173,21 @@ bool load_run_history(void)
  */
 void save_run_history(void)
 {
+    ensure_save_directory();
     FILE *file = fopen("save/run_history.dat", "wb");
 
-    if (file)
+    if (!file)
     {
-        fwrite(&runHistory, sizeof(RunHistory), 1, file);
-        fclose(file);
+        perror("fopen run_history.dat");
+        return;
     }
+
+    if (fwrite(&runHistory, sizeof(RunHistory), 1, file) != 1)
+    {
+        perror("fwrite run_history.dat");
+    }
+
+    fclose(file);
 }
 
 /**
@@ -206,8 +252,9 @@ void render_run_summary(TTF_Font *font, RunData *run)
     generate_text(font, "Upgrades:", 50, y, white);
 
     y += 30;
-    if (sizeof(run->upgradeSummary) / sizeof(run->upgradeSummary)[0])
+    if (run->upgradeSummary[0] == '\0')
     {
+
         generate_text(font, "None", 50, y, white);
     }
     else
